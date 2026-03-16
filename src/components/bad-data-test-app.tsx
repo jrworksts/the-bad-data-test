@@ -312,29 +312,6 @@ export function BadDataTestApp() {
                 </Button>
                 <p className="text-sm text-cloud/70">2-minute diagnostic. Most teams cannot answer every question confidently.</p>
               </div>
-              <div className="grid gap-4 sm:grid-cols-3">
-                {proofStats.map((stat) => (
-                  <Card key={stat.value} className="border-white/8 bg-white/[0.03]">
-                    <CardContent className="space-y-2">
-                      <p className="font-display text-3xl font-bold text-paper">{stat.value}</p>
-                      <p className="text-sm leading-6 text-cloud/70">{stat.label}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-              <div className="space-y-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cloud/50">Trusted signal placeholders</p>
-                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                  {siteConfig.trustLogos.map((logo) => (
-                    <div
-                      key={logo}
-                      className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-5 text-center text-sm text-cloud/60"
-                    >
-                      {logo}
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
 
             <Card className="overflow-hidden border-glow/15 bg-slate/80">
@@ -369,6 +346,31 @@ export function BadDataTestApp() {
                 </div>
               </CardContent>
             </Card>
+          </div>
+          <div className="mt-10 space-y-6">
+            <div className="grid gap-4 md:grid-cols-3">
+              {proofStats.map((stat) => (
+                <Card key={stat.value} className="border-white/8 bg-white/[0.03]">
+                  <CardContent className="space-y-2">
+                    <p className="font-display text-3xl font-bold text-paper">{stat.value}</p>
+                    <p className="max-w-[18ch] text-sm leading-6 text-cloud/70">{stat.label}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            <div className="space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cloud/50">Trusted signal placeholders</p>
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                {siteConfig.trustLogos.map((logo) => (
+                  <div
+                    key={logo}
+                    className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-5 text-center text-sm text-cloud/60"
+                  >
+                    {logo}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
