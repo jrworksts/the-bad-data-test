@@ -4,7 +4,6 @@ import Script from "next/script";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  Activity,
   ArrowRight,
   BarChart3,
   CheckCircle2,
@@ -13,10 +12,8 @@ import {
   Link2,
   Mail,
   MoveRight,
-  Sparkles,
   ShieldCheck,
   Target,
-  Users,
 } from "lucide-react";
 import { leadGateAfterQuestion, leadGateFields, qualificationFields, quizQuestions } from "@/config/quiz";
 import { faqItems, primaryCtas, proofStats, siteConfig, stackLayers } from "@/config/site";
@@ -35,34 +32,6 @@ const LOCAL_STORAGE_KEY = "bad-data-test-state";
 const GHL_EMBED_ID = "303rv61ZkidkXmcEvLhz_1773702309411";
 
 type FunnelStage = "landing" | "quiz" | "result";
-type LandingVariantId = "single-panel" | "editorial-human" | "operator-dashboard" | "hybrid";
-
-const landingVariants: {
-  id: LandingVariantId;
-  name: string;
-  blurb: string;
-}[] = [
-  {
-    id: "single-panel",
-    name: "Variant A",
-    blurb: "Single-panel diagnostic. Cleaner, tighter, more controlled.",
-  },
-  {
-    id: "editorial-human",
-    name: "Variant B",
-    blurb: "Editorial with a human layer. More trust, less abstraction.",
-  },
-  {
-    id: "operator-dashboard",
-    name: "Variant C",
-    blurb: "Operator dashboard. Still analytical, but lighter and more visual.",
-  },
-  {
-    id: "hybrid",
-    name: "Variant D",
-    blurb: "Hybrid recommendation. Single-panel focus plus a human signal.",
-  },
-];
 
 const initialOpportunityInputs: OpportunityInputs = {
   monthlyTraffic: 15000,
@@ -84,7 +53,6 @@ export function BadDataTestApp() {
   const [opportunityInputs, setOpportunityInputs] = useState<OpportunityInputs>(initialOpportunityInputs);
   const [submissionState, setSubmissionState] = useState<"idle" | "submitting" | "submitted" | "error">("idle");
   const [isPending, startTransition] = useTransition();
-  const [landingVariant, setLandingVariant] = useState<LandingVariantId>("hybrid");
   const quizRef = useRef<HTMLDivElement | null>(null);
 
   const currentQuestion = quizQuestions[currentIndex];
@@ -321,49 +289,87 @@ export function BadDataTestApp() {
         </header>
 
         <section className="relative pt-12 md:pt-20">
-          <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div className="space-y-3">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Design lab</p>
-              <h2 className="font-display text-3xl font-bold text-paper md:text-4xl">Choose the direction that feels most premium and most focused</h2>
-              <p className="max-w-3xl text-base leading-7 text-cloud/72">
-                These are live variants of the landing experience. The funnel logic below stays the same so you can judge the visual direction without losing the diagnostic flow.
-              </p>
+          <div className="grid items-start gap-12 lg:grid-cols-[1.15fr_0.85fr]">
+            <div className="space-y-8">
+              <div className="inline-flex items-center rounded-full border border-glow/20 bg-glow/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-glow">
+                {siteConfig.hero.badge}
+              </div>
+              <div className="space-y-5">
+                <h1 className="max-w-4xl font-display text-5xl font-bold leading-[0.96] tracking-tight text-balance text-paper md:text-7xl">
+                  {siteConfig.hero.headline}
+                </h1>
+                <p className="max-w-2xl text-lg leading-8 text-cloud/80 md:text-xl">
+                  {siteConfig.hero.subhead}
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-4">
+                <Button size="lg" onClick={() => handleCtaClick("Take the Test", "#quiz")}>
+                  Take the Test
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+                <Button variant="secondary" size="lg" onClick={() => handleCtaClick("See How It Works", "#framework")}>
+                  See How It Works
+                </Button>
+                <p className="text-sm text-cloud/70">2-minute diagnostic. Most teams cannot answer every question confidently.</p>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-3">
+                {proofStats.map((stat) => (
+                  <Card key={stat.value} className="border-white/8 bg-white/[0.03]">
+                    <CardContent className="space-y-2">
+                      <p className="font-display text-3xl font-bold text-paper">{stat.value}</p>
+                      <p className="text-sm leading-6 text-cloud/70">{stat.label}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              <div className="space-y-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cloud/50">Trusted signal placeholders</p>
+                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                  {siteConfig.trustLogos.map((logo) => (
+                    <div
+                      key={logo}
+                      className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-5 text-center text-sm text-cloud/60"
+                    >
+                      {logo}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {landingVariants.map((variant) => (
-                <button
-                  key={variant.id}
-                  type="button"
-                  onClick={() => setLandingVariant(variant.id)}
-                  className={cn(
-                    "rounded-full border px-4 py-2 text-sm font-medium transition",
-                    landingVariant === variant.id
-                      ? "border-glow bg-glow/10 text-paper"
-                      : "border-white/10 bg-white/[0.03] text-cloud/68 hover:bg-white/[0.06]",
-                  )}
-                >
-                  {variant.name}
-                </button>
-              ))}
-            </div>
-          </div>
 
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={landingVariant}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.24 }}
-            >
-              <LandingVariantPanel
-                activeVariant={landingVariants.find((item) => item.id === landingVariant)!}
-                landingVariant={landingVariant}
-                onPrimary={() => handleCtaClick("Take the Test", "#quiz")}
-                onSecondary={() => handleCtaClick("See How It Works", "#framework")}
-              />
-            </motion.div>
-          </AnimatePresence>
+            <Card className="overflow-hidden border-glow/15 bg-slate/80">
+              <CardContent className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Diagnostic preview</p>
+                    <h2 className="mt-2 font-display text-3xl font-bold text-paper">The Bad Data Test</h2>
+                  </div>
+                  <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-cloud/70">
+                    Sharp by design
+                  </div>
+                </div>
+                <div className="space-y-4 rounded-[24px] border border-white/10 bg-ink/60 p-5">
+                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">What it surfaces</p>
+                  <div className="space-y-3">
+                    {[
+                      "How much traffic is staying anonymous",
+                      "Whether attribution confidence is misleading you",
+                      "Where CRM signal is being wasted in paid media",
+                      "How fragmented systems may be hiding pipeline",
+                    ].map((item) => (
+                      <div key={item} className="flex items-start gap-3">
+                        <CheckCircle2 className="mt-0.5 h-5 w-5 text-glow" />
+                        <p className="text-sm leading-6 text-cloud/78">{item}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="rounded-[24px] border border-amber/15 bg-amber/10 p-5">
+                  <p className="text-sm leading-6 text-cloud/80">{siteConfig.hero.kicker}</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </section>
 
         <section id="quiz" ref={quizRef} className="pt-20 md:pt-28">
@@ -892,283 +898,5 @@ function MetricInput({
       <label className="mb-2 block text-sm font-medium text-cloud/80">{label}</label>
       <Input inputMode="numeric" value={value ?? ""} onChange={(event) => onChange(event.target.value)} />
     </div>
-  );
-}
-
-function LandingVariantPanel({
-  activeVariant,
-  landingVariant,
-  onPrimary,
-  onSecondary,
-}: {
-  activeVariant: { id: LandingVariantId; name: string; blurb: string };
-  landingVariant: LandingVariantId;
-  onPrimary: () => void;
-  onSecondary: () => void;
-}) {
-  const commonBullets = [
-    "Identity gaps hiding qualified demand",
-    "Signal loss driving rising CPA",
-    "CRM data that never reaches paid media",
-  ];
-
-  return (
-    <div className="space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-[24px] border border-white/10 bg-white/[0.03] px-5 py-4">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">{activeVariant.name}</p>
-          <p className="mt-1 text-sm text-cloud/68">{activeVariant.blurb}</p>
-        </div>
-        <div className="text-sm text-cloud/60">2-minute diagnostic. Designed for desktop and mobile.</div>
-      </div>
-
-      {landingVariant === "single-panel" ? (
-        <Card className="overflow-hidden border-glow/15 bg-[radial-gradient(circle_at_top_left,rgba(121,242,210,0.18),transparent_25%),linear-gradient(160deg,rgba(12,23,40,0.98),rgba(7,14,25,1))]">
-          <CardContent className="grid gap-8 p-6 md:p-10 lg:grid-cols-[1.15fr_0.85fr]">
-            <div className="space-y-6">
-              <Eyebrow />
-              <h1 className="max-w-4xl font-display text-5xl font-bold leading-[0.96] tracking-tight text-paper md:text-7xl">
-                The Bad Data Test
-              </h1>
-              <p className="max-w-2xl text-lg leading-8 text-cloud/78">
-                A cleaner, more concentrated version of the offer: one panel, one question, one decision. Diagnose whether incomplete attribution, anonymous traffic, and fragmented systems are quietly suppressing pipeline.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Button size="lg" onClick={onPrimary}>
-                  Take the Test
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-                <Button size="lg" variant="secondary" onClick={onSecondary}>
-                  See How It Works
-                </Button>
-              </div>
-              <div className="grid gap-3 md:grid-cols-3">
-                {proofStats.map((stat) => (
-                  <MetricCard key={stat.value} label={stat.label} value={stat.value} />
-                ))}
-              </div>
-            </div>
-            <div className="grid gap-4">
-              <SignalPanel title="What it surfaces" items={commonBullets} />
-              <Card className="border-amber/15 bg-amber/10">
-                <CardContent className="space-y-3">
-                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-amber">Why this feels stronger</p>
-                  <p className="text-sm leading-7 text-cloud/80">
-                    Less simultaneous information. More visual control. It behaves more like a premium diagnostic product than a conventional service page.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </CardContent>
-        </Card>
-      ) : null}
-
-      {landingVariant === "editorial-human" ? (
-        <div className="grid gap-6 lg:grid-cols-[1fr_0.92fr]">
-          <Card className="overflow-hidden border-white/10 bg-white/[0.04]">
-            <CardContent className="space-y-6 p-6 md:p-10">
-              <Eyebrow />
-              <h1 className="max-w-3xl font-display text-5xl font-bold leading-[0.98] tracking-tight text-paper md:text-6xl">
-                Are you trying to grow your company with bad data?
-              </h1>
-              <p className="max-w-2xl text-lg leading-8 text-cloud/75">
-                This version softens the abstract feel by pairing the diagnostic with a more editorial, human signal. The message stays sharp, but the page breathes more.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Button size="lg" onClick={onPrimary}>
-                  Take the Test
-                </Button>
-                <Button size="lg" variant="outline" onClick={onSecondary}>
-                  See How It Works
-                </Button>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-3">
-                {siteConfig.trustLogos.slice(0, 3).map((logo) => (
-                  <div key={logo} className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-4 text-sm text-cloud/62">
-                    {logo}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-          <div className="grid gap-6">
-            <HumanPanel
-              label="Founder / advisor image direction"
-              title="Add one human anchor without turning this into a personal brand page"
-              description="A confident portrait, a client workshop still, or a founder-at-desk image would make the site feel more credible and less purely abstract."
-            />
-            <SignalPanel title="Human-trust angle" items={["Founders and growth leads compare answers", "Better for warm outbound and referrals", "Still premium without feeling cold"]} />
-          </div>
-        </div>
-      ) : null}
-
-      {landingVariant === "operator-dashboard" ? (
-        <div className="grid gap-6 lg:grid-cols-[1.08fr_0.92fr]">
-          <Card className="overflow-hidden border-white/10 bg-slate/75">
-            <CardContent className="space-y-6 p-6 md:p-10">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <Eyebrow />
-                <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.24em] text-cloud/65">
-                  Operator dashboard
-                </div>
-              </div>
-              <h1 className="max-w-3xl font-display text-5xl font-bold leading-[0.98] tracking-tight text-paper md:text-6xl">
-                Most companies do not have a traffic problem. They have a data problem.
-              </h1>
-              <p className="max-w-2xl text-lg leading-8 text-cloud/74">
-                This version reduces paragraph weight and replaces it with a more visual executive dashboard. It still feels analytical, but less text-heavy.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Button size="lg" onClick={onPrimary}>
-                  Start Diagnostic
-                </Button>
-                <Button size="lg" variant="secondary" onClick={onSecondary}>
-                  Review Method
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
-            <DashboardStat icon={Activity} label="Signal confidence" value="Low in 3 of 4 areas" />
-            <DashboardStat icon={BarChart3} label="Potential waste" value="15-30% recovery range" />
-            <DashboardStat icon={Target} label="Traffic capture" value="Anonymous demand likely underused" />
-            <DashboardStat icon={Users} label="Team alignment" value="Different answers create diagnostic value" />
-          </div>
-        </div>
-      ) : null}
-
-      {landingVariant === "hybrid" ? (
-        <div className="grid gap-6 lg:grid-cols-[1.08fr_0.92fr]">
-          <Card className="overflow-hidden border-glow/15 bg-[radial-gradient(circle_at_top_left,rgba(121,242,210,0.18),transparent_25%),linear-gradient(160deg,rgba(12,23,40,0.96),rgba(7,14,25,1))]">
-            <CardContent className="space-y-6 p-6 md:p-10">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <Eyebrow />
-                <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.24em] text-cloud/65">
-                  Recommended hybrid
-                </div>
-              </div>
-              <h1 className="max-w-4xl font-display text-5xl font-bold leading-[0.96] tracking-tight text-paper md:text-7xl">
-                Are you trying to grow your company with bad data?
-              </h1>
-              <p className="max-w-2xl text-lg leading-8 text-cloud/78">
-                This combines the focus of a single-panel diagnostic with just enough human presence to build trust. It feels more premium, less cluttered, and still commercially serious.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Button size="lg" onClick={onPrimary}>
-                  Take the Test
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-                <Button size="lg" variant="secondary" onClick={onSecondary}>
-                  See How It Works
-                </Button>
-              </div>
-              <div className="grid gap-3 md:grid-cols-3">
-                {proofStats.map((stat) => (
-                  <div key={stat.value} className="rounded-2xl border border-white/8 bg-white/[0.03] p-4">
-                    <p className="font-display text-3xl font-bold text-paper">{stat.value}</p>
-                    <p className="mt-2 text-sm leading-6 text-cloud/68">{stat.label}</p>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-          <div className="grid gap-6">
-            <HumanPanel
-              label="Human signal"
-              title="One strong image keeps the page from feeling like a software dashboard"
-              description="A founder portrait or team-at-work shot can add warmth without weakening the high-stakes, diagnostic feel."
-            />
-            <SignalPanel title="What the test reveals" items={commonBullets} compact />
-          </div>
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
-function Eyebrow() {
-  return (
-    <div className="inline-flex items-center gap-2 rounded-full border border-glow/20 bg-glow/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-glow">
-      <Sparkles className="h-3.5 w-3.5" />
-      {siteConfig.hero.badge}
-    </div>
-  );
-}
-
-function SignalPanel({
-  title,
-  items,
-  compact = false,
-}: {
-  title: string;
-  items: string[];
-  compact?: boolean;
-}) {
-  return (
-    <Card className="overflow-hidden border-white/10 bg-white/[0.04]">
-      <CardContent className={cn("space-y-4", compact ? "p-5" : "p-6")}>
-        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">{title}</p>
-        <div className="space-y-3">
-          {items.map((item) => (
-            <div key={item} className="flex gap-3">
-              <CheckCircle2 className="mt-0.5 h-5 w-5 text-glow" />
-              <p className="text-sm leading-6 text-cloud/78">{item}</p>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function HumanPanel({
-  label,
-  title,
-  description,
-}: {
-  label: string;
-  title: string;
-  description: string;
-}) {
-  return (
-    <Card className="overflow-hidden border-white/10 bg-white/[0.04]">
-      <div className="h-72 border-b border-white/8 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.16),transparent_35%),linear-gradient(180deg,rgba(247,201,109,0.16),rgba(121,242,210,0.06)_55%,rgba(8,17,31,0.2))]">
-        <div className="flex h-full items-end justify-between px-6 pb-6">
-          <div className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.24em] text-paper/80">
-            {label}
-          </div>
-          <div className="relative h-44 w-36 rounded-t-[999px] border border-white/12 bg-white/8">
-            <div className="absolute left-1/2 top-8 h-20 w-20 -translate-x-1/2 rounded-full border border-white/14 bg-white/12" />
-            <div className="absolute bottom-0 left-1/2 h-24 w-28 -translate-x-1/2 rounded-t-[999px] border border-white/12 bg-white/10" />
-          </div>
-        </div>
-      </div>
-      <CardContent className="space-y-3">
-        <h3 className="font-display text-3xl font-bold text-paper">{title}</h3>
-        <p className="text-sm leading-7 text-cloud/75">{description}</p>
-      </CardContent>
-    </Card>
-  );
-}
-
-function DashboardStat({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: typeof Activity;
-  label: string;
-  value: string;
-}) {
-  return (
-    <Card className="border-white/10 bg-white/[0.04]">
-      <CardContent className="space-y-4">
-        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/6">
-          <Icon className="h-5 w-5 text-glow" />
-        </div>
-        <p className="text-sm font-medium text-cloud/62">{label}</p>
-        <p className="font-display text-2xl font-bold text-paper">{value}</p>
-      </CardContent>
-    </Card>
   );
 }
