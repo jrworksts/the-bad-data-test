@@ -817,7 +817,7 @@ export function BadDataTestApp() {
                 </div>
               </div>
               <div className="rounded-[28px] border border-white/10 bg-ink/70 p-6">
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">GoHighLevel booking</p>
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">Book an intro call with our team</p>
                 <div className="mt-6 overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.02]">
                   <iframe
                     src={siteConfig.bookingEmbedUrl}
