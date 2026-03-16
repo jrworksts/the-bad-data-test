@@ -1,5 +1,6 @@
 "use client";
 
+import Script from "next/script";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -28,6 +29,7 @@ import { Progress } from "@/components/ui/progress";
 import { Select } from "@/components/ui/select";
 
 const LOCAL_STORAGE_KEY = "bad-data-test-state";
+const GHL_EMBED_ID = "303rv61ZkidkXmcEvLhz_1773702309411";
 
 type FunnelStage = "landing" | "quiz" | "result";
 
@@ -819,16 +821,33 @@ export function BadDataTestApp() {
                 <div className="mt-6 overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.02]">
                   <iframe
                     src={siteConfig.bookingEmbedUrl}
+                    id={GHL_EMBED_ID}
                     title="Revenue Recovery Audit intro call booking"
-                    className="min-h-[640px] w-full border-0"
+                    className="min-h-[720px] w-full border-0 md:min-h-[820px]"
                     scrolling="no"
+                    style={{ width: "100%", border: "none", overflow: "hidden" }}
                   />
                 </div>
+                <p className="mt-4 text-sm leading-6 text-cloud/60">
+                  If the embedded calendar feels cramped on your device,{" "}
+                  <a
+                    href={siteConfig.bookingUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-semibold text-glow underline decoration-glow/40 underline-offset-4"
+                    onClick={() => trackEvent("booking_started", { source: "fallback-link" })}
+                  >
+                    open the full booking page
+                  </a>
+                  .
+                </p>
               </div>
             </CardContent>
           </Card>
         </section>
       </div>
+
+      <Script src="https://link.msgsndr.com/js/form_embed.js" strategy="afterInteractive" />
 
       <div className="fixed inset-x-0 bottom-4 z-40 mx-auto flex max-w-md px-4 md:hidden">
         <Button className="w-full" size="lg" onClick={() => handleCtaClick(stage === "result" ? "Book a 20-Minute Intro Call" : "Take the Test", stage === "result" ? "#booking" : "#quiz")}>
