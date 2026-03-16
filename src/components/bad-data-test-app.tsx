@@ -804,7 +804,7 @@ export function BadDataTestApp() {
                     size="lg"
                     onClick={() => {
                       trackEvent("booking_started");
-                      window.open("https://cal.com/", "_blank", "noopener,noreferrer");
+                      window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer");
                     }}
                   >
                     Book a 20-Minute Intro Call
@@ -815,11 +815,14 @@ export function BadDataTestApp() {
                 </div>
               </div>
               <div className="rounded-[28px] border border-white/10 bg-ink/70 p-6">
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">Booking integration placeholder</p>
-                <div className="mt-6 flex h-full min-h-72 items-center justify-center rounded-[24px] border border-dashed border-white/12 bg-white/[0.02] p-8 text-center">
-                  <p className="max-w-sm text-sm leading-7 text-cloud/65">
-                    Replace this panel with your calendar embed, scheduler, or routed booking component. Tracking hooks for booking start and completion are already prepared.
-                  </p>
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">GoHighLevel booking</p>
+                <div className="mt-6 overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.02]">
+                  <iframe
+                    src={siteConfig.bookingEmbedUrl}
+                    title="Revenue Recovery Audit intro call booking"
+                    className="min-h-[640px] w-full border-0"
+                    scrolling="no"
+                  />
                 </div>
               </div>
             </CardContent>

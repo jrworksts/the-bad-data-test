@@ -7,6 +7,12 @@ function normalizeSiteUrl(value?: string) {
 }
 
 const siteUrl = normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL);
+const ghlBookingUrl =
+  process.env.NEXT_PUBLIC_GHL_BOOKING_URL ||
+  "https://api.leadconnectorhq.com/widget/bookings/intro-call-rev-recovery-audit";
+const ghlBookingEmbedUrl =
+  process.env.NEXT_PUBLIC_GHL_BOOKING_EMBED_URL ||
+  "https://api.leadconnectorhq.com/widget/booking/303rv61ZkidkXmcEvLhz";
 
 export const primaryCtas: CTAConfig[] = [
   { id: "take-test", label: "Take the Test", href: "#quiz" },
@@ -96,6 +102,8 @@ export const faqItems: FAQItem[] = [
 export const siteConfig = {
   name: "The Bad Data Test",
   siteUrl,
+  bookingUrl: ghlBookingUrl,
+  bookingEmbedUrl: ghlBookingEmbedUrl,
   metadata: {
     title:
       "The Bad Data Test | Diagnostic Funnel for Revenue Leaks and Signal Loss",

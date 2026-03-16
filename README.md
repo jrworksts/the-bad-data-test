@@ -63,6 +63,8 @@ Copy `.env.example` to `.env.local` and fill in the integrations you want:
 - `WEBHOOK_URL`: generic webhook destination for leads
 - `HUBSPOT_*`: HubSpot forms integration
 - `GHL_WEBHOOK_URL`: GoHighLevel webhook endpoint
+- `NEXT_PUBLIC_GHL_BOOKING_URL`: GoHighLevel public booking link
+- `NEXT_PUBLIC_GHL_BOOKING_EMBED_URL`: GoHighLevel iframe booking URL
 - `NOTIFICATION_EMAIL`: reserved for future email notifications
 - `ENABLE_LOCAL_STORAGE`: when `true`, submissions are appended to `/tmp/bad-data-test-submissions.ndjson` during local development
 
