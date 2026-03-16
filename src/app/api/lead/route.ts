@@ -13,12 +13,16 @@ const submissionSchema = z.object({
     summary: z.string(),
     findings: z.array(z.string()),
     implications: z.array(z.string()),
-    qualification: z.string(),
+    qualification: z.enum(["High fit", "Potential fit", "Lower fit"]),
     opportunityNarrative: z.string(),
     recommendedNextStep: z.string(),
     ctaPrimary: z.string(),
     ctaSecondary: z.string(),
-    routeVariant: z.string(),
+    routeVariant: z.enum([
+      "high-score-high-fit",
+      "high-score-lower-fit",
+      "low-score",
+    ]),
   }),
   opportunity: z
     .object({
