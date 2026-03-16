@@ -351,9 +351,9 @@ export function BadDataTestApp() {
             <div className="grid gap-4 md:grid-cols-3">
               {proofStats.map((stat) => (
                 <Card key={stat.value} className="border-white/8 bg-white/[0.03]">
-                  <CardContent className="space-y-2">
+                  <CardContent className="flex h-full flex-col justify-center space-y-2 text-center">
                     <p className="font-display text-3xl font-bold text-paper">{stat.value}</p>
-                    <p className="max-w-[18ch] text-sm leading-6 text-cloud/70">{stat.label}</p>
+                    <p className="mx-auto max-w-[18ch] text-sm leading-6 text-cloud/70">{stat.label}</p>
                   </CardContent>
                 </Card>
               ))}
