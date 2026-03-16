@@ -1,6 +1,12 @@
 import type { CTAConfig, FAQItem, ProofStat, StackLayer } from "@/lib/types";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+function normalizeSiteUrl(value?: string) {
+  if (!value) return "http://localhost:3000";
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  return `https://${value}`;
+}
+
+const siteUrl = normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL);
 
 export const primaryCtas: CTAConfig[] = [
   { id: "take-test", label: "Take the Test", href: "#quiz" },
