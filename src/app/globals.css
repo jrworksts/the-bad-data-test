@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-ink text-paper antialiased;
+  background-image:
+    radial-gradient(circle at top, rgba(121, 242, 210, 0.18), transparent 28%),
+    radial-gradient(circle at 80% 20%, rgba(247, 201, 109, 0.12), transparent 18%),
+    linear-gradient(180deg, #08111f 0%, #0c1728 46%, #08111f 100%);
+}
+
+::selection {
+  background: rgba(121, 242, 210, 0.22);
+  color: #f5f7fb;
+}
+
+.bg-grid {
+  background-size: 48px 48px;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
