@@ -187,7 +187,7 @@ export function ResultsPage() {
             onEmailShare={handleEmailShare}
           />
 
-          <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="grid gap-6 lg:grid-cols-2">
             <Card>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
@@ -218,9 +218,9 @@ export function ResultsPage() {
             </Card>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid gap-6 lg:grid-cols-2 lg:items-stretch">
             <Card>
-              <CardContent className="space-y-5">
+              <CardContent className="flex h-full flex-col space-y-5">
                 <div className="space-y-2">
                   <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Signal loss model</p>
                   <h3 className="font-display text-3xl font-bold text-paper">Why CPA Often Rises When Signal Quality Falls</h3>
@@ -233,7 +233,7 @@ export function ResultsPage() {
             </Card>
 
             <Card>
-              <CardContent className="space-y-5">
+              <CardContent className="flex h-full flex-col space-y-5">
                 <div className="space-y-2">
                   <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Key findings</p>
                   <h3 className="font-display text-3xl font-bold text-paper">What is creating the hidden revenue inefficiency</h3>
