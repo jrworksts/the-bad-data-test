@@ -576,12 +576,12 @@ export function BadDataTestApp() {
         <section id="booking" className="pb-12 pt-20 md:pb-20 md:pt-28">
           <Card className="border-glow/15 bg-gradient-to-br from-glow/10 via-white/[0.04] to-amber/10">
             <CardContent className="grid gap-8 lg:grid-cols-[1fr_0.95fr]">
-              <div className="space-y-5">
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Next step</p>
-                <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">Move from suspicion to diagnosis</h2>
-                <p className="max-w-2xl text-base leading-8 text-cloud/80 md:text-lg">
-                  The Revenue Recovery Audit is designed to quantify where your team is losing signal, where attribution is distorting decisions, and where recoverable pipeline may already exist inside your current traffic.
-                </p>
+                <div className="space-y-5">
+                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Next step</p>
+                  <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">Recover Revenue you are already paying for</h2>
+                  <p className="max-w-2xl text-base leading-8 text-cloud/80 md:text-lg">
+                    The Revenue Recovery Audit is designed to quantify where your team is losing signal, where attribution is distorting decisions, and where recoverable pipeline may already exist inside your current traffic.
+                  </p>
                 <div className="flex flex-wrap gap-3">
                   <Button
                     size="lg"
