@@ -509,31 +509,6 @@ function ResultsHeroVariant({
           </div>
         </CardContent>
       </Card>
-      <Card className="overflow-hidden border-white/10 bg-white/[0.04]">
-        <CardContent className="space-y-5 p-6 md:p-8">
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Internal sharing</p>
-          <h3 className="font-display text-3xl font-bold text-paper">Get alignment before the call, if needed</h3>
-          <p className="text-base leading-7 text-cloud/76">
-            This version is built around a simple conversion sequence: review the score, share it internally, then decide whether the audit call should happen now.
-          </p>
-          <div className="grid gap-3">
-            <Button variant="secondary" onClick={onNativeShare}>
-              <Share2 className="h-4 w-4" />
-              Share score
-            </Button>
-            <Button variant="outline" onClick={onEmailShare}>
-              <Mail className="h-4 w-4" />
-              Email result
-            </Button>
-          </div>
-          <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
-            <p className="text-sm font-medium text-cloud/65">Why it converts</p>
-            <p className="mt-3 text-sm leading-7 text-cloud/76">
-              The page frames the score like a business case, gives the team a clear internal-share action, and keeps the booking CTA in the primary decision path.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
