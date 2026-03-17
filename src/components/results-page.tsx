@@ -5,16 +5,14 @@ import Link from "next/link";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle, ArrowRight, BarChart3, FileSpreadsheet, Link2, Mail, Share2, ShieldAlert, Target } from "lucide-react";
-import { qualificationFields } from "@/config/quiz";
 import { siteConfig } from "@/config/site";
 import { trackEvent } from "@/lib/analytics";
 import { estimateOpportunity } from "@/lib/opportunity";
-import type { LeadProfile, OpportunityInputs, QuizResponses, ResultModel } from "@/lib/types";
+import type { OpportunityInputs, QuizResponses, ResultModel } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
 
 const LOCAL_STORAGE_KEY = "bad-data-test-state";
 const GHL_EMBED_ID = "303rv61ZkidkXmcEvLhz_1773702309411";
@@ -22,7 +20,6 @@ const GHL_EMBED_ID = "303rv61ZkidkXmcEvLhz_1773702309411";
 export function ResultsPage() {
   const router = useRouter();
   const [result, setResult] = useState<ResultModel | null>(null);
-  const [qualification, setQualification] = useState<LeadProfile>({});
   const [opportunityInputs, setOpportunityInputs] = useState<OpportunityInputs>({
     monthlyTraffic: 15000,
     cpa: 180,
@@ -46,13 +43,11 @@ export function ResultsPage() {
     try {
       const parsed = JSON.parse(saved) as {
         answers: QuizResponses;
-        qualification: LeadProfile;
         result?: ResultModel | null;
         opportunityInputs?: OpportunityInputs;
       };
 
       if (parsed.result) setResult(parsed.result);
-      setQualification(parsed.qualification || {});
       if (parsed.opportunityInputs) setOpportunityInputs(parsed.opportunityInputs);
       setSubmissionState(parsed.result ? "submitted" : "idle");
     } catch {
@@ -100,24 +95,6 @@ export function ResultsPage() {
     setCopied(true);
     trackEvent("share_clicked", { type: "native-share-fallback", page: "results" });
     window.setTimeout(() => setCopied(false), 1600);
-  }
-
-  function handleQualificationFieldChange(field: string, value: string) {
-    setQualification((previous) => {
-      const next = { ...previous, [field]: value };
-      const saved = window.localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved) as Record<string, unknown>;
-        window.localStorage.setItem(
-          LOCAL_STORAGE_KEY,
-          JSON.stringify({
-            ...parsed,
-            qualification: next,
-          }),
-        );
-      }
-      return next;
-    });
   }
 
   function handleOpportunityChange(field: keyof OpportunityInputs, value: string) {
@@ -403,51 +380,6 @@ export function ResultsPage() {
               <p className="text-base leading-7 text-cloud/75">
                 If your demand gen lead, growth lead, and RevOps owner all answer this differently, that is useful signal. Share it and compare assumptions.
               </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="space-y-6">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Final profiling</p>
-                <h3 className="mt-2 font-display text-3xl font-bold text-paper">Make the recommendation more specific</h3>
-              </div>
-              <div className="grid gap-4 md:grid-cols-2">
-                {qualificationFields.map((field) => (
-                  <div key={field.id}>
-                    <label className="mb-2 block text-sm font-medium text-cloud/80" htmlFor={field.id}>
-                      {field.label}
-                    </label>
-                    {field.type === "select" ? (
-                      <Select id={field.id} value={qualification[field.id] || ""} onChange={(event) => handleQualificationFieldChange(field.id, event.target.value)}>
-                        <option value="">Select</option>
-                        {field.options?.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </Select>
-                    ) : (
-                      <Input
-                        id={field.id}
-                        type={field.type}
-                        placeholder={field.placeholder}
-                        value={qualification[field.id] || ""}
-                        onChange={(event) => handleQualificationFieldChange(field.id, event.target.value)}
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <Button onClick={() => window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer")}>Book a 20-Minute Intro Call</Button>
-                <Button variant="secondary" onClick={() => window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer")}>
-                  Request Revenue Recovery Audit Information
-                </Button>
-                <p className="text-sm text-cloud/60">
-                  Submission status: <span className="font-medium text-paper">{submissionState === "submitted" ? "captured" : submissionState}</span>
-                </p>
-              </div>
             </CardContent>
           </Card>
 
