@@ -346,13 +346,12 @@ export function BadDataTestApp() {
                 </Card>
               ))}
             </div>
-            <div className="space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cloud/50">Trusted signal placeholders</p>
-              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <div>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                 {siteConfig.trustLogos.map((logo) => (
                   <div
                     key={logo}
-                    className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-5 text-center text-sm text-cloud/60"
+                    className="flex min-h-20 items-center justify-center rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-5 text-center text-base font-medium text-cloud/72"
                   >
                     {logo}
                   </div>

@@ -123,6 +123,7 @@ export const siteConfig = {
     "Salesforce",
     "Google Ads",
     "LinkedIn Ads",
+    "Meta Ads",
   ],
   audiences: {
     for: [
