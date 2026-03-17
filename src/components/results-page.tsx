@@ -187,38 +187,6 @@ export function ResultsPage() {
             onEmailShare={handleEmailShare}
           />
 
-          <Card className="border-glow/15 bg-gradient-to-r from-glow/10 via-white/[0.04] to-amber/10">
-            <CardContent className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-              <div className="space-y-4">
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Recommended flow</p>
-                <h2 className="font-display text-3xl font-bold text-paper">Clear next steps, based on the score you just saw</h2>
-                <p className="max-w-2xl text-base leading-7 text-cloud/78">
-                  If this result feels directionally right, the fastest path is to turn it into a diagnostic conversation. Share it internally first if needed, then book the audit intro call.
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  <Button onClick={() => window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer")} size="lg">
-                    Book the intro call
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                  <Button variant="secondary" onClick={handleEmailShare} size="lg">
-                    Email result to team
-                  </Button>
-                </div>
-              </div>
-              <div className="grid gap-3">
-                {[
-                  "1. Review the score and findings with your growth team",
-                  "2. Use the estimate as a directional business case, not fake precision",
-                  "3. Book the Revenue Recovery Audit intro call if the gaps feel commercially material",
-                ].map((step) => (
-                  <div key={step} className="rounded-2xl border border-white/8 bg-white/[0.03] p-4 text-sm leading-6 text-cloud/78">
-                    {step}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
           <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
             <Card>
               <CardContent className="space-y-6">
@@ -486,15 +454,19 @@ function ResultsHeroVariant({
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             <DataConfidenceGauge model={visualModel} />
-            <div className="rounded-[24px] border border-amber/12 bg-amber/10 p-5">
-              <p className="text-sm font-medium text-cloud/70">Recommended next step</p>
-              <p className="mt-3 text-base leading-7 text-cloud/82">{result.recommendedNextStep}</p>
-              <div className="mt-5 flex flex-wrap gap-3">
+            <div className="rounded-[24px] border border-white/10 bg-[linear-gradient(135deg,rgba(121,242,210,0.10),rgba(255,255,255,0.04))] p-5 md:p-6">
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Recommended flow</p>
+              <h3 className="mt-4 font-display text-3xl font-bold text-paper">Clear next steps, based on the score you just saw</h3>
+              <p className="mt-4 max-w-2xl text-base leading-8 text-cloud/80">
+                If this result feels directionally right, the fastest path is to turn it into a diagnostic conversation. Share it internally first if needed, then book the audit intro call.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
                 <Button size="lg" onClick={onPrimary}>
-                  Book a 20-Minute Intro Call
+                  Book the intro call
+                  <ArrowRight className="h-4 w-4" />
                 </Button>
-                <Button size="lg" variant="secondary" onClick={onSecondary}>
-                  Request audit details
+                <Button size="lg" variant="secondary" onClick={onEmailShare}>
+                  Email result to team
                 </Button>
               </div>
             </div>
