@@ -144,7 +144,7 @@ export const siteConfig = {
       name: "HubSpot",
       alt: "HubSpot logo",
       src: "/logos/hubspot.png",
-      surfaceClassName: "bg-slate-950",
+      surfaceClassName: "bg-white/[0.96]",
       imageClassName: "h-8 max-w-[165px]",
     },
     {
