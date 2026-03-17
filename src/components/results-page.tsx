@@ -212,7 +212,7 @@ export function ResultsPage() {
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Completion page</p>
             <h1 className="mt-2 font-display text-4xl font-bold text-paper md:text-5xl">Your Bad Data Test results</h1>
-          </Card>
+          </div>
           <Link href="/" className="text-sm font-medium text-cloud/68 underline decoration-white/20 underline-offset-4">
             Back to the landing page
           </Link>
