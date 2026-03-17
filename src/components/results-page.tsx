@@ -630,30 +630,46 @@ function FunnelLeakVisualization({ model }: { model: VisualModel }) {
 }
 
 function OpportunityComparisonChart({ model }: { model: VisualModel }) {
-  const maxValue = Math.max(model.currentPipeline, model.improvedPipeline);
-  const bars = [
-    { label: "Current visible value", value: model.currentPipeline, color: "bg-white/35" },
-    { label: "Estimated recoverable value", value: model.recoverablePipeline, color: "bg-glow" },
-  ];
+  const totalValue = model.currentPipeline + model.recoverablePipeline;
+  const maxValue = totalValue;
+  const currentWidth = `${Math.max((model.currentPipeline / maxValue) * 100, 18)}%`;
+  const recoverableWidth = `${Math.max((model.recoverablePipeline / maxValue) * 100, 12)}%`;
 
   return (
     <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
       <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">Main visual</p>
       <h4 className="mt-2 font-display text-2xl font-bold text-paper">What Your Pipeline Could Look Like With Better Data</h4>
-      <div className="mt-6 grid gap-4">
-        {bars.map((bar) => (
-          <div key={bar.label} className="space-y-2">
-            <div className="flex items-center justify-between text-sm text-cloud/72">
-              <span>{bar.label}</span>
-              <span className="font-medium text-paper">{formatCompactCurrency(bar.value)}</span>
+      <div className="mt-6 grid gap-5">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-sm text-cloud/72">
+            <span>Current visible value</span>
+            <span className="font-medium text-paper">{formatCompactCurrency(model.currentPipeline)}</span>
+          </div>
+          <div className="h-12 overflow-hidden rounded-2xl bg-white/8">
+            <div
+              className="flex h-full items-center rounded-2xl bg-white/35 px-4 text-sm font-medium text-paper"
+              style={{ width: currentWidth }}
+            >
+              {formatCompactCurrency(model.currentPipeline)}
             </div>
-            <div className="h-12 overflow-hidden rounded-2xl bg-white/8">
-              <div className={cn("flex h-full items-center rounded-2xl px-4 text-sm font-medium text-ink", bar.color)} style={{ width: `${Math.max((bar.value / maxValue) * 100, 18)}%` }}>
-                {formatCompactCurrency(bar.value)}
+          </div>
+        </div>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-sm text-cloud/72">
+            <span>Plus Estimated Recoverable Value</span>
+            <span className="font-medium text-paper">{formatCompactCurrency(model.recoverablePipeline)}</span>
+          </div>
+          <div className="h-12 overflow-hidden rounded-2xl bg-white/8">
+            <div className="flex h-full overflow-hidden rounded-2xl" style={{ width: "100%" }}>
+              <div className="flex h-full items-center bg-white/35 px-4 text-sm font-medium text-paper" style={{ width: currentWidth }}>
+                {formatCompactCurrency(model.currentPipeline)}
+              </div>
+              <div className="flex h-full items-center bg-glow px-4 text-sm font-medium text-ink" style={{ width: recoverableWidth }}>
+                {formatCompactCurrency(model.recoverablePipeline)}
               </div>
             </div>
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );
