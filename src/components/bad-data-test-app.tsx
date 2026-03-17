@@ -224,6 +224,19 @@ export function BadDataTestApp() {
     finishQuiz(answers);
   }
 
+  function skipLeadGate() {
+    setLeadGateSubmitted(true);
+    setShowLeadGate(false);
+    trackEvent("cta_clicked", { label: "Skip lead gate", stage: "quiz" });
+
+    if (currentIndex < quizQuestions.length - 1) {
+      setCurrentIndex((value) => value + 1);
+      return;
+    }
+
+    finishQuiz(answers);
+  }
+
   function goBack() {
     if (showLeadGate) {
       setShowLeadGate(false);
@@ -411,7 +424,13 @@ export function BadDataTestApp() {
                             Share a little context and we will make your result more useful. This helps us translate the diagnostic into something commercially relevant, not generic.
                           </p>
                         </div>
-                        <div className="grid gap-4 sm:grid-cols-2">
+                        <form
+                          className="grid gap-4 sm:grid-cols-2"
+                          onSubmit={(event) => {
+                            event.preventDefault();
+                            submitLeadGate();
+                          }}
+                        >
                           {leadGateFields.map((field) => (
                             <div key={field.id} className={cn(field.id === "websiteUrl" && "sm:col-span-2")}>
                               <label className="mb-2 block text-sm font-medium text-cloud/80" htmlFor={field.id}>
@@ -422,20 +441,21 @@ export function BadDataTestApp() {
                                 type={field.type}
                                 placeholder={field.placeholder}
                                 value={lead[field.id] || ""}
+                                required={field.required}
                                 onChange={(event) => handleLeadFieldChange(field.id, event.target.value)}
                               />
                             </div>
                           ))}
                           <div className="sm:col-span-2 flex flex-wrap gap-3 pt-2">
-                            <Button onClick={submitLeadGate}>
+                            <Button type="submit">
                               Get My Score
                               <MoveRight className="h-4 w-4" />
                             </Button>
-                            <Button variant="secondary" onClick={() => setShowLeadGate(false)}>
-                              Continue without leaving
+                            <Button type="button" variant="secondary" onClick={skipLeadGate}>
+                              Skip
                             </Button>
                           </div>
-                        </div>
+                        </form>
                       </div>
                     ) : (
                       <div className="space-y-8">
