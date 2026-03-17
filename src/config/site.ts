@@ -119,10 +119,10 @@ export const siteConfig = {
       "Most teams cannot answer every question with confidence. That is often the signal.",
   },
   trustLogos: [
-    "Logo Placeholder",
-    "Case Study Placeholder",
-    "Benchmark Placeholder",
-    "Signal Partner Placeholder",
+    "HubSpot",
+    "Salesforce",
+    "Google Ads",
+    "LinkedIn Ads",
   ],
   audiences: {
     for: [
