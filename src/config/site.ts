@@ -119,11 +119,41 @@ export const siteConfig = {
       "Most teams cannot answer every question with confidence. That is often the signal.",
   },
   trustLogos: [
-    "HubSpot",
-    "Salesforce",
-    "Google Ads",
-    "LinkedIn Ads",
-    "Meta Ads",
+    {
+      name: "HighLevel",
+      alt: "HighLevel logo",
+      src: "/logos/highlevel.png",
+      surfaceClassName: "bg-white/[0.96]",
+      imageClassName: "h-8 max-w-[180px]",
+    },
+    {
+      name: "Meta",
+      alt: "Meta logo",
+      src: "/logos/meta.png",
+      surfaceClassName: "bg-white/[0.96]",
+      imageClassName: "h-8 max-w-[160px]",
+    },
+    {
+      name: "Google Ads",
+      alt: "Google Ads logo",
+      src: "/logos/google-ads.png",
+      surfaceClassName: "bg-white/[0.96]",
+      imageClassName: "h-11 max-w-[155px]",
+    },
+    {
+      name: "HubSpot",
+      alt: "HubSpot logo",
+      src: "/logos/hubspot.png",
+      surfaceClassName: "bg-slate-950",
+      imageClassName: "h-8 max-w-[165px]",
+    },
+    {
+      name: "Salesforce",
+      alt: "Salesforce logo",
+      src: "/logos/salesforce.png",
+      surfaceClassName: "bg-white/[0.96]",
+      imageClassName: "h-10 max-w-[150px]",
+    },
   ],
   audiences: {
     for: [

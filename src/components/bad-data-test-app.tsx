@@ -35,6 +35,40 @@ const initialOpportunityInputs: OpportunityInputs = {
   averageDealValue: 18000,
 };
 
+function TrustLogoCard({
+  logo,
+}: {
+  logo: {
+    name: string;
+    alt: string;
+    src: string;
+    surfaceClassName?: string;
+    imageClassName?: string;
+  };
+}) {
+  const [hasError, setHasError] = useState(false);
+
+  return (
+    <div
+      className={cn(
+        "flex min-h-24 items-center justify-center rounded-2xl border border-white/8 px-5 py-6 shadow-[0_10px_30px_rgba(3,8,20,0.12)]",
+        logo.surfaceClassName ?? "bg-white/[0.03]",
+      )}
+    >
+      {hasError ? (
+        <span className="text-center text-base font-medium text-cloud/72">{logo.name}</span>
+      ) : (
+        <img
+          src={logo.src}
+          alt={logo.alt}
+          className={cn("w-auto object-contain opacity-95", logo.imageClassName ?? "h-10 max-w-[180px]")}
+          onError={() => setHasError(true)}
+        />
+      )}
+    </div>
+  );
+}
+
 export function BadDataTestApp() {
   const router = useRouter();
   const [stage, setStage] = useState<FunnelStage>("landing");
@@ -346,15 +380,11 @@ export function BadDataTestApp() {
                 </Card>
               ))}
             </div>
-            <div>
+            <div className="space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cloud/50">Built for teams using</p>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                 {siteConfig.trustLogos.map((logo) => (
-                  <div
-                    key={logo}
-                    className="flex min-h-20 items-center justify-center rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-5 text-center text-base font-medium text-cloud/72"
-                  >
-                    {logo}
-                  </div>
+                  <TrustLogoCard key={logo.name} logo={logo} />
                 ))}
               </div>
             </div>
