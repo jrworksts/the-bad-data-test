@@ -3,8 +3,7 @@
 import Script from "next/script";
 import Link from "next/link";
 import { useEffect, useMemo, useState, useTransition } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { AlertCircle, ArrowRight, BarChart3, FileSpreadsheet, Link2, Mail, Share2, ShieldAlert, Target } from "lucide-react";
 import { qualificationFields } from "@/config/quiz";
 import { siteConfig } from "@/config/site";
@@ -19,29 +18,9 @@ import { Select } from "@/components/ui/select";
 
 const LOCAL_STORAGE_KEY = "bad-data-test-state";
 const GHL_EMBED_ID = "303rv61ZkidkXmcEvLhz_1773702309411";
-type ResultsVariantId = "executive-brief" | "recovery-report" | "audit-path";
-
-const resultsVariants: { id: ResultsVariantId; name: string; blurb: string }[] = [
-  {
-    id: "executive-brief",
-    name: "Option A",
-    blurb: "Executive brief. Tight summary, premium report feel, fast CTA handoff.",
-  },
-  {
-    id: "recovery-report",
-    name: "Option B",
-    blurb: "Revenue recovery report. More analytical and visibly diagnostic.",
-  },
-  {
-    id: "audit-path",
-    name: "Option C",
-    blurb: "Audit path. Stronger conversion framing and next-step clarity.",
-  },
-];
 
 export function ResultsPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [result, setResult] = useState<ResultModel | null>(null);
   const [qualification, setQualification] = useState<LeadProfile>({});
   const [opportunityInputs, setOpportunityInputs] = useState<OpportunityInputs>({
@@ -53,7 +32,6 @@ export function ResultsPage() {
   const [copied, setCopied] = useState(false);
   const [submissionState, setSubmissionState] = useState<"idle" | "submitting" | "submitted" | "error">("idle");
   const [isPending, startTransition] = useTransition();
-  const [resultsVariant, setResultsVariant] = useState<ResultsVariantId>("audit-path");
 
   const estimate = useMemo(() => estimateOpportunity(opportunityInputs), [opportunityInputs]);
   const shareUrl = `${siteConfig.siteUrl}/results`;
@@ -91,17 +69,6 @@ export function ResultsPage() {
       page: "dedicated-results",
     });
   }, [result]);
-
-  useEffect(() => {
-    const variant = searchParams.get("view");
-    if (
-      variant === "executive-brief" ||
-      variant === "recovery-report" ||
-      variant === "audit-path"
-    ) {
-      setResultsVariant(variant);
-    }
-  }, [searchParams]);
 
   function handleShare() {
     navigator.clipboard.writeText(shareUrl);
@@ -198,14 +165,6 @@ export function ResultsPage() {
     window.open(href, "_blank", "noopener,noreferrer");
   }
 
-  function handleVariantChange(variant: ResultsVariantId) {
-    setResultsVariant(variant);
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("view", variant);
-    router.replace(`/results?${params.toString()}`, { scroll: false });
-    trackEvent("cta_clicked", { label: `Results option ${variant}`, page: "results" });
-  }
-
   if (!result) {
     return (
       <main className="mx-auto flex min-h-screen max-w-4xl items-center px-4 py-20 sm:px-6 lg:px-8">
@@ -240,50 +199,13 @@ export function ResultsPage() {
         </div>
 
         <div className="space-y-10">
-          <div className="flex flex-wrap gap-2">
-            {resultsVariants.map((variant) => (
-              <button
-                key={variant.id}
-                type="button"
-                onClick={() => handleVariantChange(variant.id)}
-                className={cn(
-                  "rounded-full border px-4 py-2 text-sm font-medium transition",
-                  resultsVariant === variant.id
-                    ? "border-glow bg-glow/10 text-paper"
-                    : "border-white/10 bg-white/[0.03] text-cloud/68 hover:bg-white/[0.06]",
-                )}
-              >
-                {variant.name}
-              </button>
-            ))}
-          </div>
-
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-cloud/68">
-            <span className="font-semibold text-paper">
-              Viewing {resultsVariants.find((item) => item.id === resultsVariant)?.name}
-            </span>
-            {" - "}
-            {resultsVariants.find((item) => item.id === resultsVariant)?.blurb}
-          </div>
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={resultsVariant}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.22 }}
-            >
-              <ResultsHeroVariant
-                result={result}
-                resultsVariant={resultsVariant}
-                onPrimary={() => window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer")}
-                onSecondary={() => window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer")}
-                onNativeShare={handleNativeShare}
-                onEmailShare={handleEmailShare}
-              />
-            </motion.div>
-          </AnimatePresence>
+          <ResultsHeroVariant
+            result={result}
+            onPrimary={() => window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer")}
+            onSecondary={() => window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer")}
+            onNativeShare={handleNativeShare}
+            onEmailShare={handleEmailShare}
+          />
 
           <Card className="border-glow/15 bg-gradient-to-r from-glow/10 via-white/[0.04] to-amber/10">
             <CardContent className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
@@ -509,108 +431,17 @@ function MetricInput({
 
 function ResultsHeroVariant({
   result,
-  resultsVariant,
   onPrimary,
   onSecondary,
   onNativeShare,
   onEmailShare,
 }: {
   result: ResultModel;
-  resultsVariant: ResultsVariantId;
   onPrimary: () => void;
   onSecondary: () => void;
   onNativeShare: () => void;
   onEmailShare: () => void;
 }) {
-  if (resultsVariant === "executive-brief") {
-    return (
-      <Card className="overflow-hidden border-glow/15 bg-[radial-gradient(circle_at_top_left,rgba(121,242,210,0.14),transparent_25%),linear-gradient(160deg,rgba(12,23,40,0.96),rgba(7,14,25,1))]">
-        <CardContent className="grid gap-8 p-6 md:p-8 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="space-y-5">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Executive brief</p>
-            <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">Bad Data Score: {result.score}/100</h2>
-            <p className="max-w-2xl text-lg leading-8 text-cloud/78">{result.summary}</p>
-            <div className="flex flex-wrap gap-3">
-              <Button size="lg" onClick={onPrimary}>
-                {result.ctaPrimary}
-              </Button>
-              <Button size="lg" variant="secondary" onClick={onEmailShare}>
-                Email result internally
-              </Button>
-            </div>
-          </div>
-          <div className="grid gap-4">
-            <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
-              <p className="text-sm font-medium text-cloud/65">Classification</p>
-              <p className="mt-2 text-2xl font-semibold text-paper">{result.label}</p>
-              <p className="mt-4 text-sm leading-7 text-cloud/72">{result.recommendedNextStep}</p>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <MetricCard label="Qualification tier" value={result.qualification} compact />
-              <MetricCard label="Recommended path" value="Audit intro call" compact />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (resultsVariant === "recovery-report") {
-    return (
-      <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-        <Card className="overflow-hidden border-white/10 bg-white/[0.04]">
-          <CardContent className="space-y-5 p-6 md:p-8">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-glow/12">
-                <FileSpreadsheet className="h-5 w-5 text-glow" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Revenue recovery report</p>
-                <p className="text-sm text-cloud/62">Directional report view for commercial decision-making</p>
-              </div>
-            </div>
-            <div className="rounded-[28px] border border-white/10 bg-ink/60 p-6">
-              <p className="text-sm font-medium text-cloud/65">Bad Data Score</p>
-              <p className="mt-3 font-display text-6xl font-bold text-paper">{result.score}</p>
-              <p className="mt-2 text-sm leading-7 text-cloud/70">{result.label}</p>
-            </div>
-            <div className="grid gap-3">
-              {result.findings.slice(0, 3).map((finding) => (
-                <div key={finding} className="flex gap-3 rounded-2xl border border-white/8 bg-white/[0.03] p-4">
-                  <AlertCircle className="mt-0.5 h-5 w-5 text-amber" />
-                  <p className="text-sm leading-6 text-cloud/80">{finding}</p>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="overflow-hidden border-white/10 bg-slate/75">
-          <CardContent className="space-y-5 p-6 md:p-8">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Report summary</p>
-            <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">Where hidden leaks are most likely sitting</h2>
-            <p className="text-base leading-7 text-cloud/78">{result.opportunityNarrative}</p>
-            <div className="grid gap-3">
-              {result.implications.map((implication) => (
-                <div key={implication} className="rounded-2xl border border-white/8 bg-white/[0.03] p-4 text-sm leading-6 text-cloud/78">
-                  {implication}
-                </div>
-              ))}
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <Button size="lg" onClick={onPrimary}>
-                Book audit intro call
-              </Button>
-              <Button size="lg" variant="outline" onClick={onNativeShare}>
-                <Share2 className="h-4 w-4" />
-                Share score
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
       <Card className="overflow-hidden border-glow/15 bg-[radial-gradient(circle_at_top_left,rgba(121,242,210,0.12),transparent_28%),linear-gradient(160deg,rgba(12,23,40,0.96),rgba(7,14,25,1))]">
