@@ -4,6 +4,7 @@ import Script from "next/script";
 import Link from "next/link";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import { AlertCircle, ArrowRight, BarChart3, FileSpreadsheet, Link2, Mail, Share2, ShieldAlert, Target } from "lucide-react";
 import { qualificationFields } from "@/config/quiz";
 import { siteConfig } from "@/config/site";
@@ -237,16 +238,32 @@ export function ResultsPage() {
             ))}
           </div>
 
-          <p className="text-sm text-cloud/60">{resultsVariants.find((item) => item.id === resultsVariant)?.blurb}</p>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-cloud/68">
+            <span className="font-semibold text-paper">
+              Viewing {resultsVariants.find((item) => item.id === resultsVariant)?.name}
+            </span>
+            {" - "}
+            {resultsVariants.find((item) => item.id === resultsVariant)?.blurb}
+          </div>
 
-          <ResultsHeroVariant
-            result={result}
-            resultsVariant={resultsVariant}
-            onPrimary={() => window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer")}
-            onSecondary={() => window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer")}
-            onNativeShare={handleNativeShare}
-            onEmailShare={handleEmailShare}
-          />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={resultsVariant}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.22 }}
+            >
+              <ResultsHeroVariant
+                result={result}
+                resultsVariant={resultsVariant}
+                onPrimary={() => window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer")}
+                onSecondary={() => window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer")}
+                onNativeShare={handleNativeShare}
+                onEmailShare={handleEmailShare}
+              />
+            </motion.div>
+          </AnimatePresence>
 
           <Card className="border-glow/15 bg-gradient-to-r from-glow/10 via-white/[0.04] to-amber/10">
             <CardContent className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
