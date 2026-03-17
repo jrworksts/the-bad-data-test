@@ -550,7 +550,7 @@ function ResultsHeroVariant({
             </div>
             <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-cloud/75">{result.label}</div>
           </div>
-          <div className="grid gap-4 md:grid-cols-[0.6fr_1.4fr]">
+          <div className="grid gap-4 md:grid-cols-2">
             <DataConfidenceGauge model={visualModel} />
             <div className="rounded-[24px] border border-amber/12 bg-amber/10 p-5">
               <p className="text-sm font-medium text-cloud/70">Recommended next step</p>
@@ -565,11 +565,11 @@ function ResultsHeroVariant({
               </div>
             </div>
           </div>
-          <div className="grid gap-3 md:grid-cols-3">
-            {result.findings.slice(0, 3).map((finding) => (
-              <div key={finding} className="rounded-2xl border border-white/8 bg-white/[0.03] p-4">
-                <ShieldAlert className="h-5 w-5 text-glow" />
-                <p className="mt-3 text-sm leading-6 text-cloud/78">{finding}</p>
+          <div className="space-y-3">
+            {result.findings.map((finding) => (
+              <div key={finding} className="flex gap-3 rounded-2xl border border-white/8 bg-white/[0.03] p-4">
+                <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-glow" />
+                <p className="text-sm leading-6 text-cloud/78">{finding}</p>
               </div>
             ))}
           </div>
