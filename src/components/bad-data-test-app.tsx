@@ -504,19 +504,6 @@ export function BadDataTestApp() {
           </Card>
         </section>
 
-        <section className="pt-20 md:pt-28">
-          <div className="grid gap-6 lg:grid-cols-3">
-            {siteConfig.whyItWorks.map((point, index) => (
-              <Card key={point}>
-                <CardContent className="space-y-3">
-                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Why this test works {index + 1}</p>
-                  <p className="text-base leading-7 text-cloud/78">{point}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
         <section id="framework" className="pt-20 md:pt-28">
           <div className="mb-8 max-w-3xl space-y-3">
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Framework</p>
