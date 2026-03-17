@@ -4,7 +4,7 @@ import Script from "next/script";
 import Link from "next/link";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { BarChart3, Link2, Mail, Target } from "lucide-react";
+import { BarChart3, Link2, Mail, Share2, Target } from "lucide-react";
 import { qualificationFields } from "@/config/quiz";
 import { siteConfig } from "@/config/site";
 import { trackEvent } from "@/lib/analytics";
@@ -34,6 +34,10 @@ export function ResultsPage() {
   const [isPending, startTransition] = useTransition();
 
   const estimate = useMemo(() => estimateOpportunity(opportunityInputs), [opportunityInputs]);
+  const shareUrl = `${siteConfig.siteUrl}/results`;
+  const shareMessage = result
+    ? `We scored ${result.score}/100 on The Bad Data Test (${result.label}). Worth a look if we're serious about attribution, anonymous traffic, and recoverable pipeline.`
+    : "We took The Bad Data Test. Worth a look if we're serious about attribution, anonymous traffic, and recoverable pipeline.";
 
   useEffect(() => {
     const saved = window.localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -67,9 +71,34 @@ export function ResultsPage() {
   }, [result]);
 
   function handleShare() {
-    navigator.clipboard.writeText(siteConfig.siteUrl);
+    navigator.clipboard.writeText(shareUrl);
     setCopied(true);
     trackEvent("share_clicked", { type: "copy-link", page: "results" });
+    window.setTimeout(() => setCopied(false), 1600);
+  }
+
+  async function handleNativeShare() {
+    if (!result) return;
+
+    const payload = {
+      title: `Bad Data Score: ${result.score}/100`,
+      text: shareMessage,
+      url: shareUrl,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(payload);
+        trackEvent("share_clicked", { type: "native-share", page: "results" });
+        return;
+      } catch {
+        // Fall back to copy for canceled or unsupported flows.
+      }
+    }
+
+    await navigator.clipboard.writeText(`${shareMessage} ${shareUrl}`);
+    setCopied(true);
+    trackEvent("share_clicked", { type: "native-share-fallback", page: "results" });
     window.setTimeout(() => setCopied(false), 1600);
   }
 
@@ -115,11 +144,25 @@ export function ResultsPage() {
 
   function handleEmailShare() {
     trackEvent("share_clicked", { type: "email-team", page: "results" });
-    const subject = encodeURIComponent("We should review this Bad Data Test result");
+    const subject = encodeURIComponent(
+      result ? `We scored ${result.score}/100 on The Bad Data Test` : "We should review this Bad Data Test result",
+    );
     const body = encodeURIComponent(
-      `I completed The Bad Data Test and thought it would be useful for the team to review.\n\nSee the diagnostic here: ${siteConfig.siteUrl}`,
+      `${shareMessage}\n\nSee the diagnostic here: ${shareUrl}`,
     );
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  }
+
+  function handleSocialShare(platform: "linkedin" | "x") {
+    const encodedUrl = encodeURIComponent(shareUrl);
+    const encodedText = encodeURIComponent(shareMessage);
+    const href =
+      platform === "linkedin"
+        ? `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`
+        : `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
+
+    trackEvent("share_clicked", { type: platform, page: "results" });
+    window.open(href, "_blank", "noopener,noreferrer");
   }
 
   if (!result) {
@@ -182,6 +225,22 @@ export function ResultsPage() {
                   <Button variant="secondary" onClick={() => window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer")} size="lg">
                     {result.ctaSecondary}
                   </Button>
+                </div>
+                <div className="rounded-[22px] border border-white/10 bg-white/[0.03] p-5">
+                  <p className="text-sm font-medium text-cloud/65">Shareable score</p>
+                  <p className="mt-2 text-sm leading-7 text-cloud/80">
+                    Make it easy for your team, founder, or channel lead to review the result and compare assumptions.
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-3">
+                    <Button variant="secondary" onClick={handleNativeShare}>
+                      <Share2 className="h-4 w-4" />
+                      Share score
+                    </Button>
+                    <Button variant="outline" onClick={handleEmailShare}>
+                      <Mail className="h-4 w-4" />
+                      Email result
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -275,6 +334,12 @@ export function ResultsPage() {
                   <Button variant="outline" onClick={handleEmailShare}>
                     <Mail className="h-4 w-4" />
                     Email to colleague
+                  </Button>
+                  <Button variant="outline" onClick={() => handleSocialShare("linkedin")}>
+                    Share on LinkedIn
+                  </Button>
+                  <Button variant="outline" onClick={() => handleSocialShare("x")}>
+                    Share on X
                   </Button>
                 </div>
               </div>
