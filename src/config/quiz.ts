@@ -69,18 +69,6 @@ export const quizQuestions: QuizQuestion[] = [
     ],
   },
   {
-    id: "traffic-waste",
-    title: "Traffic Waste",
-    prompt: "Roughly what percentage of your website visitors leave without converting or being captured?",
-    options: [
-      makeOption("under-50", "Under 50%", 2),
-      makeOption("50-70", "50–70%", 8),
-      makeOption("70-90", "70–90%", 14),
-      makeOption("over-90", "Over 90%", 18),
-      makeOption("not-sure", "Not sure", 10),
-    ],
-  },
-  {
     id: "cpa-trend",
     title: "Cost Per Acquisition Trend",
     prompt: "Over the past 12 months, your CPA has:",
