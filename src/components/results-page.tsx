@@ -378,10 +378,10 @@ export function ResultsPage() {
             <Card className="border-glow/15 bg-gradient-to-br from-glow/10 via-white/[0.04] to-amber/10">
               <CardContent className="grid gap-8 lg:grid-cols-[1fr_0.95fr]">
                 <div className="space-y-5">
-                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Book your next step</p>
-                  <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">Move from suspicion to diagnosis</h2>
+                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Next step</p>
+                  <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">Find the Revenue You’re Already Paying For</h2>
                   <p className="max-w-2xl text-base leading-8 text-cloud/80 md:text-lg">
-                    If the score feels directionally right, use this call to pressure-test whether a Revenue Recovery Audit is the right next step.
+                    If these visuals directionally match your reality, the next step is a Revenue Recovery Audit to validate where signal is being lost and how much upside may be recoverable.
                   </p>
                   <div className="flex flex-wrap gap-3">
                     <Button size="lg" onClick={() => window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer")}>
