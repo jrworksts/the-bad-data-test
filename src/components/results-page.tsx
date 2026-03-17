@@ -329,7 +329,7 @@ export function ResultsPage() {
                     <OpportunityBreakdownChart model={visualModel} />
                     <IdentificationLiftChart model={visualModel} />
                   </div>
-                  <div className="grid gap-4 md:grid-cols-3">
+                  <div className="grid gap-4">
                     <MetricCard label="Estimated wasted ad spend" value={estimate.wastedSpendRange} />
                     <MetricCard label="Potential recoverable pipeline" value={estimate.recoverablePipelineRange} />
                     <MetricCard label="Anonymous traffic upside" value={estimate.anonymousTrafficUpside} compact />
