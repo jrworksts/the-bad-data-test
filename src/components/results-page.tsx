@@ -2,12 +2,11 @@
 
 import Script from "next/script";
 import Link from "next/link";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, ArrowRight, BarChart3, FileSpreadsheet, Link2, Mail, Share2, ShieldAlert, Target } from "lucide-react";
+import { ArrowRight, Link2, Mail, ShieldAlert } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { trackEvent } from "@/lib/analytics";
-import { estimateOpportunity } from "@/lib/opportunity";
 import type { OpportunityInputs, QuizResponses, ResultModel } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -29,8 +28,6 @@ export function ResultsPage() {
   const [copied, setCopied] = useState(false);
   const [submissionState, setSubmissionState] = useState<"idle" | "submitting" | "submitted" | "error">("idle");
   const [isPending, startTransition] = useTransition();
-
-  const estimate = useMemo(() => estimateOpportunity(opportunityInputs), [opportunityInputs]);
   const shareUrl = `${siteConfig.siteUrl}/results`;
   const shareMessage = result
     ? `We scored ${result.score}/100 on The Bad Data Test (${result.label}). Worth a look if we're serious about attribution, anonymous traffic, and recoverable pipeline.`
@@ -276,15 +273,40 @@ export function ResultsPage() {
                   <IdentificationLiftChart model={visualModel} />
                   <div className="grid gap-4">
                     <div className="grid gap-4">
-                      <MetricCard label="Estimated wasted ad spend" value={estimate.wastedSpendRange} />
-                      <MetricCard label="Potential recoverable pipeline" value={estimate.recoverablePipelineRange} />
-                      <MetricCard label="Anonymous traffic upside" value={estimate.anonymousTrafficUpside} compact />
+                      <OutputPanel
+                        title="Current performance"
+                        fields={[
+                          { label: "Sales", value: formatDetailedNumber(visualModel.currentSales) },
+                          { label: "Revenue", value: formatDetailedCurrency(visualModel.currentRevenue) },
+                          { label: "Estimated Spend", value: formatDetailedCurrency(visualModel.estimatedSpend) },
+                        ]}
+                      />
+                      <OutputPanel
+                        title="Identity recovery"
+                        fields={[
+                          { label: "Anonymous Traffic", value: formatDetailedNumber(visualModel.anonymousTraffic) },
+                          { label: "ID Resolution Match %", value: formatPercent(visualModel.idResolutionMatchPct) },
+                          { label: "Consumer Matches", value: formatDetailedNumber(visualModel.consumerMatches) },
+                          { label: "Verification %", value: formatPercent(visualModel.verificationPct) },
+                          { label: "Verified Matched Profiles", value: formatDetailedNumber(visualModel.verifiedMatchedProfiles) },
+                        ]}
+                      />
+                      <OutputPanel
+                        title="Recovery outcome"
+                        fields={[
+                          { label: "Re-opt-in %", value: formatPercent(visualModel.reOptInPct) },
+                          { label: "Recovered Leads", value: formatDetailedNumber(visualModel.recoveredLeads) },
+                          { label: "Re-activation Sales Rate", value: formatPercent(visualModel.reactivationSalesRate) },
+                          { label: "Recovered Sales", value: formatDetailedNumber(visualModel.recoveredSales, 0) },
+                          { label: "Recovered Revenue", value: formatDetailedCurrency(visualModel.recoveredRevenue) },
+                        ]}
+                      />
                     </div>
                     <div className="rounded-[22px] border border-white/10 bg-white/[0.03] p-5">
                       <p className="text-sm font-medium text-cloud/70">Assumptions</p>
                       {isPending ? <p className="mt-2 text-sm text-glow">Updating estimate...</p> : null}
                       <div className="mt-3 grid gap-2">
-                        {estimate.assumptions.map((assumption) => (
+                        {visualModel.assumptions.map((assumption) => (
                           <p key={assumption} className="text-sm text-cloud/65">
                             {assumption}
                           </p>
@@ -498,27 +520,53 @@ type VisualModel = {
   efficiencyGain: number;
   anonymousTrafficUpside: number;
   wastedSpend: number;
+  currentSales: number;
+  currentRevenue: number;
+  estimatedSpend: number;
+  anonymousTraffic: number;
+  idResolutionMatchPct: number;
+  consumerMatches: number;
+  verificationPct: number;
+  verifiedMatchedProfiles: number;
+  reOptInPct: number;
+  recoveredLeads: number;
+  reactivationSalesRate: number;
+  recoveredSales: number;
+  recoveredRevenue: number;
   liftScenarios: { label: string; value: number }[];
+  assumptions: string[];
 };
 
 function buildVisualModel(result: ResultModel, inputs: OpportunityInputs): VisualModel {
-  const traffic = inputs.monthlyTraffic || 15000;
-  const cpa = inputs.cpa || 180;
-  const closeRate = (inputs.leadToCloseRate || 12) / 100;
-  const averageDeal = inputs.averageDealValue || 18000;
+  const traffic = inputs.monthlyTraffic || 93000;
+  const cpa = inputs.cpa || 24.58;
+  const closeRatePercent = inputs.leadToCloseRate || 3.6;
+  const closeRate = closeRatePercent / 100;
+  const averageDeal = inputs.averageDealValue || 64.21;
+  const currentSalesFactor = 1.0027777778;
+  const idResolutionMatchPct = 30;
+  const verificationPct = 80;
+  const reOptInPct = 15;
+  const reactivationSalesRate = closeRatePercent;
 
-  const leakFactor = 0.18 + (result.score / 100) * 0.22;
   const confidenceScore = Math.max(0, Math.min(100, 100 - result.score));
-  const currentLeadRate = 0.012;
-  const improvedLeadRate = currentLeadRate * (1 + leakFactor);
-  const currentLeads = Math.round(traffic * currentLeadRate);
-  const improvedLeads = Math.round(traffic * improvedLeadRate);
-  const currentPipeline = currentLeads * closeRate * averageDeal;
-  const improvedPipeline = improvedLeads * closeRate * averageDeal;
-  const recoverablePipeline = Math.max(improvedPipeline - currentPipeline, averageDeal * 0.8);
-  const efficiencyGain = recoverablePipeline * 0.28;
-  const anonymousTrafficUpside = recoverablePipeline * 0.24;
-  const wastedSpend = cpa * Math.max(improvedLeads - currentLeads, 1);
+  const currentSales = traffic * closeRate * currentSalesFactor;
+  const currentRevenue = currentSales * averageDeal;
+  const estimatedSpend = currentSales * cpa;
+  const anonymousTraffic = Math.max(traffic - currentSales, 0);
+  const consumerMatches = anonymousTraffic * (idResolutionMatchPct / 100);
+  const verifiedMatchedProfiles = consumerMatches * (verificationPct / 100);
+  const recoveredLeads = verifiedMatchedProfiles * (reOptInPct / 100);
+  const recoveredSales = recoveredLeads * closeRate;
+  const recoveredRevenue = recoveredSales * averageDeal;
+  const currentLeads = currentSales;
+  const improvedLeads = currentSales + recoveredSales;
+  const currentPipeline = currentRevenue;
+  const improvedPipeline = currentRevenue + recoveredRevenue;
+  const recoverablePipeline = recoveredRevenue;
+  const efficiencyGain = estimatedSpend * 0.36;
+  const anonymousTrafficUpside = verifiedMatchedProfiles;
+  const wastedSpend = estimatedSpend * 0.12;
 
   const confidenceLabel =
     confidenceScore <= 40 ? "High Risk" : confidenceScore <= 70 ? "Moderate Risk" : "Strong Foundation";
@@ -541,10 +589,32 @@ function buildVisualModel(result: ResultModel, inputs: OpportunityInputs): Visua
     efficiencyGain,
     anonymousTrafficUpside,
     wastedSpend,
+    currentSales,
+    currentRevenue,
+    estimatedSpend,
+    anonymousTraffic,
+    idResolutionMatchPct,
+    consumerMatches,
+    verificationPct,
+    verifiedMatchedProfiles,
+    reOptInPct,
+    recoveredLeads,
+    reactivationSalesRate,
+    recoveredSales,
+    recoveredRevenue,
     liftScenarios: [
-      { label: "20% identification lift", value: recoverablePipeline * 0.55 },
-      { label: "30% identification lift", value: recoverablePipeline * 0.78 },
-      { label: "40% identification lift", value: recoverablePipeline },
+      { label: "20% identification lift", value: recoveredRevenue * 0.55 },
+      { label: "30% identification lift", value: recoveredRevenue * 0.78 },
+      { label: "40% identification lift", value: recoveredRevenue },
+    ],
+    assumptions: [
+      `Using ${formatDetailedNumber(traffic)} monthly visitors`,
+      `Using ${formatDetailedCurrency(cpa)} CPA`,
+      `Using ${formatPercent(closeRatePercent)} sales conversion rate`,
+      `Using ${formatDetailedCurrency(averageDeal)} deal value / AOV`,
+      `Using ${formatPercent(idResolutionMatchPct)} ID resolution match rate`,
+      `Using ${formatPercent(verificationPct)} verification rate`,
+      `Using ${formatPercent(reOptInPct)} re-opt-in rate`,
     ],
   };
 }
@@ -563,6 +633,26 @@ function formatCompactNumber(value: number) {
     notation: value >= 1000 ? "compact" : "standard",
     maximumFractionDigits: 1,
   }).format(value);
+}
+
+function formatDetailedCurrency(value: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+function formatDetailedNumber(value: number, digits = 2) {
+  return new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  }).format(value);
+}
+
+function formatPercent(value: number) {
+  return `${value.toFixed(2)}%`;
 }
 
 function DataConfidenceGauge({ model }: { model: VisualModel }) {
@@ -676,11 +766,11 @@ function OpportunityComparisonChart({ model }: { model: VisualModel }) {
 }
 
 function OpportunityBreakdownChart({ model }: { model: VisualModel }) {
-  const total = model.efficiencyGain + model.recoverablePipeline + model.anonymousTrafficUpside;
+  const total = model.efficiencyGain + model.recoverablePipeline + model.estimatedSpend;
   const segments = [
     { label: "Efficiency gain", value: model.efficiencyGain, className: "bg-amber" },
     { label: "Recoverable pipeline", value: model.recoverablePipeline, className: "bg-glow" },
-    { label: "Anonymous traffic upside", value: model.anonymousTrafficUpside, className: "bg-white/55" },
+    { label: "Anonymous traffic upside", value: model.estimatedSpend, className: "bg-white/55" },
   ];
 
   return (
@@ -701,6 +791,28 @@ function OpportunityBreakdownChart({ model }: { model: VisualModel }) {
               <span>{segment.label}</span>
             </div>
             <span className="font-medium text-paper">{formatCompactCurrency(segment.value)}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function OutputPanel({
+  title,
+  fields,
+}: {
+  title: string;
+  fields: { label: string; value: string }[];
+}) {
+  return (
+    <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">{title}</p>
+      <div className="mt-4 grid gap-3">
+        {fields.map((field) => (
+          <div key={field.label} className="flex items-center justify-between gap-4 border-b border-white/8 pb-3 text-sm last:border-b-0 last:pb-0">
+            <span className="text-cloud/70">{field.label}</span>
+            <span className="font-medium text-paper">{field.value}</span>
           </div>
         ))}
       </div>
