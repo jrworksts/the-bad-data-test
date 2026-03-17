@@ -237,7 +237,7 @@ export function BadDataTestApp() {
     trackEvent("share_clicked", { type: "email-team" });
     const subject = encodeURIComponent("We should take The Bad Data Test");
     const body = encodeURIComponent(
-      `This diagnostic is a fast way to pressure-test whether we're making growth decisions on incomplete attribution, anonymous traffic, or weak CRM signal.\n\nTake it here: ${siteConfig.siteUrl}`,
+      `Team,\n\nThis is a quick diagnostic to see whether we may be making growth decisions on incomplete attribution, anonymous traffic, or weak CRM signal.\n\nTake the test here: ${siteConfig.siteUrl}\n\nI think it would be useful to compare answers across the team.`,
     );
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   }
