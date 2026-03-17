@@ -316,33 +316,35 @@ export function ResultsPage() {
                   This estimate is directional, but it highlights why incomplete data can create meaningful financial drag.
                 </p>
               </div>
-              <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <MetricInput label="Monthly traffic" value={opportunityInputs.monthlyTraffic} onChange={(value) => handleOpportunityChange("monthlyTraffic", value)} />
-                  <MetricInput label="CPA" value={opportunityInputs.cpa} onChange={(value) => handleOpportunityChange("cpa", value)} />
-                  <MetricInput label="Lead-to-close rate %" value={opportunityInputs.leadToCloseRate} onChange={(value) => handleOpportunityChange("leadToCloseRate", value)} />
-                  <MetricInput label="Average deal value" value={opportunityInputs.averageDealValue} onChange={(value) => handleOpportunityChange("averageDealValue", value)} />
-                </div>
-                <div className="grid gap-4">
+              <div className="grid gap-4 lg:grid-cols-4">
+                <MetricInput label="Monthly traffic" value={opportunityInputs.monthlyTraffic} onChange={(value) => handleOpportunityChange("monthlyTraffic", value)} />
+                <MetricInput label="CPA" value={opportunityInputs.cpa} onChange={(value) => handleOpportunityChange("cpa", value)} />
+                <MetricInput label="Lead-to-close rate %" value={opportunityInputs.leadToCloseRate} onChange={(value) => handleOpportunityChange("leadToCloseRate", value)} />
+                <MetricInput label="Average deal value" value={opportunityInputs.averageDealValue} onChange={(value) => handleOpportunityChange("averageDealValue", value)} />
+              </div>
+              <div className="grid gap-6">
+                <div className="grid gap-4 lg:grid-cols-[1.35fr_0.65fr]">
                   <OpportunityComparisonChart model={visualModel} />
-                  <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-                    <OpportunityBreakdownChart model={visualModel} />
-                    <IdentificationLiftChart model={visualModel} />
-                  </div>
+                  <OpportunityBreakdownChart model={visualModel} />
+                </div>
+                <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
+                  <IdentificationLiftChart model={visualModel} />
                   <div className="grid gap-4">
-                    <MetricCard label="Estimated wasted ad spend" value={estimate.wastedSpendRange} />
-                    <MetricCard label="Potential recoverable pipeline" value={estimate.recoverablePipelineRange} />
-                    <MetricCard label="Anonymous traffic upside" value={estimate.anonymousTrafficUpside} compact />
-                  </div>
-                  <div className="rounded-[22px] border border-white/10 bg-white/[0.03] p-5">
-                    <p className="text-sm font-medium text-cloud/70">Assumptions</p>
-                    {isPending ? <p className="mt-2 text-sm text-glow">Updating estimate...</p> : null}
-                    <div className="mt-3 grid gap-2">
-                      {estimate.assumptions.map((assumption) => (
-                        <p key={assumption} className="text-sm text-cloud/65">
-                          {assumption}
-                        </p>
-                      ))}
+                    <div className="grid gap-4">
+                      <MetricCard label="Estimated wasted ad spend" value={estimate.wastedSpendRange} />
+                      <MetricCard label="Potential recoverable pipeline" value={estimate.recoverablePipelineRange} />
+                      <MetricCard label="Anonymous traffic upside" value={estimate.anonymousTrafficUpside} compact />
+                    </div>
+                    <div className="rounded-[22px] border border-white/10 bg-white/[0.03] p-5">
+                      <p className="text-sm font-medium text-cloud/70">Assumptions</p>
+                      {isPending ? <p className="mt-2 text-sm text-glow">Updating estimate...</p> : null}
+                      <div className="mt-3 grid gap-2">
+                        {estimate.assumptions.map((assumption) => (
+                          <p key={assumption} className="text-sm text-cloud/65">
+                            {assumption}
+                          </p>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
