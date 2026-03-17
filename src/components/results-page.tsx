@@ -4,7 +4,7 @@ import Script from "next/script";
 import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Link2, Mail, ShieldAlert } from "lucide-react";
+import { ArrowRight, ShieldAlert } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { trackEvent } from "@/lib/analytics";
 import type { OpportunityInputs, QuizResponses, ResultModel } from "@/lib/types";
@@ -317,60 +317,6 @@ export function ResultsPage() {
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-glow/15 bg-gradient-to-r from-glow/10 via-white/[0.04] to-amber/10">
-            <CardContent className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-              <div className="space-y-4">
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Next step</p>
-                <h3 className="font-display text-3xl font-bold text-paper">Find the Revenue You’re Already Paying For</h3>
-                <p className="max-w-2xl text-base leading-7 text-cloud/78">
-                  If these visuals directionally match your reality, the next step is a Revenue Recovery Audit to validate where signal is being lost and how much upside may be recoverable.
-                </p>
-              </div>
-              <div className="flex flex-wrap items-center gap-3 lg:justify-end">
-                <Button size="lg" onClick={() => window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer")}>
-                  See If You Qualify for a Revenue Recovery Audit
-                </Button>
-                <Button
-                  size="lg"
-                  variant="secondary"
-                  onClick={() => document.getElementById("opportunity")?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                >
-                  Review Your Revenue Leak Opportunity
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="space-y-6">
-              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Team-ready sharing</p>
-                  <h3 className="mt-2 font-display text-3xl font-bold text-paper">Send this to your growth team</h3>
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  <Button variant="secondary" onClick={handleShare}>
-                    <Link2 className="h-4 w-4" />
-                    {copied ? "Link copied" : "Copy share link"}
-                  </Button>
-                  <Button variant="outline" onClick={handleEmailShare}>
-                    <Mail className="h-4 w-4" />
-                    Email to colleague
-                  </Button>
-                  <Button variant="outline" onClick={() => handleSocialShare("linkedin")}>
-                    Share on LinkedIn
-                  </Button>
-                  <Button variant="outline" onClick={() => handleSocialShare("x")}>
-                    Share on X
-                  </Button>
-                </div>
-              </div>
-              <p className="text-base leading-7 text-cloud/75">
-                If your demand gen lead, growth lead, and RevOps owner all answer this differently, that is useful signal. Share it and compare assumptions.
-              </p>
             </CardContent>
           </Card>
 
