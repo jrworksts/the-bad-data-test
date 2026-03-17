@@ -1,7 +1,6 @@
 "use client";
 
 import Script from "next/script";
-import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ShieldAlert } from "lucide-react";
@@ -164,14 +163,11 @@ export function ResultsPage() {
     <main className="relative overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-30" aria-hidden />
       <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-4 pb-24 pt-10 sm:px-6 lg:px-8">
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+        <div className="mb-8">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Completion page</p>
             <h1 className="mt-2 font-display text-4xl font-bold text-paper md:text-5xl">Your Bad Data Test results</h1>
           </div>
-          <Link href="/" className="text-sm font-medium text-cloud/68 underline decoration-white/20 underline-offset-4">
-            Back to the landing page
-          </Link>
         </div>
 
         <div className="space-y-10">
@@ -238,7 +234,7 @@ export function ResultsPage() {
                 <div className="grid gap-3">
                   {result.findings.map((finding) => (
                     <div key={finding} className="flex gap-3 rounded-2xl border border-white/8 bg-white/[0.03] p-4">
-                      <ShieldAlert className="mt-0.5 h-5 w-5 text-glow" />
+                      <ShieldAlert className="mt-0.5 h-5 w-5 text-rose-400" />
                       <p className="text-sm leading-6 text-cloud/80">{finding}</p>
                     </div>
                   ))}
@@ -779,7 +775,7 @@ function CPASignalChart() {
         <path d="M36 128 C86 120 126 104 170 88 C210 70 252 50 292 34" fill="none" stroke="#f7c96d" strokeWidth="4" strokeLinecap="round" />
         <path d="M36 42 C82 56 126 72 170 88 C214 104 252 118 292 132" fill="none" stroke="#79f2d2" strokeWidth="4" strokeLinecap="round" />
         <text x="36" y="28" fill="#f5f7fb" fontSize="12">CPA</text>
-        <text x="228" y="126" fill="#dbe5f4" fontSize="12">Signal quality</text>
+        <text x="224" y="144" fill="#dbe5f4" fontSize="12">Signal quality</text>
       </svg>
     </div>
   );
