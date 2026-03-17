@@ -279,6 +279,7 @@ export function ResultsPage() {
                           { label: "Sales", value: formatDetailedNumber(visualModel.currentSales) },
                           { label: "Revenue", value: formatDetailedCurrency(visualModel.currentRevenue) },
                           { label: "Estimated Spend", value: formatDetailedCurrency(visualModel.estimatedSpend) },
+                          { label: "Traffic Loss Value", value: formatDetailedCurrency(visualModel.trafficLossValue) },
                         ]}
                       />
                       <OutputPanel
@@ -523,6 +524,7 @@ type VisualModel = {
   currentSales: number;
   currentRevenue: number;
   estimatedSpend: number;
+  trafficLossValue: number;
   anonymousTraffic: number;
   idResolutionMatchPct: number;
   consumerMatches: number;
@@ -554,6 +556,7 @@ function buildVisualModel(result: ResultModel, inputs: OpportunityInputs): Visua
   const currentRevenue = currentSales * averageDeal;
   const estimatedSpend = currentSales * cpa;
   const anonymousTraffic = Math.max(traffic - currentSales, 0);
+  const trafficLossValue = (estimatedSpend / traffic) * anonymousTraffic;
   const consumerMatches = anonymousTraffic * (idResolutionMatchPct / 100);
   const verifiedMatchedProfiles = consumerMatches * (verificationPct / 100);
   const recoveredLeads = verifiedMatchedProfiles * (reOptInPct / 100);
@@ -592,6 +595,7 @@ function buildVisualModel(result: ResultModel, inputs: OpportunityInputs): Visua
     currentSales,
     currentRevenue,
     estimatedSpend,
+    trafficLossValue,
     anonymousTraffic,
     idResolutionMatchPct,
     consumerMatches,
