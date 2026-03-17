@@ -13,7 +13,7 @@ function moneyRange(min: number, max: number) {
 export function estimateOpportunity(inputs: OpportunityInputs): OpportunityEstimate {
   const traffic = inputs.monthlyTraffic || 15000;
   const cpa = inputs.cpa || 180;
-  const closeRate = (inputs.leadToCloseRate || 12) / 100;
+  const closeRate = (inputs.leadToCloseRate || 3.6) / 100;
   const averageDeal = inputs.averageDealValue || 18000;
 
   const anonymousVisitors = traffic * 0.2;
@@ -33,7 +33,7 @@ export function estimateOpportunity(inputs: OpportunityInputs): OpportunityEstim
     assumptions: [
       `Using ${traffic.toLocaleString()} monthly visitors`,
       `Using ${cpa.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })} CPA`,
-      `Using ${inputs.leadToCloseRate || 12}% lead-to-close rate`,
+      `Using ${inputs.leadToCloseRate || 3.6}% sales conversion rate`,
       `Using ${averageDeal.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })} average deal value`,
     ],
   };

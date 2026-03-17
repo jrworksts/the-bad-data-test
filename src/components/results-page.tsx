@@ -21,7 +21,7 @@ export function ResultsPage() {
   const [opportunityInputs, setOpportunityInputs] = useState<OpportunityInputs>({
     monthlyTraffic: 15000,
     cpa: 180,
-    leadToCloseRate: 12,
+    leadToCloseRate: 3.6,
     averageDealValue: 18000,
   });
   const [copied, setCopied] = useState(false);
@@ -257,7 +257,7 @@ export function ResultsPage() {
               <div className="grid gap-4 lg:grid-cols-4">
                 <MetricInput label="Monthly traffic" value={opportunityInputs.monthlyTraffic} onChange={(value) => handleOpportunityChange("monthlyTraffic", value)} />
                 <MetricInput label="CPA" value={opportunityInputs.cpa} onChange={(value) => handleOpportunityChange("cpa", value)} />
-                <MetricInput label="Lead-to-close rate %" value={opportunityInputs.leadToCloseRate} onChange={(value) => handleOpportunityChange("leadToCloseRate", value)} />
+                <MetricInput label="Sales conversion rate" value={opportunityInputs.leadToCloseRate} onChange={(value) => handleOpportunityChange("leadToCloseRate", value)} />
                 <MetricInput label="Average deal value" value={opportunityInputs.averageDealValue} onChange={(value) => handleOpportunityChange("averageDealValue", value)} />
               </div>
               <div className="grid gap-6">
@@ -386,7 +386,7 @@ function MetricInput({
   return (
     <div>
       <label className="mb-2 block text-sm font-medium text-cloud/80">{label}</label>
-      <Input inputMode="numeric" value={value ?? ""} onChange={(event) => onChange(event.target.value)} />
+      <Input inputMode="decimal" value={value ?? ""} onChange={(event) => onChange(event.target.value)} />
     </div>
   );
 }

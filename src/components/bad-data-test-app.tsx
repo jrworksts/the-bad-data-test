@@ -31,7 +31,7 @@ type FunnelStage = "landing" | "quiz" | "result";
 const initialOpportunityInputs: OpportunityInputs = {
   monthlyTraffic: 15000,
   cpa: 180,
-  leadToCloseRate: 12,
+  leadToCloseRate: 3.6,
   averageDealValue: 18000,
 };
 
@@ -521,7 +521,6 @@ export function BadDataTestApp() {
                             <ChevronLeft className="h-4 w-4" />
                             Back
                           </Button>
-                          <p className="text-sm text-cloud/60">One answer per screen keeps the diagnostic fast and focused.</p>
                         </div>
                       </div>
                     )}
