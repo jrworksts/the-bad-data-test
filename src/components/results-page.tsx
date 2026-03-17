@@ -502,7 +502,7 @@ function ResultsHeroVariant({
           <div className="space-y-3">
             {result.findings.map((finding) => (
               <div key={finding} className="flex gap-3 rounded-2xl border border-white/8 bg-white/[0.03] p-4">
-                <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-glow" />
+                <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-rose" />
                 <p className="text-sm leading-6 text-cloud/78">{finding}</p>
               </div>
             ))}
