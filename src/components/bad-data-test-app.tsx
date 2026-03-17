@@ -12,7 +12,7 @@ import {
   MoveRight,
   ShieldCheck,
 } from "lucide-react";
-import { leadGateFields, quizQuestions } from "@/config/quiz";
+import { leadGateAfterQuestion, leadGateFields, quizQuestions } from "@/config/quiz";
 import { faqItems, primaryCtas, proofStats, siteConfig, stackLayers } from "@/config/site";
 import { trackEvent } from "@/lib/analytics";
 import { buildResultModel } from "@/lib/scoring";
@@ -42,15 +42,14 @@ export function BadDataTestApp() {
   const [answers, setAnswers] = useState<QuizResponses>({});
   const [lead, setLead] = useState<LeadProfile>({});
   const [qualification, setQualification] = useState<LeadProfile>({});
+  const [showLeadGate, setShowLeadGate] = useState(false);
   const [leadGateSubmitted, setLeadGateSubmitted] = useState(false);
   const [result, setResult] = useState<ResultModel | null>(null);
   const [opportunityInputs, setOpportunityInputs] = useState<OpportunityInputs>(initialOpportunityInputs);
   const quizRef = useRef<HTMLDivElement | null>(null);
 
   const currentQuestion = quizQuestions[currentIndex];
-  const totalSteps = quizQuestions.length + 1;
-  const currentStep = leadGateSubmitted ? currentIndex + 2 : 1;
-  const progress = Math.round((currentStep / totalSteps) * 100);
+  const progress = Math.round(((currentIndex + 1) / quizQuestions.length) * 100);
 
   useEffect(() => {
     trackEvent("landing_viewed");
@@ -137,15 +136,19 @@ export function BadDataTestApp() {
     setStage("quiz");
     quizRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     trackEvent("quiz_started");
-    if (!leadGateSubmitted) {
-      trackEvent("lead_gate_viewed", { placement: "quiz-setup" });
-    }
   }
 
   function handleAnswer(questionId: string, value: string) {
     const nextAnswers = { ...answers, [questionId]: value };
     setAnswers(nextAnswers);
     trackEvent("question_answered", { questionId, value, index: currentIndex + 1 });
+
+    const shouldGate = currentIndex + 1 === leadGateAfterQuestion && !leadGateSubmitted;
+    if (shouldGate) {
+      setShowLeadGate(true);
+      trackEvent("lead_gate_viewed");
+      return;
+    }
 
     if (currentIndex < quizQuestions.length - 1) {
       setCurrentIndex((value) => value + 1);
@@ -159,6 +162,7 @@ export function BadDataTestApp() {
     const built = buildResultModel(finalAnswers, lead, qualification);
     setResult(built);
     setStage("result");
+    setShowLeadGate(false);
     window.localStorage.setItem(
       LOCAL_STORAGE_KEY,
       JSON.stringify({
@@ -209,12 +213,20 @@ export function BadDataTestApp() {
     if (missing) return;
 
     setLeadGateSubmitted(true);
+    setShowLeadGate(false);
     trackEvent("lead_gate_completed");
+
+    if (currentIndex < quizQuestions.length - 1) {
+      setCurrentIndex((value) => value + 1);
+      return;
+    }
+
+    finishQuiz(answers);
   }
 
   function goBack() {
-    if (!leadGateSubmitted) {
-      setStage("landing");
+    if (showLeadGate) {
+      setShowLeadGate(false);
       return;
     }
 
@@ -369,7 +381,7 @@ export function BadDataTestApp() {
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="text-sm font-medium text-cloud/65">
-                    Step {stage === "result" ? totalSteps : currentStep} of {totalSteps}
+                    Step {Math.min(currentIndex + 1, quizQuestions.length)} of {quizQuestions.length}
                   </p>
                   <p className="mt-1 text-sm text-cloud/55">Fast, keyboard-friendly, and built for your growth team.</p>
                 </div>
@@ -381,22 +393,22 @@ export function BadDataTestApp() {
               {stage !== "result" ? (
                 <AnimatePresence mode="wait">
                   <motion.div
-                    key={!leadGateSubmitted ? "lead-setup" : currentQuestion.id}
+                    key={showLeadGate ? "lead-gate" : currentQuestion.id}
                     initial={{ opacity: 0, y: 18 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -18 }}
                     transition={{ duration: 0.22 }}
                     className="space-y-6"
                   >
-                    {!leadGateSubmitted ? (
+                    {showLeadGate ? (
                       <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
                         <div className="space-y-4">
                           <div className="inline-flex rounded-full border border-glow/20 bg-glow/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-glow">
-                            Quiz setup
+                            Earned gate
                           </div>
-                          <h3 className="font-display text-3xl font-bold text-paper">Set up your diagnostic before we start</h3>
+                          <h3 className="font-display text-3xl font-bold text-paper">Want your score and recovery potential?</h3>
                           <p className="text-base leading-7 text-cloud/75">
-                            Add a little context up front so the score, recommendations, and follow-up can be tied to the right company. Then the test runs straight through without interruption.
+                            Share a little context and we will make your result more useful. This helps us translate the diagnostic into something commercially relevant, not generic.
                           </p>
                         </div>
                         <div className="grid gap-4 sm:grid-cols-2">
@@ -416,11 +428,11 @@ export function BadDataTestApp() {
                           ))}
                           <div className="sm:col-span-2 flex flex-wrap gap-3 pt-2">
                             <Button onClick={submitLeadGate}>
-                              Start the Test
+                              Get My Score
                               <MoveRight className="h-4 w-4" />
                             </Button>
-                            <Button variant="secondary" onClick={() => setStage("landing")}>
-                              Back
+                            <Button variant="secondary" onClick={() => setShowLeadGate(false)}>
+                              Continue without leaving
                             </Button>
                           </div>
                         </div>
