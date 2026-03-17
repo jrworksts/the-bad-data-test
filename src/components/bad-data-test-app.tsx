@@ -224,19 +224,6 @@ export function BadDataTestApp() {
     finishQuiz(answers);
   }
 
-  function skipLeadGate() {
-    setLeadGateSubmitted(true);
-    setShowLeadGate(false);
-    trackEvent("cta_clicked", { label: "Skip lead gate", stage: "quiz" });
-
-    if (currentIndex < quizQuestions.length - 1) {
-      setCurrentIndex((value) => value + 1);
-      return;
-    }
-
-    finishQuiz(answers);
-  }
-
   function goBack() {
     if (showLeadGate) {
       setShowLeadGate(false);
@@ -448,11 +435,8 @@ export function BadDataTestApp() {
                           ))}
                           <div className="sm:col-span-2 flex flex-wrap gap-3 pt-2">
                             <Button type="submit">
-                              Get My Score
+                              Continue
                               <MoveRight className="h-4 w-4" />
-                            </Button>
-                            <Button type="button" variant="secondary" onClick={skipLeadGate}>
-                              Skip
                             </Button>
                           </div>
                         </form>
