@@ -1,24 +1,20 @@
 "use client";
 
 import Script from "next/script";
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
-  BarChart3,
   CheckCircle2,
   ChevronLeft,
   Clipboard,
-  Link2,
-  Mail,
   MoveRight,
   ShieldCheck,
-  Target,
 } from "lucide-react";
-import { leadGateAfterQuestion, leadGateFields, qualificationFields, quizQuestions } from "@/config/quiz";
+import { leadGateAfterQuestion, leadGateFields, quizQuestions } from "@/config/quiz";
 import { faqItems, primaryCtas, proofStats, siteConfig, stackLayers } from "@/config/site";
 import { trackEvent } from "@/lib/analytics";
-import { estimateOpportunity } from "@/lib/opportunity";
 import { buildResultModel } from "@/lib/scoring";
 import type { LeadProfile, OpportunityInputs, QuizResponses, ResultModel } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -26,7 +22,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { Select } from "@/components/ui/select";
 
 const LOCAL_STORAGE_KEY = "bad-data-test-state";
 const GHL_EMBED_ID = "303rv61ZkidkXmcEvLhz_1773702309411";
@@ -41,6 +36,7 @@ const initialOpportunityInputs: OpportunityInputs = {
 };
 
 export function BadDataTestApp() {
+  const router = useRouter();
   const [stage, setStage] = useState<FunnelStage>("landing");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<QuizResponses>({});
@@ -49,15 +45,11 @@ export function BadDataTestApp() {
   const [showLeadGate, setShowLeadGate] = useState(false);
   const [leadGateSubmitted, setLeadGateSubmitted] = useState(false);
   const [result, setResult] = useState<ResultModel | null>(null);
-  const [copied, setCopied] = useState(false);
   const [opportunityInputs, setOpportunityInputs] = useState<OpportunityInputs>(initialOpportunityInputs);
-  const [submissionState, setSubmissionState] = useState<"idle" | "submitting" | "submitted" | "error">("idle");
-  const [isPending, startTransition] = useTransition();
   const quizRef = useRef<HTMLDivElement | null>(null);
 
   const currentQuestion = quizQuestions[currentIndex];
   const progress = Math.round(((currentIndex + 1) / quizQuestions.length) * 100);
-  const estimate = useMemo(() => estimateOpportunity(opportunityInputs), [opportunityInputs]);
 
   useEffect(() => {
     trackEvent("landing_viewed");
@@ -73,14 +65,18 @@ export function BadDataTestApp() {
         lead: LeadProfile;
         qualification: LeadProfile;
         leadGateSubmitted: boolean;
+        result?: ResultModel | null;
+        opportunityInputs?: OpportunityInputs;
       };
 
-      setStage(parsed.stage || "landing");
+      setStage(parsed.stage === "result" ? "landing" : parsed.stage || "landing");
       setCurrentIndex(parsed.currentIndex || 0);
       setAnswers(parsed.answers || {});
       setLead(parsed.lead || {});
       setQualification(parsed.qualification || {});
       setLeadGateSubmitted(parsed.leadGateSubmitted || false);
+      if (parsed.result) setResult(parsed.result);
+      if (parsed.opportunityInputs) setOpportunityInputs(parsed.opportunityInputs);
     } catch {
       window.localStorage.removeItem(LOCAL_STORAGE_KEY);
     }
@@ -96,9 +92,11 @@ export function BadDataTestApp() {
         lead,
         qualification,
         leadGateSubmitted,
+        result,
+        opportunityInputs,
       }),
     );
-  }, [answers, currentIndex, lead, leadGateSubmitted, qualification, stage]);
+  }, [answers, currentIndex, lead, leadGateSubmitted, opportunityInputs, qualification, result, stage]);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -165,12 +163,24 @@ export function BadDataTestApp() {
     setResult(built);
     setStage("result");
     setShowLeadGate(false);
+    window.localStorage.setItem(
+      LOCAL_STORAGE_KEY,
+      JSON.stringify({
+        stage: "result",
+        currentIndex,
+        answers: finalAnswers,
+        lead,
+        qualification,
+        leadGateSubmitted,
+        result: built,
+        opportunityInputs,
+      }),
+    );
     void submitLeadPayload(built, finalAnswers);
+    router.push("/results");
   }
 
   async function submitLeadPayload(finalResult: ResultModel, finalAnswers: QuizResponses) {
-    setSubmissionState("submitting");
-
     try {
       const response = await fetch("/api/lead", {
         method: "POST",
@@ -189,18 +199,13 @@ export function BadDataTestApp() {
       });
 
       if (!response.ok) throw new Error("Submission failed");
-      setSubmissionState("submitted");
     } catch {
-      setSubmissionState("error");
+      // Keep the quiz flow moving even if the lead handoff needs a retry later.
     }
   }
 
   function handleLeadFieldChange(field: string, value: string) {
     setLead((previous) => ({ ...previous, [field]: value }));
-  }
-
-  function handleQualificationFieldChange(field: string, value: string) {
-    setQualification((previous) => ({ ...previous, [field]: value }));
   }
 
   function submitLeadGate() {
@@ -228,13 +233,6 @@ export function BadDataTestApp() {
     setCurrentIndex((value) => Math.max(value - 1, 0));
   }
 
-  function handleShare() {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    trackEvent("share_clicked", { type: "copy-link" });
-    window.setTimeout(() => setCopied(false), 1600);
-  }
-
   function handleEmailShare() {
     trackEvent("share_clicked", { type: "email-team" });
     const subject = encodeURIComponent("We should take The Bad Data Test");
@@ -252,16 +250,6 @@ export function BadDataTestApp() {
     }
 
     document.querySelector(href)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function handleOpportunityChange(field: keyof OpportunityInputs, value: string) {
-    startTransition(() => {
-      setOpportunityInputs((previous) => ({
-        ...previous,
-        [field]: value ? Number(value) : undefined,
-      }));
-      trackEvent("opportunity_estimated", { field, value: value ? Number(value) : 0 });
-    });
   }
 
   return (
@@ -508,215 +496,6 @@ export function BadDataTestApp() {
                 </AnimatePresence>
               ) : null}
 
-              {result ? (
-                <div className="space-y-10">
-                  <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-                      <Card className="border-glow/15 bg-glow/8">
-                      <CardContent className="space-y-5">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Your results</p>
-                            <h3 className="mt-2 font-display text-4xl font-bold text-paper">{result.score}/100</h3>
-                          </div>
-                          <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-cloud/75">
-                            {result.label}
-                          </div>
-                        </div>
-                        <p className="text-base leading-7 text-cloud/80">{result.summary}</p>
-                        <div className="rounded-[22px] border border-white/10 bg-white/[0.03] p-5">
-                          <p className="text-sm font-medium text-cloud/65">Recommended next step</p>
-                          <p className="mt-2 text-sm leading-7 text-cloud/82">{result.recommendedNextStep}</p>
-                        </div>
-                        <div className="rounded-[22px] border border-white/10 bg-ink/60 p-5">
-                          <p className="text-sm font-medium text-cloud/65">Qualification tier</p>
-                          <p className="mt-2 text-2xl font-semibold text-paper">{result.qualification}</p>
-                        </div>
-                        <div className="space-y-3">
-                          <Button onClick={() => handleCtaClick(result.ctaPrimary, "#booking")} size="lg">
-                            {result.ctaPrimary}
-                          </Button>
-                          <Button variant="secondary" onClick={() => handleCtaClick(result.ctaSecondary, "#booking")} size="lg">
-                            {result.ctaSecondary}
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <div className="space-y-6">
-                      <Card>
-                        <CardContent className="space-y-4">
-                          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">What stood out</p>
-                          <div className="grid gap-3">
-                            {result.findings.map((finding) => (
-                              <div key={finding} className="flex gap-3 rounded-2xl border border-white/8 bg-white/[0.03] p-4">
-                                <BarChart3 className="mt-0.5 h-5 w-5 text-amber" />
-                                <p className="text-sm leading-6 text-cloud/80">{finding}</p>
-                              </div>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      <Card>
-                        <CardContent className="space-y-4">
-                          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Business implications</p>
-                          <div className="grid gap-3">
-                            {result.implications.map((implication) => (
-                              <div key={implication} className="flex gap-3 rounded-2xl border border-white/8 bg-white/[0.03] p-4">
-                                <Target className="mt-0.5 h-5 w-5 text-glow" />
-                                <p className="text-sm leading-6 text-cloud/80">{implication}</p>
-                              </div>
-                            ))}
-                          </div>
-                          <div className="rounded-[22px] border border-amber/12 bg-amber/10 p-5">
-                            <p className="text-sm leading-7 text-cloud/82">{result.opportunityNarrative}</p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </div>
-
-                  <Card>
-                    <CardContent className="space-y-6">
-                      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-                        <div>
-                          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Opportunity estimate</p>
-                          <h3 className="mt-2 font-display text-3xl font-bold text-paper">A conservative view of what hidden signal loss may be costing</h3>
-                        </div>
-                        <p className="max-w-xl text-sm leading-6 text-cloud/65">
-                          Directional only. If numbers are missing, benchmark estimates are used to avoid false precision.
-                        </p>
-                      </div>
-                      <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-                        <div className="grid gap-4 sm:grid-cols-2">
-                          <MetricInput
-                            label="Monthly traffic"
-                            value={opportunityInputs.monthlyTraffic}
-                            onChange={(value) => handleOpportunityChange("monthlyTraffic", value)}
-                          />
-                          <MetricInput label="CPA" value={opportunityInputs.cpa} onChange={(value) => handleOpportunityChange("cpa", value)} />
-                          <MetricInput
-                            label="Lead-to-close rate %"
-                            value={opportunityInputs.leadToCloseRate}
-                            onChange={(value) => handleOpportunityChange("leadToCloseRate", value)}
-                          />
-                          <MetricInput
-                            label="Average deal value"
-                            value={opportunityInputs.averageDealValue}
-                            onChange={(value) => handleOpportunityChange("averageDealValue", value)}
-                          />
-                        </div>
-                        <div className="grid gap-4">
-                          <div className="grid gap-4 md:grid-cols-3">
-                            <MetricCard label="Estimated wasted ad spend" value={estimate.wastedSpendRange} />
-                            <MetricCard label="Potential recoverable pipeline" value={estimate.recoverablePipelineRange} />
-                            <MetricCard label="Anonymous traffic upside" value={estimate.anonymousTrafficUpside} compact />
-                          </div>
-                          <div className="rounded-[22px] border border-white/10 bg-white/[0.03] p-5">
-                            <p className="text-sm font-medium text-cloud/70">Assumptions</p>
-                            {isPending ? <p className="mt-2 text-sm text-glow">Updating estimate...</p> : null}
-                            <div className="mt-3 grid gap-2">
-                              {estimate.assumptions.map((assumption) => (
-                                <p key={assumption} className="text-sm text-cloud/65">
-                                  {assumption}
-                                </p>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardContent className="space-y-6">
-                      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                        <div>
-                          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Team-ready sharing</p>
-                          <h3 className="mt-2 font-display text-3xl font-bold text-paper">Send this to your growth team</h3>
-                        </div>
-                        <div className="flex flex-wrap gap-3">
-                          <Button variant="secondary" onClick={handleShare}>
-                            <Link2 className="h-4 w-4" />
-                            {copied ? "Link copied" : "Copy share link"}
-                          </Button>
-                          <Button
-                            variant="outline"
-                            onClick={() => {
-                              trackEvent("share_clicked", { type: "email-results" });
-                              window.location.href = `mailto:?subject=The Bad Data Test result&body=Take a look at this diagnostic: ${window.location.href}`;
-                            }}
-                          >
-                            <Mail className="h-4 w-4" />
-                            Email to colleague
-                          </Button>
-                        </div>
-                      </div>
-                      <p className="text-base leading-7 text-cloud/75">
-                        If your demand gen lead, growth lead, and RevOps owner all answer this differently, that is useful signal. Share it and compare assumptions.
-                      </p>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardContent className="space-y-6">
-                      <div>
-                        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Final profiling</p>
-                        <h3 className="mt-2 font-display text-3xl font-bold text-paper">Make the recommendation more specific</h3>
-                      </div>
-                      <div className="grid gap-4 md:grid-cols-2">
-                        {qualificationFields.map((field) => (
-                          <div key={field.id}>
-                            <label className="mb-2 block text-sm font-medium text-cloud/80" htmlFor={field.id}>
-                              {field.label}
-                            </label>
-                            {field.type === "select" ? (
-                              <Select
-                                id={field.id}
-                                value={qualification[field.id] || ""}
-                                onChange={(event) => handleQualificationFieldChange(field.id, event.target.value)}
-                              >
-                                <option value="">Select</option>
-                                {field.options?.map((option) => (
-                                  <option key={option} value={option}>
-                                    {option}
-                                  </option>
-                                ))}
-                              </Select>
-                            ) : (
-                              <Input
-                                id={field.id}
-                                type={field.type}
-                                placeholder={field.placeholder}
-                                value={qualification[field.id] || ""}
-                                onChange={(event) => handleQualificationFieldChange(field.id, event.target.value)}
-                              />
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                      <div className="flex flex-wrap items-center gap-3">
-                        <Button onClick={() => handleCtaClick("Book a 20-Minute Intro Call", "#booking")}>
-                          Book a 20-Minute Intro Call
-                        </Button>
-                        <Button variant="secondary" onClick={() => handleCtaClick("Request Revenue Recovery Audit Information", "#booking")}>
-                          Request Revenue Recovery Audit Information
-                        </Button>
-                        <p className="text-sm text-cloud/60">
-                          Submission status:{" "}
-                          <span className="font-medium text-paper">
-                            {submissionState === "submitted"
-                              ? "captured"
-                              : submissionState === "error"
-                                ? "needs retry"
-                                : submissionState}
-                          </span>
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              ) : null}
             </CardContent>
           </Card>
         </section>
@@ -866,39 +645,5 @@ export function BadDataTestApp() {
         </Button>
       </div>
     </main>
-  );
-}
-
-function MetricCard({
-  label,
-  value,
-  compact = false,
-}: {
-  label: string;
-  value: string;
-  compact?: boolean;
-}) {
-  return (
-    <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
-      <p className="text-sm font-medium text-cloud/65">{label}</p>
-      <p className={cn("mt-3 font-display font-bold text-paper", compact ? "text-lg leading-7" : "text-2xl")}>{value}</p>
-    </div>
-  );
-}
-
-function MetricInput({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value?: number;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <div>
-      <label className="mb-2 block text-sm font-medium text-cloud/80">{label}</label>
-      <Input inputMode="numeric" value={value ?? ""} onChange={(event) => onChange(event.target.value)} />
-    </div>
   );
 }
