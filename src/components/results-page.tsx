@@ -3,7 +3,7 @@
 import Script from "next/script";
 import Link from "next/link";
 import { useEffect, useMemo, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertCircle, ArrowRight, BarChart3, FileSpreadsheet, Link2, Mail, Share2, ShieldAlert, Target } from "lucide-react";
 import { qualificationFields } from "@/config/quiz";
@@ -41,6 +41,7 @@ const resultsVariants: { id: ResultsVariantId; name: string; blurb: string }[] =
 
 export function ResultsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [result, setResult] = useState<ResultModel | null>(null);
   const [qualification, setQualification] = useState<LeadProfile>({});
   const [opportunityInputs, setOpportunityInputs] = useState<OpportunityInputs>({
@@ -90,6 +91,17 @@ export function ResultsPage() {
       page: "dedicated-results",
     });
   }, [result]);
+
+  useEffect(() => {
+    const variant = searchParams.get("view");
+    if (
+      variant === "executive-brief" ||
+      variant === "recovery-report" ||
+      variant === "audit-path"
+    ) {
+      setResultsVariant(variant);
+    }
+  }, [searchParams]);
 
   function handleShare() {
     navigator.clipboard.writeText(shareUrl);
@@ -186,6 +198,14 @@ export function ResultsPage() {
     window.open(href, "_blank", "noopener,noreferrer");
   }
 
+  function handleVariantChange(variant: ResultsVariantId) {
+    setResultsVariant(variant);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("view", variant);
+    router.replace(`/results?${params.toString()}`, { scroll: false });
+    trackEvent("cta_clicked", { label: `Results option ${variant}`, page: "results" });
+  }
+
   if (!result) {
     return (
       <main className="mx-auto flex min-h-screen max-w-4xl items-center px-4 py-20 sm:px-6 lg:px-8">
@@ -225,7 +245,7 @@ export function ResultsPage() {
               <button
                 key={variant.id}
                 type="button"
-                onClick={() => setResultsVariant(variant.id)}
+                onClick={() => handleVariantChange(variant.id)}
                 className={cn(
                   "rounded-full border px-4 py-2 text-sm font-medium transition",
                   resultsVariant === variant.id
