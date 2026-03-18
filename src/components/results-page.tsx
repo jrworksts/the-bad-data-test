@@ -773,14 +773,42 @@ function OpportunityComparisonChart({ model }: { model: VisualModel }) {
 function OpportunityBreakdownChart({ model }: { model: VisualModel }) {
   const total = model.efficiencyGain + model.recoverablePipeline + model.estimatedSpend;
   const segments = [
-    { label: "Efficiency gain", value: model.efficiencyGain, className: "bg-amber" },
-    { label: "Recoverable pipeline", value: model.recoverablePipeline, className: "bg-glow" },
-    { label: "Anonymous traffic upside", value: model.estimatedSpend, className: "bg-white/55" },
+    {
+      label: "Conversion Efficiency Lift",
+      value: model.efficiencyGain,
+      className: "bg-amber",
+      description: "Small gains from improved targeting, attribution, and data accuracy",
+      confidence: "High confidence",
+    },
+    {
+      label: "Reactivated Lost Pipeline",
+      value: model.recoverablePipeline,
+      className: "bg-glow",
+      description: "Revenue from previously anonymous visitors who can now be identified and re-engaged",
+      confidence: "Moderate confidence",
+    },
+    {
+      label: "Uncaptured Traffic Potential (Theoretical)",
+      value: model.estimatedSpend,
+      className: "bg-white/35",
+      description: "Estimated value if more anonymous traffic were converted into leads",
+      confidence: "Theoretical / directional",
+    },
   ];
 
   return (
     <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
-      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">Where the Opportunity Likely Exists</p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">Where the Opportunity Likely Exists</p>
+        </div>
+        <div
+          className="max-w-[240px] rounded-full border border-white/8 bg-white/[0.03] px-3 py-1.5 text-right text-[11px] leading-5 text-cloud/58"
+          title="This estimate combines incremental efficiency improvements in conversion and targeting, recoverable pipeline from identified anonymous visitors, and total potential value from uncaptured traffic. All estimates are directional and based on your inputs."
+        >
+          How this is calculated
+        </div>
+      </div>
       <div className="mt-5 overflow-hidden rounded-full bg-white/10">
         <div className="flex h-6">
           {segments.map((segment) => (
@@ -790,15 +818,28 @@ function OpportunityBreakdownChart({ model }: { model: VisualModel }) {
       </div>
       <div className="mt-4 space-y-3">
         {segments.map((segment) => (
-          <div key={segment.label} className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-3 text-cloud/74">
-              <span className={cn("h-3 w-3 rounded-full", segment.className)} />
-              <span>{segment.label}</span>
+          <div key={segment.label} className="rounded-2xl border border-white/8 bg-white/[0.02] p-3">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-3 text-cloud/74">
+                <span className={cn("mt-1 h-3 w-3 rounded-full", segment.className)} />
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-medium text-paper">{segment.label}</span>
+                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[11px] uppercase tracking-[0.14em] text-cloud/55">
+                      {segment.confidence}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs leading-5 text-cloud/58">{segment.description}</p>
+                </div>
+              </div>
+              <span className="pt-0.5 text-sm font-medium text-paper">{formatCompactCurrency(segment.value)}</span>
             </div>
-            <span className="font-medium text-paper">{formatCompactCurrency(segment.value)}</span>
           </div>
         ))}
       </div>
+      <p className="mt-4 text-sm leading-7 text-cloud/66">
+        Most companies capture only a fraction of the value already present in their traffic.
+      </p>
     </div>
   );
 }
