@@ -275,7 +275,7 @@ export function ResultsPage() {
                           { label: "Sales", value: formatDetailedNumber(visualModel.currentSales) },
                           { label: "Revenue", value: formatDetailedCurrency(visualModel.currentRevenue) },
                           { label: "Estimated Spend", value: formatDetailedCurrency(visualModel.estimatedSpend) },
-                          { label: "Traffic Loss Value", value: formatDetailedCurrency(visualModel.trafficLossValue) },
+                          { label: "Traffic Loss Value", value: formatDetailedCurrency(visualModel.trafficLossValue), highlight: true },
                         ]}
                       />
                       <OutputPanel
@@ -491,7 +491,7 @@ function buildVisualModel(result: ResultModel, inputs: OpportunityInputs): Visua
   const idResolutionMatchPct = 30;
   const verificationPct = 80;
   const reOptInPct = 15;
-  const reactivationSalesRate = closeRatePercent;
+  const reactivationSalesRate = 4;
 
   const confidenceScore = Math.max(0, Math.min(100, 100 - result.score));
   const currentSales = traffic * closeRate * currentSalesFactor;
@@ -749,16 +749,22 @@ function OutputPanel({
   fields,
 }: {
   title: string;
-  fields: { label: string; value: string }[];
+  fields: { label: string; value: string; highlight?: boolean }[];
 }) {
   return (
     <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
       <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">{title}</p>
       <div className="mt-4 grid gap-3">
         {fields.map((field) => (
-          <div key={field.label} className="flex items-center justify-between gap-4 border-b border-white/8 pb-3 text-sm last:border-b-0 last:pb-0">
-            <span className="text-cloud/70">{field.label}</span>
-            <span className="font-medium text-paper">{field.value}</span>
+          <div
+            key={field.label}
+            className={cn(
+              "flex items-center justify-between gap-4 border-b border-white/8 pb-3 text-sm last:border-b-0 last:pb-0",
+              field.highlight && "rounded-2xl border-0 bg-[linear-gradient(135deg,rgba(121,242,210,0.16),rgba(255,209,102,0.12))] px-4 py-4 pb-4",
+            )}
+          >
+            <span className={cn("text-cloud/70", field.highlight && "font-semibold text-paper")}>{field.label}</span>
+            <span className={cn("font-medium text-paper", field.highlight && "font-display text-xl font-bold text-glow")}>{field.value}</span>
           </div>
         ))}
       </div>
