@@ -612,9 +612,30 @@ function DataConfidenceGauge({ model }: { model: VisualModel }) {
 
 function FunnelLeakVisualization({ model }: { model: VisualModel }) {
   const stages = [
-    { label: "Traffic", current: 15000, improved: 15000, format: formatCompactNumber },
-    { label: "Leads (5%)", current: 750, improved: 5250, format: formatCompactNumber },
-    { label: "Pipeline", current: 3750000, improved: 26250000, format: formatCompactCurrency },
+    {
+      label: "Traffic",
+      currentLabel: "Traffic",
+      improvedLabel: "Traffic",
+      current: 15000,
+      improved: 15000,
+      format: formatCompactNumber,
+    },
+    {
+      label: "Leads",
+      currentLabel: "Leads (5%)",
+      improvedLabel: "Leads (35%)",
+      current: 750,
+      improved: 5250,
+      format: formatCompactNumber,
+    },
+    {
+      label: "Pipeline",
+      currentLabel: "Pipeline",
+      improvedLabel: "Pipeline",
+      current: 3750000,
+      improved: 26250000,
+      format: formatCompactCurrency,
+    },
   ];
 
   const maxValue = Math.max(...stages.flatMap((stage) => [stage.current, stage.improved]));
@@ -634,7 +655,7 @@ function FunnelLeakVisualization({ model }: { model: VisualModel }) {
               return (
                 <div key={`${column.title}-${stage.label}`} className="space-y-2">
                   <div className="flex items-center justify-between text-sm text-cloud/72">
-                    <span>{stage.label}</span>
+                    <span>{column.key === "current" ? stage.currentLabel : stage.improvedLabel}</span>
                     <span className="font-medium text-paper">{stage.format(value)}</span>
                   </div>
                   <div className="h-3 overflow-hidden rounded-full bg-white/10">
