@@ -272,15 +272,6 @@ export function BadDataTestApp() {
     setCurrentIndex((value) => Math.max(value - 1, 0));
   }
 
-  function handleEmailShare() {
-    trackEvent("share_clicked", { type: "email-team" });
-    const subject = encodeURIComponent("We should take The Bad Data Test");
-    const body = encodeURIComponent(
-      `Team,\n\nThis is a quick diagnostic to see whether we may be making growth decisions on incomplete attribution, anonymous traffic, or weak CRM signal.\n\nTake the test here: ${siteConfig.siteUrl}\n\nI think it would be useful to compare answers across the team.`,
-    );
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
-  }
-
   function handleCtaClick(label: string, href: string) {
     trackEvent("cta_clicked", { label, href, stage });
     if (href === "#quiz") {
@@ -617,9 +608,6 @@ export function BadDataTestApp() {
                     }}
                   >
                     Book a 20-Minute Intro Call
-                  </Button>
-                  <Button variant="secondary" size="lg" onClick={handleEmailShare}>
-                    Share the Test With Your Team
                   </Button>
                 </div>
               </div>
