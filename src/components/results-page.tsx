@@ -623,6 +623,8 @@ function FunnelLeakVisualization({ model }: { model: VisualModel }) {
       current: 750,
       improved: 5250,
       format: formatCompactNumber,
+      currentWidth: "5%",
+      improvedWidth: "35%",
     },
     {
       label: "Pipeline",
@@ -640,14 +642,17 @@ function FunnelLeakVisualization({ model }: { model: VisualModel }) {
     <div className="grid gap-4 md:grid-cols-2">
       {[
         { title: "Current state", key: "current" as const, tone: "bg-white/[0.03]" },
-        { title: "With Improved Data Visibility", key: "improved" as const, tone: "bg-glow/8" },
+        { title: "With improved data", key: "improved" as const, tone: "bg-glow/8" },
       ].map((column) => (
         <div key={column.title} className={cn("rounded-[24px] border border-white/10 p-5", column.tone)}>
           <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">{column.title}</p>
           <div className="mt-5 space-y-4">
             {stages.map((stage) => {
               const value = column.key === "current" ? stage.current : stage.improved;
-              const width = `${Math.max((value / maxValue) * 100, 14)}%`;
+              const width =
+                column.key === "current"
+                  ? ("currentWidth" in stage && stage.currentWidth) || `${Math.max((value / maxValue) * 100, 14)}%`
+                  : ("improvedWidth" in stage && stage.improvedWidth) || `${Math.max((value / maxValue) * 100, 14)}%`;
               return (
                 <div key={`${column.title}-${stage.label}`} className="space-y-2">
                   <div className="flex items-center justify-between text-sm text-cloud/72">
