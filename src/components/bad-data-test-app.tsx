@@ -31,8 +31,8 @@ type FunnelStage = "landing" | "quiz" | "result";
 const initialOpportunityInputs: OpportunityInputs = {
   monthlyTraffic: 15000,
   cpa: 180,
-  leadToCloseRate: 3.6,
-  averageDealValue: 18000,
+  leadToCloseRate: 2,
+  averageDealValue: 1800,
   identificationRate: 5,
 };
 
@@ -447,7 +447,7 @@ export function BadDataTestApp() {
                         </div>
                         <div className="grid gap-4 sm:grid-cols-2">
                           {leadGateFields.map((field) => (
-                            <div key={field.id} className={cn(field.id === "websiteUrl" && "sm:col-span-2")}>
+                            <div key={field.id} className={cn(field.id === "phone" && "sm:col-span-2")}>
                               <label className="mb-2 block text-sm font-medium text-cloud/80" htmlFor={field.id}>
                                 {field.label}
                               </label>

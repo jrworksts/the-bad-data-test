@@ -35,7 +35,7 @@ async function submitHubSpot(payload: SubmissionPayload) {
     { name: "firstname", value: payload.lead.firstName || "" },
     { name: "email", value: payload.lead.workEmail || "" },
     { name: "company", value: payload.lead.company || "" },
-    { name: "website", value: payload.lead.websiteUrl || "" },
+    { name: "phone", value: payload.lead.phone || "" },
     { name: "bad_data_score", value: String(payload.result.score) },
     { name: "qualification_tier", value: payload.result.qualification },
     { name: "quiz_answers", value: JSON.stringify(payload.answers) },
