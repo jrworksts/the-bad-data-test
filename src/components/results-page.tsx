@@ -271,6 +271,17 @@ export function ResultsPage() {
                   <div className="grid gap-4">
                     <IdentificationLiftChart model={visualModel} />
                     <OutputPanel
+                      title="Current performance"
+                      fields={[
+                        { label: "Sales", value: formatDetailedNumber(visualModel.currentSales) },
+                        { label: "Revenue", value: formatDetailedCurrency(visualModel.currentRevenue) },
+                        { label: "Estimated Spend", value: formatDetailedCurrency(visualModel.estimatedSpend) },
+                        { label: "Traffic Loss Value", value: formatDetailedCurrency(visualModel.trafficLossValue), highlight: true },
+                      ]}
+                    />
+                  </div>
+                  <div className="grid gap-4">
+                    <OutputPanel
                       title="Identity recovery"
                       fields={[
                         { label: "Anonymous Traffic", value: formatDetailedNumber(visualModel.anonymousTraffic) },
@@ -278,17 +289,6 @@ export function ResultsPage() {
                         { label: "Consumer Matches", value: formatDetailedNumber(visualModel.consumerMatches) },
                         { label: "Verification %", value: formatPercent(visualModel.verificationPct) },
                         { label: "Verified Matched Profiles", value: formatDetailedNumber(visualModel.verifiedMatchedProfiles) },
-                      ]}
-                    />
-                  </div>
-                  <div className="grid gap-4">
-                    <OutputPanel
-                      title="Current performance"
-                      fields={[
-                        { label: "Sales", value: formatDetailedNumber(visualModel.currentSales) },
-                        { label: "Revenue", value: formatDetailedCurrency(visualModel.currentRevenue) },
-                        { label: "Estimated Spend", value: formatDetailedCurrency(visualModel.estimatedSpend) },
-                        { label: "Traffic Loss Value", value: formatDetailedCurrency(visualModel.trafficLossValue), highlight: true },
                       ]}
                     />
                     <OutputPanel
@@ -751,7 +751,8 @@ function OutputPanel({
             key={field.label}
             className={cn(
               "flex items-center justify-between gap-4 border-b border-white/8 pb-3 text-sm last:border-b-0 last:pb-0",
-              field.highlight && "rounded-2xl border-0 bg-[linear-gradient(135deg,rgba(121,242,210,0.16),rgba(255,209,102,0.12))] px-4 py-4 pb-4",
+              field.highlight &&
+                "min-h-14 rounded-2xl border-0 bg-[linear-gradient(135deg,rgba(121,242,210,0.16),rgba(255,209,102,0.12))] px-4 py-0",
             )}
           >
             <span className={cn("text-cloud/70", field.highlight && "font-semibold text-paper")}>{field.label}</span>
