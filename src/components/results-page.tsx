@@ -961,7 +961,7 @@ function CPASignalChart() {
         <line x1="24" y1="20" x2="24" y2="150" stroke="rgba(255,255,255,0.16)" />
         <path d="M36 128 C86 120 126 104 170 88 C210 70 252 50 292 34" fill="none" stroke="#f7c96d" strokeWidth="4" strokeLinecap="round" />
         <path d="M36 42 C82 56 126 72 170 88 C214 104 252 118 292 132" fill="none" stroke="#79f2d2" strokeWidth="4" strokeLinecap="round" />
-        <text x="36" y="28" fill="#f5f7fb" fontSize="12">CPA</text>
+        <text x="70" y="112" fill="#f7c96d" fontSize="12">CPA</text>
         <text x="224" y="144" fill="#dbe5f4" fontSize="12">Signal quality</text>
       </svg>
     </div>
