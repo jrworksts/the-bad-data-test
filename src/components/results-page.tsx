@@ -347,7 +347,7 @@ function MetricInput({
 }) {
   return (
     <div className="flex h-full flex-col">
-      <label className="mb-2 block min-h-[3.5rem] text-sm font-medium leading-6 text-cloud/80">{label}</label>
+      <label className="mb-2 block min-h-[3.5rem] text-sm font-semibold uppercase tracking-[0.16em] text-paper/88">{label}</label>
       <Input
         type="number"
         step="any"
@@ -798,17 +798,7 @@ function OpportunityBreakdownChart({ model }: { model: VisualModel }) {
 
   return (
     <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">Where the Opportunity Likely Exists</p>
-        </div>
-        <div
-          className="max-w-[240px] rounded-full border border-white/8 bg-white/[0.03] px-3 py-1.5 text-right text-[11px] leading-5 text-cloud/58"
-          title="This estimate combines incremental efficiency improvements in conversion and targeting, recoverable pipeline from identified anonymous visitors, and total potential value from uncaptured traffic. All estimates are directional and based on your inputs."
-        >
-          How this is calculated
-        </div>
-      </div>
+      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">Where The Opportunity Exists</p>
       <div className="mt-5 overflow-hidden rounded-full bg-white/10">
         <div className="flex h-6">
           {segments.map((segment) => (
