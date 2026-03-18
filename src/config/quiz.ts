@@ -118,9 +118,9 @@ export const quizQuestions: QuizQuestion[] = [
 export const leadGateAfterQuestion = 4;
 
 export const leadGateFields: ProfilingField[] = [
-  { id: "firstName", label: "First name", type: "text", required: true, placeholder: "Taylor" },
-  { id: "workEmail", label: "Work email", type: "email", required: true, placeholder: "taylor@company.com" },
-  { id: "websiteUrl", label: "Website URL", type: "url", required: true, placeholder: "https://company.com" },
+  { id: "firstName", label: "First name", type: "text", required: false, placeholder: "Taylor" },
+  { id: "workEmail", label: "Work email", type: "email", required: false, placeholder: "taylor@company.com" },
+  { id: "websiteUrl", label: "Website URL", type: "url", required: false, placeholder: "https://company.com" },
 ];
 
 export const qualificationFields: ProfilingField[] = [

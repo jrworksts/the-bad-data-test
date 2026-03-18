@@ -194,6 +194,7 @@ export function BadDataTestApp() {
 
   function finishQuiz(finalAnswers: QuizResponses) {
     const built = buildResultModel(finalAnswers, lead, qualification);
+    const hasLeadDetails = leadGateFields.some((field) => !!lead[field.id]?.trim());
     setResult(built);
     setStage("result");
     setShowLeadGate(false);
@@ -210,7 +211,9 @@ export function BadDataTestApp() {
         opportunityInputs,
       }),
     );
-    void submitLeadPayload(built, finalAnswers);
+    if (hasLeadDetails) {
+      void submitLeadPayload(built, finalAnswers);
+    }
     router.push("/results");
   }
 
@@ -243,12 +246,13 @@ export function BadDataTestApp() {
   }
 
   function submitLeadGate() {
-    const missing = leadGateFields.some((field) => field.required && !lead[field.id]?.trim());
-    if (missing) return;
+    const hasLeadDetails = leadGateFields.some((field) => !!lead[field.id]?.trim());
 
     setLeadGateSubmitted(true);
     setShowLeadGate(false);
-    trackEvent("lead_gate_completed");
+    if (hasLeadDetails) {
+      trackEvent("lead_gate_completed");
+    }
 
     if (currentIndex < quizQuestions.length - 1) {
       setCurrentIndex((value) => value + 1);
@@ -440,13 +444,7 @@ export function BadDataTestApp() {
                             Share a little context and we will make your result more useful. This helps us translate the diagnostic into something commercially relevant, not generic.
                           </p>
                         </div>
-                        <form
-                          className="grid gap-4 sm:grid-cols-2"
-                          onSubmit={(event) => {
-                            event.preventDefault();
-                            submitLeadGate();
-                          }}
-                        >
+                        <div className="grid gap-4 sm:grid-cols-2">
                           {leadGateFields.map((field) => (
                             <div key={field.id} className={cn(field.id === "websiteUrl" && "sm:col-span-2")}>
                               <label className="mb-2 block text-sm font-medium text-cloud/80" htmlFor={field.id}>
@@ -457,18 +455,17 @@ export function BadDataTestApp() {
                                 type={field.type}
                                 placeholder={field.placeholder}
                                 value={lead[field.id] || ""}
-                                required={field.required}
                                 onChange={(event) => handleLeadFieldChange(field.id, event.target.value)}
                               />
                             </div>
                           ))}
                           <div className="sm:col-span-2 flex flex-wrap gap-3 pt-2">
-                            <Button type="submit">
+                            <Button type="button" onClick={submitLeadGate}>
                               Continue
                               <MoveRight className="h-4 w-4" />
                             </Button>
                           </div>
-                        </form>
+                        </div>
                       </div>
                     ) : (
                       <div className="space-y-8">
