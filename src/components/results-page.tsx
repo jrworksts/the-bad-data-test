@@ -177,7 +177,6 @@ export function ResultsPage() {
             onPrimary={() => window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer")}
             onSecondary={() => window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer")}
             onNativeShare={handleNativeShare}
-            onEmailShare={handleEmailShare}
           />
 
           <div className="grid gap-6 lg:grid-cols-2">
@@ -388,14 +387,12 @@ function ResultsHeroVariant({
   onPrimary,
   onSecondary,
   onNativeShare,
-  onEmailShare,
 }: {
   result: ResultModel;
   visualModel: VisualModel;
   onPrimary: () => void;
   onSecondary: () => void;
   onNativeShare: () => void;
-  onEmailShare: () => void;
 }) {
   return (
     <div className="space-y-6">
@@ -420,9 +417,6 @@ function ResultsHeroVariant({
                 <Button size="lg" onClick={onPrimary}>
                   Book the intro call
                   <ArrowRight className="h-4 w-4" />
-                </Button>
-                <Button size="lg" variant="secondary" onClick={onEmailShare}>
-                  Email result to team
                 </Button>
               </div>
             </div>
