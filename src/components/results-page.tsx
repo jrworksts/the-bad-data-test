@@ -265,40 +265,40 @@ export function ResultsPage() {
                   <OpportunityComparisonChart model={visualModel} />
                   <OpportunityBreakdownChart model={visualModel} />
                 </div>
-                <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
-                  <IdentificationLiftChart model={visualModel} />
+                <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
                   <div className="grid gap-4">
-                    <div className="grid gap-4">
-                      <OutputPanel
-                        title="Current performance"
-                        fields={[
-                          { label: "Sales", value: formatDetailedNumber(visualModel.currentSales) },
-                          { label: "Revenue", value: formatDetailedCurrency(visualModel.currentRevenue) },
-                          { label: "Estimated Spend", value: formatDetailedCurrency(visualModel.estimatedSpend) },
-                          { label: "Traffic Loss Value", value: formatDetailedCurrency(visualModel.trafficLossValue), highlight: true },
-                        ]}
-                      />
-                      <OutputPanel
-                        title="Identity recovery"
-                        fields={[
-                          { label: "Anonymous Traffic", value: formatDetailedNumber(visualModel.anonymousTraffic) },
-                          { label: "ID Resolution Match %", value: formatPercent(visualModel.idResolutionMatchPct) },
-                          { label: "Consumer Matches", value: formatDetailedNumber(visualModel.consumerMatches) },
-                          { label: "Verification %", value: formatPercent(visualModel.verificationPct) },
-                          { label: "Verified Matched Profiles", value: formatDetailedNumber(visualModel.verifiedMatchedProfiles) },
-                        ]}
-                      />
-                      <OutputPanel
-                        title="Recovery outcome"
-                        fields={[
-                          { label: "Re-opt-in %", value: formatPercent(visualModel.reOptInPct) },
-                          { label: "Recovered Leads", value: formatDetailedNumber(visualModel.recoveredLeads) },
-                          { label: "Re-activation Sales Rate", value: formatPercent(visualModel.reactivationSalesRate) },
-                          { label: "Recovered Sales", value: formatDetailedNumber(visualModel.recoveredSales, 0) },
-                          { label: "Recovered Revenue", value: formatDetailedCurrency(visualModel.recoveredRevenue) },
-                        ]}
-                      />
-                    </div>
+                    <IdentificationLiftChart model={visualModel} />
+                    <OutputPanel
+                      title="Identity recovery"
+                      fields={[
+                        { label: "Anonymous Traffic", value: formatDetailedNumber(visualModel.anonymousTraffic) },
+                        { label: "ID Resolution Match %", value: formatPercent(visualModel.idResolutionMatchPct) },
+                        { label: "Consumer Matches", value: formatDetailedNumber(visualModel.consumerMatches) },
+                        { label: "Verification %", value: formatPercent(visualModel.verificationPct) },
+                        { label: "Verified Matched Profiles", value: formatDetailedNumber(visualModel.verifiedMatchedProfiles) },
+                      ]}
+                    />
+                  </div>
+                  <div className="grid gap-4">
+                    <OutputPanel
+                      title="Current performance"
+                      fields={[
+                        { label: "Sales", value: formatDetailedNumber(visualModel.currentSales) },
+                        { label: "Revenue", value: formatDetailedCurrency(visualModel.currentRevenue) },
+                        { label: "Estimated Spend", value: formatDetailedCurrency(visualModel.estimatedSpend) },
+                        { label: "Traffic Loss Value", value: formatDetailedCurrency(visualModel.trafficLossValue), highlight: true },
+                      ]}
+                    />
+                    <OutputPanel
+                      title="Recovery outcome"
+                      fields={[
+                        { label: "Re-opt-in %", value: formatPercent(visualModel.reOptInPct) },
+                        { label: "Recovered Leads", value: formatDetailedNumber(visualModel.recoveredLeads) },
+                        { label: "Re-activation Sales Rate", value: formatPercent(visualModel.reactivationSalesRate) },
+                        { label: "Recovered Sales", value: formatDetailedNumber(visualModel.recoveredSales, 0) },
+                        { label: "Recovered Revenue", value: formatDetailedCurrency(visualModel.recoveredRevenue) },
+                      ]}
+                    />
                   </div>
                 </div>
               </div>
