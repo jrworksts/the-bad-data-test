@@ -21,8 +21,8 @@ export function ResultsPage() {
   const [opportunityInputs, setOpportunityInputs] = useState<OpportunityInputs>({
     monthlyTraffic: 15000,
     cpa: 180,
-    leadToCloseRate: 3.6,
-    averageDealValue: 18000,
+    leadToCloseRate: 2,
+    averageDealValue: 1800,
     identificationRate: 5,
   });
   const [copied, setCopied] = useState(false);
@@ -684,13 +684,15 @@ function OpportunityComparisonChart({ model }: { model: VisualModel }) {
   const maxValue = totalValue;
   const currentWidth = `${Math.max((model.currentPipeline / maxValue) * 100, 18)}%`;
   const recoverableWidth = `${Math.max((model.recoverablePipeline / maxValue) * 100, 12)}%`;
+  const pipelineLiftPercent = model.currentPipeline > 0 ? (model.recoverablePipeline / model.currentPipeline) * 100 : 0;
+  const annualizedImpact = model.recoverablePipeline * 12;
 
   return (
     <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">Main visual</p>
-          <h4 className="mt-2 font-display text-2xl font-bold text-paper">How Much Pipeline Your Current Data Gaps May Be Hiding</h4>
+          <h4 className="mt-2 font-display text-2xl font-bold text-paper">You May Be Leaving Pipeline on the Table</h4>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-cloud/72">
             Based on your inputs of {formatCompactNumber(model.traffic)} monthly visitors and a {formatPercent(model.conversionRate)} visitor-to-customer conversion rate.
           </p>
@@ -711,7 +713,7 @@ function OpportunityComparisonChart({ model }: { model: VisualModel }) {
           </div>
           <div className="h-12 overflow-hidden rounded-2xl bg-white/8">
             <div
-              className="flex h-full items-center rounded-2xl bg-white/35 px-4 text-sm font-medium text-paper"
+              className="flex h-full items-center rounded-2xl bg-white/25 px-4 text-sm font-medium text-paper"
               style={{ width: currentWidth }}
             >
               {formatCompactCurrency(model.currentPipeline)}
@@ -720,15 +722,18 @@ function OpportunityComparisonChart({ model }: { model: VisualModel }) {
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm text-cloud/72">
-            <span>Plus Estimated Recoverable Value</span>
-            <span className="font-medium text-paper">{formatCompactCurrency(model.recoverablePipeline)}</span>
+            <span>With improved data visibility</span>
+            <span className="font-medium text-paper">{formatCompactCurrency(model.currentPipeline + model.recoverablePipeline)}</span>
           </div>
           <div className="h-12 overflow-hidden rounded-2xl bg-white/8">
             <div className="flex h-full overflow-hidden rounded-2xl" style={{ width: "100%" }}>
-              <div className="flex h-full items-center bg-white/35 px-4 text-sm font-medium text-paper" style={{ width: currentWidth }}>
+              <div className="flex h-full items-center bg-white/20 px-4 text-sm font-medium text-paper" style={{ width: currentWidth }}>
                 {formatCompactCurrency(model.currentPipeline)}
               </div>
-              <div className="flex h-full items-center bg-glow px-4 text-sm font-medium text-ink" style={{ width: recoverableWidth }}>
+              <div
+                className="flex h-full items-center justify-end border-l border-white/20 bg-gradient-to-r from-glow to-[#9df4dd] px-4 text-sm font-semibold text-ink shadow-[0_0_20px_rgba(121,242,210,0.18)]"
+                style={{ width: recoverableWidth }}
+              >
                 {formatCompactCurrency(model.recoverablePipeline)}
               </div>
             </div>
@@ -739,11 +744,18 @@ function OpportunityComparisonChart({ model }: { model: VisualModel }) {
         <div className="rounded-[20px] border border-white/10 bg-white/[0.03] p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cloud/55">Potential Pipeline Lift</p>
           <p className="mt-2 font-display text-3xl font-bold text-glow">+{formatCompactCurrency(model.recoverablePipeline)}</p>
+          <p className="mt-2 text-sm font-medium text-cloud/72">+{pipelineLiftPercent.toFixed(1)}%</p>
+          <p className="mt-3 text-sm text-cloud/65">From traffic you are already paying for.</p>
         </div>
         <div className="rounded-[20px] border border-white/10 bg-white/[0.02] p-4">
           <p className="text-sm leading-7 text-cloud/76">
             The difference between these two states is not new traffic — it&apos;s better use of traffic you already paid for.
           </p>
+          <p className="mt-3 text-sm leading-7 text-cloud/62">Even small improvements in signal quality can compound across your funnel.</p>
+          <div className="mt-4 flex items-center justify-between rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-cloud/55">Annualized Impact</span>
+            <span className="font-medium text-paper">+{formatCompactCurrency(annualizedImpact)} / year</span>
+          </div>
         </div>
       </div>
       <p className="mt-5 text-sm leading-7 text-cloud/70">
@@ -752,6 +764,7 @@ function OpportunityComparisonChart({ model }: { model: VisualModel }) {
       <div className="mt-4 space-y-1 text-xs leading-6 text-cloud/52">
         <p>Directional estimate based on your inputs and benchmark assumptions.</p>
         <p>Actual outcomes depend on traffic quality, conversion performance, and signal match rates.</p>
+        <p>This represents one layer of recoverable value. Additional gains often exist in targeting efficiency, attribution, and CRM activation.</p>
       </div>
     </div>
   );
