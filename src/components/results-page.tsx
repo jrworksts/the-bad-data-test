@@ -299,17 +299,6 @@ export function ResultsPage() {
                         ]}
                       />
                     </div>
-                    <div className="rounded-[22px] border border-white/10 bg-white/[0.03] p-5">
-                      <p className="text-sm font-medium text-cloud/70">Assumptions</p>
-                      {isPending ? <p className="mt-2 text-sm text-glow">Updating estimate...</p> : null}
-                      <div className="mt-3 grid gap-2">
-                        {visualModel.assumptions.map((assumption) => (
-                          <p key={assumption} className="text-sm text-cloud/65">
-                            {assumption}
-                          </p>
-                        ))}
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
