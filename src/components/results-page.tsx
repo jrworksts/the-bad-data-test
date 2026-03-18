@@ -234,7 +234,9 @@ export function ResultsPage() {
                 <div className="grid gap-3">
                   {result.findings.map((finding) => (
                     <div key={finding} className="flex gap-3 rounded-2xl border border-white/8 bg-white/[0.03] p-4">
-                      <ShieldAlert className="mt-0.5 h-5 w-5 text-rose-400" />
+                      <div className="mt-0.5 rounded-full bg-rose-500/12 p-1">
+                        <ShieldAlert className="h-4 w-4 text-rose-500" />
+                      </div>
                       <p className="text-sm leading-6 text-cloud/80">{finding}</p>
                     </div>
                   ))}
