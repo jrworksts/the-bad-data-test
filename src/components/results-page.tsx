@@ -253,7 +253,7 @@ export function ResultsPage() {
                   <h3 className="mt-2 font-display text-3xl font-bold text-paper">What Your Pipeline Could Look Like With Better Data</h3>
                 </div>
                 <p className="max-w-xl text-sm leading-6 text-cloud/65">
-                  This estimate is directional, but it highlights why incomplete data can create meaningful financial drag.
+                  Enter your company information below to see what sort of results you can expect.
                 </p>
               </div>
               <div className="grid gap-4 lg:grid-cols-4">
