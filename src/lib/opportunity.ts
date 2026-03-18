@@ -15,8 +15,9 @@ export function estimateOpportunity(inputs: OpportunityInputs): OpportunityEstim
   const cpa = inputs.cpa || 180;
   const closeRate = (inputs.leadToCloseRate || 3.6) / 100;
   const averageDeal = inputs.averageDealValue || 18000;
+  const identificationRate = inputs.identificationRate || 5;
 
-  const anonymousVisitors = traffic * 0.2;
+  const anonymousVisitors = traffic * ((100 - identificationRate) / 100);
   const conservativeRecoveredLeads = anonymousVisitors * 0.01;
   const aggressiveRecoveredLeads = anonymousVisitors * 0.025;
 
@@ -35,6 +36,7 @@ export function estimateOpportunity(inputs: OpportunityInputs): OpportunityEstim
       `Using ${cpa.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })} CPA`,
       `Using ${inputs.leadToCloseRate || 3.6}% sales conversion rate`,
       `Using ${averageDeal.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })} average deal value`,
+      `Using ${identificationRate}% current traffic identification rate`,
     ],
   };
 }

@@ -33,6 +33,7 @@ const initialOpportunityInputs: OpportunityInputs = {
   cpa: 180,
   leadToCloseRate: 3.6,
   averageDealValue: 18000,
+  identificationRate: 5,
 };
 
 function TrustLogoCard({

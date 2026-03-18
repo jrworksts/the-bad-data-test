@@ -83,6 +83,7 @@ export type OpportunityInputs = {
   cpa?: number;
   leadToCloseRate?: number;
   averageDealValue?: number;
+  identificationRate?: number;
 };
 
 export type OpportunityEstimate = {

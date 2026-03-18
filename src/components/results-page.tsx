@@ -23,6 +23,7 @@ export function ResultsPage() {
     cpa: 180,
     leadToCloseRate: 3.6,
     averageDealValue: 18000,
+    identificationRate: 5,
   });
   const [copied, setCopied] = useState(false);
   const [submissionState, setSubmissionState] = useState<"idle" | "submitting" | "submitted" | "error">("idle");
@@ -220,11 +221,38 @@ export function ResultsPage() {
                   Enter your company information below to see what sort of results you can expect.
                 </p>
               </div>
-              <div className="grid gap-4 lg:grid-cols-4">
-                <MetricInput label="Monthly traffic" value={opportunityInputs.monthlyTraffic} onChange={(value) => handleOpportunityChange("monthlyTraffic", value)} />
-                <MetricInput label="CPA" value={opportunityInputs.cpa} onChange={(value) => handleOpportunityChange("cpa", value)} />
-                <MetricInput label="Sales conversion rate" value={opportunityInputs.leadToCloseRate} onChange={(value) => handleOpportunityChange("leadToCloseRate", value)} />
-                <MetricInput label="Average deal value" value={opportunityInputs.averageDealValue} onChange={(value) => handleOpportunityChange("averageDealValue", value)} />
+              <div className="grid gap-4 lg:grid-cols-5">
+                <MetricInput
+                  label="Monthly Website Visitors"
+                  value={opportunityInputs.monthlyTraffic}
+                  onChange={(value) => handleOpportunityChange("monthlyTraffic", value)}
+                  helperText="The number of visitors your site receives each month."
+                />
+                <MetricInput
+                  label="Average Cost Per Customer (CPA)"
+                  value={opportunityInputs.cpa}
+                  onChange={(value) => handleOpportunityChange("cpa", value)}
+                  helperText="Your average acquisition cost per paying customer."
+                />
+                <MetricInput
+                  label="Visitor → Customer Conversion Rate"
+                  value={opportunityInputs.leadToCloseRate}
+                  onChange={(value) => handleOpportunityChange("leadToCloseRate", value)}
+                  helperText="The percentage of site visitors who ultimately become customers."
+                />
+                <MetricInput
+                  label="Average Revenue Per Customer"
+                  value={opportunityInputs.averageDealValue}
+                  onChange={(value) => handleOpportunityChange("averageDealValue", value)}
+                  helperText="The average revenue generated per customer or sale."
+                />
+                <MetricInput
+                  label="Current Traffic Identification Rate (optional)"
+                  value={opportunityInputs.identificationRate}
+                  onChange={(value) => handleOpportunityChange("identificationRate", value)}
+                  placeholder="5"
+                  helperText="Estimated percentage of your traffic you can currently identify or activate."
+                />
               </div>
               <div className="grid gap-6">
                 <div className="grid gap-4 lg:grid-cols-[1.35fr_0.65fr]">
@@ -308,15 +336,20 @@ function MetricInput({
   label,
   value,
   onChange,
+  helperText,
+  placeholder,
 }: {
   label: string;
   value?: number;
   onChange: (value: string) => void;
+  helperText?: string;
+  placeholder?: string;
 }) {
   return (
     <div>
       <label className="mb-2 block text-sm font-medium text-cloud/80">{label}</label>
-      <Input inputMode="decimal" value={value ?? ""} onChange={(event) => onChange(event.target.value)} />
+      <Input inputMode="decimal" placeholder={placeholder} value={value ?? ""} onChange={(event) => onChange(event.target.value)} />
+      {helperText ? <p className="mt-2 text-xs leading-5 text-cloud/55">{helperText}</p> : null}
     </div>
   );
 }
@@ -380,6 +413,10 @@ type VisualModel = {
   confidenceLabel: string;
   interpretation: string;
   traffic: number;
+  conversionRate: number;
+  identificationRate: number;
+  recoveryPotentialLow: number;
+  recoveryPotentialHigh: number;
   currentLeads: number;
   improvedLeads: number;
   currentPipeline: number;
@@ -412,6 +449,7 @@ function buildVisualModel(result: ResultModel, inputs: OpportunityInputs): Visua
   const closeRatePercent = inputs.leadToCloseRate || 3.6;
   const closeRate = closeRatePercent / 100;
   const averageDeal = inputs.averageDealValue || 64.21;
+  const identificationRate = inputs.identificationRate || 5;
   const currentSalesFactor = 1.0027777778;
   const idResolutionMatchPct = 30;
   const verificationPct = 80;
@@ -422,7 +460,7 @@ function buildVisualModel(result: ResultModel, inputs: OpportunityInputs): Visua
   const currentSales = traffic * closeRate * currentSalesFactor;
   const currentRevenue = currentSales * averageDeal;
   const estimatedSpend = currentSales * cpa;
-  const anonymousTraffic = Math.max(traffic - currentSales, 0);
+  const anonymousTraffic = traffic * ((100 - identificationRate) / 100);
   const trafficLossValue = (estimatedSpend / traffic) * anonymousTraffic;
   const consumerMatches = anonymousTraffic * (idResolutionMatchPct / 100);
   const verifiedMatchedProfiles = consumerMatches * (verificationPct / 100);
@@ -434,6 +472,8 @@ function buildVisualModel(result: ResultModel, inputs: OpportunityInputs): Visua
   const currentPipeline = currentRevenue;
   const improvedPipeline = currentRevenue + recoveredRevenue;
   const recoverablePipeline = recoveredRevenue;
+  const recoveryPotentialLow = recoverablePipeline * 0.75;
+  const recoveryPotentialHigh = recoverablePipeline * 1.18;
   const efficiencyGain = estimatedSpend * 0.36;
   const anonymousTrafficUpside = verifiedMatchedProfiles;
   const wastedSpend = estimatedSpend * 0.12;
@@ -451,6 +491,10 @@ function buildVisualModel(result: ResultModel, inputs: OpportunityInputs): Visua
           ? "Your score suggests incomplete visibility is creating some hidden drag, even if the stack looks stable on the surface."
           : "Your score suggests a stronger foundation than most, but there may still be underused traffic value or fragmented signals worth validating.",
     traffic,
+    conversionRate: closeRatePercent,
+    identificationRate,
+    recoveryPotentialLow,
+    recoveryPotentialHigh,
     currentLeads,
     improvedLeads,
     currentPipeline,
@@ -480,9 +524,10 @@ function buildVisualModel(result: ResultModel, inputs: OpportunityInputs): Visua
     ],
     assumptions: [
       `Using ${formatDetailedNumber(traffic)} monthly visitors`,
-      `Using ${formatDetailedCurrency(cpa)} CPA`,
-      `Using ${formatPercent(closeRatePercent)} sales conversion rate`,
-      `Using ${formatDetailedCurrency(averageDeal)} deal value / AOV`,
+      `Using ${formatDetailedCurrency(cpa)} average cost per customer`,
+      `Using ${formatPercent(closeRatePercent)} visitor-to-customer conversion rate`,
+      `Using ${formatDetailedCurrency(averageDeal)} average revenue per customer`,
+      `Using ${formatPercent(identificationRate)} current traffic identification rate`,
       `Using ${formatPercent(idResolutionMatchPct)} ID resolution match rate`,
       `Using ${formatPercent(verificationPct)} verification rate`,
       `Using ${formatPercent(reOptInPct)} re-opt-in rate`,
@@ -497,6 +542,17 @@ function formatCompactCurrency(value: number) {
     notation: value >= 1000 ? "compact" : "standard",
     maximumFractionDigits: 1,
   }).format(value);
+}
+
+function formatRangeCurrency(min: number, max: number) {
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    notation: min >= 1000 ? "compact" : "standard",
+    maximumFractionDigits: 0,
+  });
+
+  return `${formatter.format(min)}-${formatter.format(max)}`;
 }
 
 function formatCompactNumber(value: number) {
@@ -584,7 +640,7 @@ function FunnelLeakVisualization({ model }: { model: VisualModel }) {
     <div className="grid gap-4 md:grid-cols-2">
       {[
         { title: "Current state", key: "current" as const, tone: "bg-white/[0.03]" },
-        { title: "With stronger data", key: "improved" as const, tone: "bg-glow/8" },
+        { title: "With Improved Data Visibility", key: "improved" as const, tone: "bg-glow/8" },
       ].map((column) => (
         <div key={column.title} className={cn("rounded-[24px] border border-white/10 p-5", column.tone)}>
           <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">{column.title}</p>
@@ -619,8 +675,22 @@ function OpportunityComparisonChart({ model }: { model: VisualModel }) {
 
   return (
     <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
-      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">Main visual</p>
-      <h4 className="mt-2 font-display text-2xl font-bold text-paper">What Your Pipeline Could Look Like With Better Data</h4>
+      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">Main visual</p>
+          <h4 className="mt-2 font-display text-2xl font-bold text-paper">How Much Pipeline Your Current Data Gaps May Be Hiding</h4>
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-cloud/72">
+            Based on your inputs of {formatCompactNumber(model.traffic)} monthly visitors and a {formatPercent(model.conversionRate)} visitor-to-customer conversion rate.
+          </p>
+        </div>
+        <div className="rounded-[20px] border border-glow/15 bg-glow/10 px-4 py-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-glow">Estimated Recovery Potential</p>
+          <p className="mt-2 font-display text-3xl font-bold text-paper">
+            {formatRangeCurrency(model.recoveryPotentialLow, model.recoveryPotentialHigh)}
+          </p>
+          <p className="mt-2 text-sm text-cloud/68">Modeled midpoint {formatDetailedCurrency(model.recoverablePipeline)}</p>
+        </div>
+      </div>
       <div className="mt-6 grid gap-5">
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm text-cloud/72">
@@ -652,6 +722,24 @@ function OpportunityComparisonChart({ model }: { model: VisualModel }) {
             </div>
           </div>
         </div>
+      </div>
+      <div className="mt-6 grid gap-4 md:grid-cols-[0.9fr_1.1fr]">
+        <div className="rounded-[20px] border border-white/10 bg-white/[0.03] p-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cloud/55">Potential Pipeline Lift</p>
+          <p className="mt-2 font-display text-3xl font-bold text-glow">+{formatCompactCurrency(model.recoverablePipeline)}</p>
+        </div>
+        <div className="rounded-[20px] border border-white/10 bg-white/[0.02] p-4">
+          <p className="text-sm leading-7 text-cloud/76">
+            The difference between these two states is not new traffic — it&apos;s better use of traffic you already paid for.
+          </p>
+        </div>
+      </div>
+      <p className="mt-5 text-sm leading-7 text-cloud/70">
+        This estimate is based on improving how your existing traffic is identified and activated — not increasing traffic.
+      </p>
+      <div className="mt-4 space-y-1 text-xs leading-6 text-cloud/52">
+        <p>Directional estimate based on your inputs and benchmark assumptions.</p>
+        <p>Actual outcomes depend on traffic quality, conversion performance, and signal match rates.</p>
       </div>
     </div>
   );
