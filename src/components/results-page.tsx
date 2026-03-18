@@ -231,40 +231,15 @@ export function ResultsPage() {
                   <OpportunityComparisonChart model={visualModel} />
                   <OpportunityBreakdownChart model={visualModel} />
                 </div>
-                <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
-                  <div className="grid gap-4">
-                    <IdentificationLiftChart model={visualModel} />
-                    <OutputPanel
-                      title="Current performance"
-                      fields={[
-                        { label: "Sales", value: formatDetailedNumber(visualModel.currentSales) },
-                        { label: "Revenue", value: formatDetailedCurrency(visualModel.currentRevenue) },
-                        { label: "Estimated Spend", value: formatDetailedCurrency(visualModel.estimatedSpend) },
-                        { label: "Traffic Loss Value", value: formatDetailedCurrency(visualModel.trafficLossValue), highlight: true },
-                      ]}
-                    />
-                  </div>
-                  <div className="grid gap-4">
-                    <OutputPanel
-                      title="Identity recovery"
-                      fields={[
-                        { label: "Anonymous Traffic", value: formatDetailedNumber(visualModel.anonymousTraffic) },
-                        { label: "ID Resolution Match %", value: formatPercent(visualModel.idResolutionMatchPct) },
-                        { label: "Consumer Matches", value: formatDetailedNumber(visualModel.consumerMatches) },
-                        { label: "Verification %", value: formatPercent(visualModel.verificationPct) },
-                        { label: "Verified Matched Profiles", value: formatDetailedNumber(visualModel.verifiedMatchedProfiles) },
-                      ]}
-                    />
-                    <OutputPanel
-                      title="Recovery outcome"
-                      fields={[
-                        { label: "Re-opt-in %", value: formatPercent(visualModel.reOptInPct) },
-                        { label: "Recovered Leads", value: formatDetailedNumber(visualModel.recoveredLeads) },
-                        { label: "Re-activation Sales Rate", value: formatPercent(visualModel.reactivationSalesRate) },
-                        { label: "Recovered Sales", value: formatDetailedNumber(visualModel.recoveredSales, 0) },
-                        { label: "Recovered Revenue", value: formatDetailedCurrency(visualModel.recoveredRevenue) },
-                      ]}
-                    />
+                <div className="space-y-4">
+                  <RecoverableRevenueModule model={visualModel} />
+                  <div className="space-y-2 px-1">
+                    <p className="text-sm leading-7 text-cloud/70">
+                      This is not new traffic. This is value already inside your existing system.
+                    </p>
+                    <p className="text-sm leading-7 text-cloud/60">
+                      Even modest improvements in identification and re-engagement can create meaningful pipeline without increasing acquisition spend.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -715,30 +690,110 @@ function OpportunityBreakdownChart({ model }: { model: VisualModel }) {
   );
 }
 
-function OutputPanel({
-  title,
-  fields,
-}: {
-  title: string;
-  fields: { label: string; value: string; highlight?: boolean }[];
-}) {
+function RecoverableRevenueModule({ model }: { model: VisualModel }) {
+  const flow = [
+    {
+      label: "Anonymous visitors",
+      value: `${formatCompactNumber(model.anonymousTraffic)} anonymous visitors`,
+    },
+    {
+      label: "Matched profiles",
+      value: `${formatCompactNumber(model.consumerMatches)} matched`,
+      note: `${formatPercent(model.idResolutionMatchPct)} ID resolution match`,
+    },
+    {
+      label: "Verified contacts",
+      value: `${formatCompactNumber(model.verifiedMatchedProfiles)} verified`,
+      note: `${formatPercent(model.verificationPct)} verification`,
+    },
+    {
+      label: "Re-engaged leads",
+      value: `${formatCompactNumber(model.recoveredLeads)} re-engaged leads`,
+      note: `${formatPercent(model.reOptInPct)} re-opt-in`,
+    },
+    {
+      label: "Additional sales",
+      value: `${formatDetailedNumber(model.recoveredSales, 0)} additional sales`,
+      note: `${formatPercent(model.reactivationSalesRate)} re-activation sales rate`,
+    },
+    {
+      label: "Recovered revenue",
+      value: `${formatCompactCurrency(model.recoveredRevenue)} recovered revenue`,
+    },
+  ];
+
   return (
-    <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
-      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">{title}</p>
-      <div className="mt-4 grid gap-3">
-        {fields.map((field) => (
-          <div
-            key={field.label}
-            className={cn(
-              "flex items-center justify-between gap-4 border-b border-white/8 pb-3 text-sm last:border-b-0 last:pb-0",
-              field.highlight &&
-                "min-h-14 rounded-2xl border-0 bg-[linear-gradient(135deg,rgba(121,242,210,0.16),rgba(255,209,102,0.12))] px-4 py-0",
-            )}
-          >
-            <span className={cn("text-cloud/70", field.highlight && "font-semibold text-paper")}>{field.label}</span>
-            <span className={cn("font-medium text-paper", field.highlight && "font-display text-xl font-bold text-glow")}>{field.value}</span>
+    <div className="rounded-[24px] border border-white/10 bg-[linear-gradient(160deg,rgba(17,27,42,0.96),rgba(11,18,31,1))] p-5 md:p-6">
+      <div className="space-y-3">
+        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-glow">Your Recoverable Revenue Opportunity</p>
+        <h4 className="font-display text-3xl font-bold text-paper">A portion of your existing traffic is currently anonymous and underused.</h4>
+        <p className="max-w-4xl text-sm leading-7 text-cloud/75">
+          This model estimates how much of that traffic can be identified, re-engaged, and turned into additional revenue without increasing spend.
+        </p>
+        <p className="text-xs uppercase tracking-[0.18em] text-cloud/50">Directional estimate based on your current inputs and benchmark assumptions.</p>
+      </div>
+
+      <div className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+          <div className="space-y-3">
+            {flow.map((step, index) => (
+              <div key={step.label}>
+                <div className="flex items-center gap-4 rounded-[20px] border border-white/8 bg-white/[0.02] px-4 py-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/6 text-sm font-semibold text-paper">
+                    {index + 1}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium uppercase tracking-[0.16em] text-cloud/55">{step.label}</p>
+                    <p className="mt-1 text-lg font-semibold text-paper">{step.value}</p>
+                    {step.note ? <p className="mt-1 text-sm text-cloud/62">{step.note}</p> : null}
+                  </div>
+                </div>
+                {index < flow.length - 1 ? <div className="ml-5 h-5 w-px bg-gradient-to-b from-glow/80 to-white/10" /> : null}
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
+
+        <div className="space-y-4">
+          <div className="rounded-[24px] border border-glow/20 bg-[linear-gradient(135deg,rgba(121,242,210,0.18),rgba(255,209,102,0.10))] p-5">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-glow">Estimated Recoverable Revenue</p>
+            <p className="mt-4 font-display text-5xl font-bold text-paper">{formatCompactCurrency(model.recoveredRevenue)}</p>
+            <p className="mt-3 text-sm leading-7 text-cloud/78">
+              From traffic you have already paid for, but are not currently capturing at full value.
+            </p>
+          </div>
+
+          <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">Current Baseline</p>
+            <div className="mt-4 grid gap-3">
+              {[
+                { label: "Sales", value: formatDetailedNumber(model.currentSales) },
+                { label: "Revenue", value: formatDetailedCurrency(model.currentRevenue) },
+                { label: "Estimated Spend", value: formatDetailedCurrency(model.estimatedSpend) },
+              ].map((field) => (
+                <div key={field.label} className="flex items-center justify-between gap-4 border-b border-white/8 pb-3 text-sm last:border-b-0 last:pb-0">
+                  <span className="text-cloud/70">{field.label}</span>
+                  <span className="font-medium text-paper">{field.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">Traffic Loss Value</p>
+            <p className="mt-3 font-display text-3xl font-bold text-glow">{formatDetailedCurrency(model.trafficLossValue)}</p>
+            <p className="mt-3 text-sm leading-7 text-cloud/72">
+              This represents the portion of your spend that drove visitors who did not convert or become usable data.
+            </p>
+            <p className="mt-2 text-sm leading-7 text-cloud/60">
+              This traffic is not necessarily lost forever — it is often just unidentified and unactivated.
+            </p>
+          </div>
+
+          <p className="text-xs leading-6 text-cloud/52">
+            Actual outcomes depend on traffic quality, match quality, and conversion performance.
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -755,60 +810,6 @@ function CPASignalChart() {
         <text x="36" y="28" fill="#f5f7fb" fontSize="12">CPA</text>
         <text x="224" y="144" fill="#dbe5f4" fontSize="12">Signal quality</text>
       </svg>
-    </div>
-  );
-}
-
-function FragmentationMap() {
-  const nodes = [
-    { label: "CRM", x: 24, y: 24 },
-    { label: "Ad Platforms", x: 210, y: 24 },
-    { label: "Analytics", x: 24, y: 120 },
-    { label: "Site / Visitor Data", x: 180, y: 120 },
-  ];
-
-  return (
-    <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
-      <svg viewBox="0 0 340 220" className="w-full" role="img" aria-label="Fragmented systems with weak connections">
-        <line x1="94" y1="54" x2="210" y2="54" stroke="rgba(255,255,255,0.22)" strokeDasharray="6 8" />
-        <line x1="74" y1="84" x2="74" y2="120" stroke="rgba(255,255,255,0.16)" strokeDasharray="6 8" />
-        <line x1="260" y1="84" x2="250" y2="120" stroke="rgba(255,255,255,0.16)" strokeDasharray="6 8" />
-        <line x1="100" y1="150" x2="180" y2="150" stroke="rgba(255,255,255,0.22)" strokeDasharray="6 8" />
-        {nodes.map((node) => (
-          <g key={node.label}>
-            <rect x={node.x} y={node.y} width="110" height="58" rx="18" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.16)" />
-            <text x={node.x + 55} y={node.y + 33} textAnchor="middle" fill="#f5f7fb" fontSize="13">
-              {node.label}
-            </text>
-          </g>
-        ))}
-      </svg>
-    </div>
-  );
-}
-
-function IdentificationLiftChart({ model }: { model: VisualModel }) {
-  const maxValue = Math.max(...model.liftScenarios.map((item) => item.value));
-
-  return (
-    <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
-      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">Even Small Gains in Identification Can Have Outsized Impact</p>
-      <div className="mt-5 space-y-4">
-        {model.liftScenarios.map((scenario) => (
-          <div key={scenario.label} className="space-y-2">
-            <div className="flex items-center justify-between text-sm text-cloud/74">
-              <span>{scenario.label}</span>
-              <span className="font-medium text-paper">{formatCompactCurrency(scenario.value)}</span>
-            </div>
-            <div className="h-4 overflow-hidden rounded-full bg-white/10">
-              <div className="h-full rounded-full bg-gradient-to-r from-glow to-amber" style={{ width: `${(scenario.value / maxValue) * 100}%` }} />
-            </div>
-          </div>
-        ))}
-      </div>
-      <p className="mt-4 text-sm leading-7 text-cloud/65">
-        The upside often comes from incremental gains that compound across targeting, attribution, and conversion.
-      </p>
     </div>
   );
 }
