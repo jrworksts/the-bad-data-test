@@ -30,6 +30,7 @@ const submissionSchema = z.object({
       cpa: z.number().optional(),
       leadToCloseRate: z.number().optional(),
       averageDealValue: z.number().optional(),
+      identificationRate: z.number().optional(),
     })
     .optional(),
   submittedAt: z.string(),
