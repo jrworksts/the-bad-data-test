@@ -346,10 +346,10 @@ function MetricInput({
   placeholder?: string;
 }) {
   return (
-    <div>
-      <label className="mb-2 block text-sm font-medium text-cloud/80">{label}</label>
+    <div className="flex h-full flex-col">
+      <label className="mb-2 block min-h-[3.5rem] text-sm font-medium leading-6 text-cloud/80">{label}</label>
       <Input inputMode="decimal" placeholder={placeholder} value={value ?? ""} onChange={(event) => onChange(event.target.value)} />
-      {helperText ? <p className="mt-2 text-xs leading-5 text-cloud/55">{helperText}</p> : null}
+      {helperText ? <p className="mt-2 min-h-[3.25rem] text-xs leading-5 text-cloud/55">{helperText}</p> : null}
     </div>
   );
 }
