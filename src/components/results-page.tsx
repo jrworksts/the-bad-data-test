@@ -195,22 +195,6 @@ export function ResultsPage() {
                 </p>
               </CardContent>
             </Card>
-
-            <Card>
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Fragmentation</p>
-                  <h3 className="font-display text-3xl font-bold text-paper">How Fragmentation Hides Revenue Opportunity</h3>
-                  <p className="text-base leading-7 text-cloud/74">
-                    When key signals are split across disconnected systems, budget decisions become less reliable.
-                  </p>
-                </div>
-                <FragmentationMap />
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="grid gap-6 lg:grid-cols-2 lg:items-stretch">
             <Card>
               <CardContent className="flex h-full flex-col space-y-5">
                 <div className="space-y-2">
@@ -221,25 +205,6 @@ export function ResultsPage() {
                 <p className="text-sm leading-7 text-cloud/65">
                   Directional model - illustrates a common pattern when attribution, identity, and targeting signals weaken.
                 </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="flex h-full flex-col space-y-5">
-                <div className="space-y-2">
-                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Key findings</p>
-                  <h3 className="font-display text-3xl font-bold text-paper">What is creating the hidden revenue inefficiency</h3>
-                </div>
-                <div className="grid gap-3">
-                  {result.findings.map((finding) => (
-                    <div key={finding} className="flex gap-3 rounded-2xl border border-white/8 bg-white/[0.03] p-4">
-                      <div className="mt-0.5 rounded-full bg-rose-500/12 p-1">
-                        <ShieldAlert className="h-4 w-4 text-rose-500" />
-                      </div>
-                      <p className="text-sm leading-6 text-cloud/80">{finding}</p>
-                    </div>
-                  ))}
-                </div>
               </CardContent>
             </Card>
           </div>
