@@ -185,7 +185,7 @@ export function ResultsPage() {
               <CardContent className="space-y-6">
                 <div className="space-y-2">
                   <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Funnel leak view</p>
-                  <h3 className="font-display text-3xl font-bold text-paper">Where Your Funnel Is Likely Leaking Value</h3>
+                  <h3 className="font-display text-3xl font-bold text-paper">Where Your System Is Likely Leaking Value</h3>
                   <p className="max-w-3xl text-base leading-7 text-cloud/74">
                     You may not need more traffic. You may need better signal quality.
                   </p>
@@ -616,9 +616,9 @@ function DataConfidenceGauge({ model }: { model: VisualModel }) {
 
 function FunnelLeakVisualization({ model }: { model: VisualModel }) {
   const stages = [
-    { label: "Traffic", current: model.traffic, improved: model.traffic, format: formatCompactNumber },
-    { label: "Leads", current: model.currentLeads, improved: model.improvedLeads, format: formatCompactNumber },
-    { label: "Pipeline", current: model.currentPipeline, improved: model.improvedPipeline, format: formatCompactCurrency },
+    { label: "Traffic", current: 15000, improved: 15000, format: formatCompactNumber },
+    { label: "Leads (5%)", current: 750, improved: 5250, format: formatCompactNumber },
+    { label: "Pipeline", current: 3750000, improved: 26250000, format: formatCompactCurrency },
   ];
 
   const maxValue = Math.max(...stages.flatMap((stage) => [stage.current, stage.improved]));
@@ -627,7 +627,7 @@ function FunnelLeakVisualization({ model }: { model: VisualModel }) {
     <div className="grid gap-4 md:grid-cols-2">
       {[
         { title: "Current state", key: "current" as const, tone: "bg-white/[0.03]" },
-        { title: "With stronger data visibility", key: "improved" as const, tone: "bg-glow/8" },
+        { title: "With stronger data", key: "improved" as const, tone: "bg-glow/8" },
       ].map((column) => (
         <div key={column.title} className={cn("rounded-[24px] border border-white/10 p-5", column.tone)}>
           <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">{column.title}</p>
