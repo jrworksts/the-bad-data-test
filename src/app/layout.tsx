@@ -1,18 +1,8 @@
 import type { Metadata } from "next";
-import { Instrument_Sans, Space_Grotesk } from "next/font/google";
+import type { CSSProperties } from "react";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
 import { buildOrganizationSchema, buildWebsiteSchema } from "@/lib/schema";
-
-const sans = Instrument_Sans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
-
-const display = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-display",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.siteUrl),
@@ -52,7 +42,17 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={`${sans.variable} ${display.variable} font-sans`}>
+      <body
+        className="font-sans"
+        style={
+          {
+            "--font-sans":
+              '"Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
+            "--font-display":
+              '"Avenir Next Condensed", "Arial Narrow", "Avenir Next", "Segoe UI", sans-serif',
+          } as CSSProperties
+        }
+      >
         {children}
         {schemas.map((schema, index) => (
           <script
