@@ -120,7 +120,6 @@ export const leadGateAfterQuestion = 4;
 export const leadGateFields: ProfilingField[] = [
   { id: "firstName", label: "First name", type: "text", required: true, placeholder: "Taylor" },
   { id: "workEmail", label: "Work email", type: "email", required: true, placeholder: "taylor@company.com" },
-  { id: "company", label: "Company", type: "text", required: true, placeholder: "Acme Software" },
   { id: "websiteUrl", label: "Website URL", type: "url", required: true, placeholder: "https://company.com" },
 ];
 
