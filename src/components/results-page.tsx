@@ -1,9 +1,9 @@
 "use client";
 
 import Script from "next/script";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ShieldAlert } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { trackEvent } from "@/lib/analytics";
 import type { OpportunityInputs, QuizResponses, ResultModel } from "@/lib/types";
@@ -28,6 +28,7 @@ export function ResultsPage() {
   const [copied, setCopied] = useState(false);
   const [submissionState, setSubmissionState] = useState<"idle" | "submitting" | "submitted" | "error">("idle");
   const [isPending, startTransition] = useTransition();
+  const bookingRef = useRef<HTMLElement | null>(null);
   const shareUrl = `${siteConfig.siteUrl}/results`;
   const shareMessage = result
     ? `We scored ${result.score}/100 on The Bad Data Test (${result.label}). Worth a look if we're serious about attribution, anonymous traffic, and recoverable pipeline.`
@@ -159,6 +160,14 @@ export function ResultsPage() {
   }
 
   const visualModel = buildVisualModel(result, opportunityInputs);
+  const isAuditCandidate = result.qualification === "High fit" && result.score >= 40;
+  const annualizedRecoverableRevenue = visualModel.recoveredRevenue * 12;
+  const annualizedLeakFloor = Math.max(annualizedRecoverableRevenue, 100000);
+
+  function scrollToBooking() {
+    trackEvent("booking_started", { source: isAuditCandidate ? "results-hero" : "results-soft-cta" });
+    bookingRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   return (
     <main className="relative overflow-hidden">
@@ -175,9 +184,9 @@ export function ResultsPage() {
           <ResultsHeroVariant
             result={result}
             visualModel={visualModel}
-            onPrimary={() => window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer")}
-            onSecondary={() => window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer")}
-            onNativeShare={handleNativeShare}
+            isAuditCandidate={isAuditCandidate}
+            annualizedLeakFloor={annualizedLeakFloor}
+            onPrimary={isAuditCandidate ? scrollToBooking : handleEmailShare}
           />
 
           <div className="grid gap-6 lg:grid-cols-2">
@@ -274,36 +283,72 @@ export function ResultsPage() {
             </CardContent>
           </Card>
 
-          <section id="booking">
+          <section id="booking" ref={bookingRef}>
             <Card className="border-glow/15 bg-gradient-to-br from-glow/10 via-white/[0.04] to-amber/10">
               <CardContent className="grid gap-8 lg:grid-cols-[1fr_0.95fr]">
                 <div className="space-y-5">
                   <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Next step</p>
-                  <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">Find the Revenue You’re Already Paying For</h2>
-                  <p className="max-w-2xl text-base leading-8 text-cloud/80 md:text-lg">
-                    If these visuals directionally match your reality, the next step is a Revenue Recovery Audit to validate where signal is being lost and how much upside may be recoverable.
-                  </p>
-                  <div className="flex flex-wrap gap-3">
-                    <Button size="lg" onClick={() => window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer")}>
-                      Book a 20-Minute Intro Call
-                    </Button>
-                    <Button variant="secondary" size="lg" onClick={handleEmailShare}>
-                      Share the Test With Your Team
-                    </Button>
-                  </div>
+                  {isAuditCandidate ? (
+                    <>
+                      <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">
+                        If these visuals even loosely match your reality and you&apos;re spending $50k+/mo on paid, you&apos;re almost certainly leaving six figures on the table.
+                      </h2>
+                      <p className="max-w-2xl text-base leading-8 text-cloud/80 md:text-lg">
+                        The next step is a 20-minute Intro Call to validate the upside and decide if a full Revenue Recovery Audit makes sense now or later.
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        <Button size="lg" onClick={scrollToBooking}>
+                          Book a 20-Minute Revenue Leak Intro Call
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">
+                        Your Bad Data risk looks lower on the surface.
+                      </h2>
+                      <p className="max-w-2xl text-base leading-8 text-cloud/80 md:text-lg">
+                        This report is still useful for team alignment. Share it internally and use it to benchmark whether signal loss or attribution quality becomes a bigger issue as spend scales.
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        <Button size="lg" onClick={handleEmailShare}>
+                          Share this report with your team
+                        </Button>
+                      </div>
+                    </>
+                  )}
                 </div>
                 <div className="rounded-[28px] border border-white/10 bg-ink/70 p-6">
-                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">Book an intro call with our team</p>
-                  <div className="mt-6 overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.02]">
-                    <iframe
-                      src={siteConfig.bookingEmbedUrl}
-                      id={GHL_EMBED_ID}
-                      title="Revenue Recovery Audit intro call booking"
-                      className="min-h-[720px] w-full border-0 md:min-h-[820px]"
-                      scrolling="no"
-                      style={{ width: "100%", border: "none", overflow: "hidden" }}
-                    />
-                  </div>
+                  {isAuditCandidate ? (
+                    <>
+                      <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">Book an intro call with our team</p>
+                      <p className="mt-3 text-sm leading-6 text-cloud/68">
+                        We only run a limited number of Revenue Recovery Audits per month for teams spending $50k-$500k+/mo on paid. If your calendar is full, we&apos;ll prioritize you next month.
+                      </p>
+                      <div className="mt-6 overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.02]">
+                        <iframe
+                          src={siteConfig.bookingEmbedUrl}
+                          id={GHL_EMBED_ID}
+                          title="Revenue Recovery Audit intro call booking"
+                          className="min-h-[720px] w-full border-0 md:min-h-[820px]"
+                          scrolling="no"
+                          style={{ width: "100%", border: "none", overflow: "hidden" }}
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <div className="space-y-4">
+                      <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">Share-first recommendation</p>
+                      <p className="text-base leading-7 text-cloud/78">
+                        Bring this report to your growth lead, RevOps lead, or founder and see whether the findings match how your team currently thinks about attribution, anonymous traffic, and signal quality.
+                      </p>
+                      <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+                        <p className="text-sm leading-7 text-cloud/70">
+                          If the team sees the same pattern and wants a second look, the next step can still be a short intro call to validate whether a Revenue Recovery Audit makes sense.
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -364,24 +409,44 @@ function MetricInput({
 function ResultsHeroVariant({
   result,
   visualModel,
+  annualizedLeakFloor,
+  isAuditCandidate,
   onPrimary,
-  onSecondary,
-  onNativeShare,
 }: {
   result: ResultModel;
   visualModel: VisualModel;
+  annualizedLeakFloor: number;
+  isAuditCandidate: boolean;
   onPrimary: () => void;
-  onSecondary: () => void;
-  onNativeShare: () => void;
 }) {
+  const annualizedLeakLabel =
+    annualizedLeakFloor >= 100000 ? "$100k+" : formatCompactCurrency(annualizedLeakFloor);
+
   return (
     <div className="space-y-6">
       <Card className="overflow-hidden border-glow/15 bg-[radial-gradient(circle_at_top_left,rgba(121,242,210,0.12),transparent_28%),linear-gradient(160deg,rgba(12,23,40,0.96),rgba(7,14,25,1))]">
         <CardContent className="space-y-6 p-6 md:p-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Audit path</p>
-              <h2 className="mt-2 font-display text-4xl font-bold text-paper md:text-5xl">This result likely warrants a deeper audit conversation</h2>
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">
+                {isAuditCandidate ? "Revenue leak signal" : "Lower urgency result"}
+              </p>
+              <h2 className="mt-2 font-display text-4xl font-bold text-paper md:text-5xl">
+                {isAuditCandidate
+                  ? "Your Bad Data Test shows likely 6-figure revenue leaks."
+                  : "Your Bad Data risk looks lower on the surface."}
+              </h2>
+              <p className="mt-4 max-w-3xl text-base leading-8 text-cloud/80 md:text-lg">
+                {isAuditCandidate
+                  ? `${result.label} score of ${result.score}. At your level of spend, even small signal loss can mean ${annualizedLeakLabel} in wasted pipeline each year.`
+                  : `${result.label} score of ${result.score}. The stack may be healthier than average right now, but this report is still useful for pressure-testing attribution confidence, CRM activation, and anonymous traffic before spend scales further.`}
+              </p>
+              <div className="mt-6">
+                <Button size="lg" onClick={onPrimary}>
+                  {isAuditCandidate ? "Book a 20-Minute Revenue Leak Intro Call" : "Share This Report With Your Team"}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
             <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-cloud/75">{result.label}</div>
           </div>
@@ -389,25 +454,21 @@ function ResultsHeroVariant({
             <DataConfidenceGauge model={visualModel} />
             <div className="rounded-[24px] border border-white/10 bg-[linear-gradient(135deg,rgba(121,242,210,0.10),rgba(255,255,255,0.04))] p-5 md:p-6">
               <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Recommended flow</p>
-              <h3 className="mt-4 font-display text-3xl font-bold text-paper">Clear next steps, based on the score you just saw</h3>
+              <h3 className="mt-4 font-display text-3xl font-bold text-paper">
+                {isAuditCandidate ? "Validate whether the upside is real." : "Use this result to align the team before escalating."}
+              </h3>
               <p className="mt-4 max-w-2xl text-base leading-8 text-cloud/80">
-                If this result feels directionally right, the fastest path is to turn it into a diagnostic conversation. Share it internally first if needed, then book the audit intro call.
+                {isAuditCandidate
+                  ? "This is a directional estimate based on a few high-level inputs. The intro call is where we validate the model against your actual GA / CRM data and confirm if there is real 6-figure upside."
+                  : "Share the report with your growth lead, RevOps owner, or founder so the team can decide whether signal quality is a real constraint now or a benchmark to revisit later."}
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Button size="lg" onClick={onPrimary}>
-                  Book the intro call
+                  {isAuditCandidate ? "Book a 20-Minute Revenue Leak Intro Call" : "Share This Report With Your Team"}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>
             </div>
-          </div>
-          <div className="space-y-3">
-            {result.findings.map((finding) => (
-              <div key={finding} className="flex gap-3 rounded-2xl border border-white/8 bg-white/[0.03] p-4">
-                <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-rose" />
-                <p className="text-sm leading-6 text-cloud/78">{finding}</p>
-              </div>
-            ))}
           </div>
         </CardContent>
       </Card>
@@ -760,6 +821,9 @@ function OpportunityComparisonChart({ model }: { model: VisualModel }) {
       </div>
       <p className="mt-5 text-sm leading-7 text-cloud/70">
         This estimate is based on improving how your existing traffic is identified and activated — not increasing traffic.
+      </p>
+      <p className="mt-3 text-sm leading-7 text-cloud/70">
+        This is a directional estimate based on a few high-level inputs. The intro call is where we validate the model against your actual GA / CRM data and confirm if there is real 6-figure upside.
       </p>
       <div className="mt-4 space-y-1 text-xs leading-6 text-cloud/52">
         <p>Directional estimate based on your inputs and benchmark assumptions.</p>
