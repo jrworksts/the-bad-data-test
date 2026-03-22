@@ -164,9 +164,9 @@ export function ResultsPage() {
   const annualizedRecoverableRevenue = visualModel.recoveredRevenue * 12;
   const hasSixFigureUpside = visualModel.recoveryPotentialHigh * 12 >= 100000;
 
-  function scrollToBooking() {
+  function openBookingUrl() {
     trackEvent("booking_started", { source: isAuditCandidate ? "results-hero" : "results-soft-cta" });
-    bookingRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.open("https://api.leadconnectorhq.com/widget/bookings/intro-call-rev-recovery-audit", "_blank", "noopener,noreferrer");
   }
 
   return (
@@ -187,7 +187,7 @@ export function ResultsPage() {
             isAuditCandidate={isAuditCandidate}
             annualizedRecoverableRevenue={annualizedRecoverableRevenue}
             hasSixFigureUpside={hasSixFigureUpside}
-            onPrimary={scrollToBooking}
+            onPrimary={openBookingUrl}
           />
 
           <div className="grid gap-6 lg:grid-cols-2">
@@ -304,8 +304,8 @@ export function ResultsPage() {
                         Everything above is a modeled view from 8 questions. The Intro Call is where we turn this into a concrete 90-day plan.
                       </p>
                       <div className="flex flex-wrap gap-3">
-                        <Button size="lg" onClick={scrollToBooking}>
-                          Book a 20-Minute Revenue Leak Intro Call
+                        <Button size="lg" onClick={openBookingUrl}>
+                          Book a 20-Minute Revenue Recovery Call
                         </Button>
                       </div>
                     </>
@@ -321,8 +321,8 @@ export function ResultsPage() {
                         Everything above is a modeled view from 8 questions. The Intro Call is where we turn this into a concrete 90-day plan.
                       </p>
                       <div className="flex flex-wrap gap-3">
-                        <Button size="lg" onClick={scrollToBooking}>
-                          Book a 20-Minute Revenue Leak Intro Call
+                        <Button size="lg" onClick={openBookingUrl}>
+                          Book a 20-Minute Revenue Recovery Call
                         </Button>
                       </div>
                     </>
@@ -464,7 +464,7 @@ function ResultsHeroVariant({
               </p>
               <div className="mt-6">
                 <Button size="lg" onClick={onPrimary}>
-                  Book a 20-Minute Revenue Leak Intro Call
+                  Book a 20-Minute Revenue Recovery Call
                   <ArrowRight className="h-4 w-4" />
                 </Button>
                 <p className="mt-3 text-sm leading-6 text-cloud/68">
@@ -490,7 +490,7 @@ function ResultsHeroVariant({
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Button size="lg" onClick={onPrimary}>
-                  Book a 20-Minute Revenue Leak Intro Call
+                  Book a 20-Minute Revenue Recovery Call
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>
