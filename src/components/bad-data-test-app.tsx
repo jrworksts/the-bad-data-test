@@ -320,7 +320,7 @@ export function BadDataTestApp() {
                   {siteConfig.hero.subhead}
                 </p>
                 <p className="max-w-2xl text-base italic leading-7 text-cloud/66">
-                  ** For B2B SaaS / info products doing $5M–$100M ARR and spending $50k–$500k/mo on paid.
+                  ** For B2B SaaS / info products doing $5M–$100M ARR and spending $50k–$500k/mo on paid ads.
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-4">
