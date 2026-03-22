@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
-  CheckCircle2,
   ChevronLeft,
   Clipboard,
   MoveRight,
@@ -295,16 +294,9 @@ export function BadDataTestApp() {
               The Bad Data Test
             </a>
             <div className="hidden items-center gap-3 md:flex">
-              {primaryCtas.slice(0, 2).map((cta) => (
-                <Button
-                  key={cta.id}
-                  variant={cta.variant || "primary"}
-                  size="sm"
-                  onClick={() => handleCtaClick(cta.label, cta.href)}
-                >
-                  {cta.label}
-                </Button>
-              ))}
+              <Button size="sm" onClick={() => handleCtaClick(primaryCtas[0].label, primaryCtas[0].href)}>
+                {primaryCtas[0].label}
+              </Button>
             </div>
           </div>
         </header>
@@ -322,19 +314,26 @@ export function BadDataTestApp() {
                 <p className="max-w-2xl text-lg leading-8 text-cloud/80 md:text-xl">
                   {siteConfig.hero.subhead}
                 </p>
-                <p className="max-w-2xl text-base italic leading-7 text-cloud/66">
-                  ** For B2B SaaS / info products doing $5M–$100M ARR and spending $50k–$500k/mo on paid ads.
-                </p>
+                <ul className="grid gap-2 text-base leading-7 text-cloud/74">
+                  <li>For B2B SaaS / info products doing $5M-$100M ARR</li>
+                  <li>Takes ~2 minutes, 8 questions</li>
+                  <li>Get a modeled estimate of recoverable revenue, not generic tips</li>
+                </ul>
               </div>
-              <div className="flex flex-wrap items-center gap-4">
-                <Button size="lg" onClick={() => handleCtaClick("Take the Test", "#quiz")}>
-                  Take the Test
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-                <Button variant="secondary" size="lg" onClick={() => handleCtaClick("See How It Works", "#framework")}>
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-4">
+                  <Button size="lg" onClick={() => handleCtaClick("Start the Bad Data Test", "#quiz")}>
+                    Start the Bad Data Test
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
+                <button
+                  type="button"
+                  className="text-sm font-medium text-cloud/74 underline decoration-white/20 underline-offset-4 transition hover:text-paper"
+                  onClick={() => handleCtaClick("See How It Works", "#framework")}
+                >
                   See How It Works
-                </Button>
-                <p className="text-sm text-cloud/70">2-minute diagnostic. Most teams cannot answer every question confidently.</p>
+                </button>
               </div>
             </div>
 
@@ -342,25 +341,31 @@ export function BadDataTestApp() {
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Diagnostic preview</p>
-                    <h2 className="mt-2 font-display text-3xl font-bold text-paper">The Bad Data Test</h2>
+                    <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Step 1 of 8</p>
+                    <h2 className="mt-2 font-display text-3xl font-bold text-paper">~2 minutes total</h2>
                   </div>
                   <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-cloud/70">
-                    Sharp by design
+                    Start with one question
                   </div>
                 </div>
                 <div className="space-y-4 rounded-[24px] border border-white/10 bg-ink/60 p-5">
-                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">What it surfaces</p>
+                  <Progress value={12.5} />
                   <div className="space-y-3">
-                    {[
-                      "How much traffic is staying anonymous",
-                      "Whether attribution confidence is misleading you",
-                      "Where CRM signal is being wasted in paid media",
-                      "How fragmented systems may be hiding pipeline",
-                    ].map((item) => (
-                      <div key={item} className="flex items-start gap-3">
-                        <CheckCircle2 className="mt-0.5 h-5 w-5 text-glow" />
-                        <p className="text-sm leading-6 text-cloud/78">{item}</p>
+                    <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">
+                      {quizQuestions[0].title}
+                    </p>
+                    <h3 className="font-display text-2xl font-bold text-paper">
+                      {quizQuestions[0].prompt}
+                    </h3>
+                  </div>
+                  <div className="grid gap-3">
+                    {quizQuestions[0].options.slice(0, 3).map((option) => (
+                      <div
+                        key={option.value}
+                        className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-cloud/78"
+                      >
+                        <span>{option.label}</span>
+                        <ArrowRight className="h-4 w-4 text-cloud/35" />
                       </div>
                     ))}
                   </div>
@@ -377,13 +382,13 @@ export function BadDataTestApp() {
                 <Card key={stat.value} className="border-white/8 bg-white/[0.03]">
                   <CardContent className="flex h-full flex-col justify-center space-y-2 text-center">
                     <p className="font-display text-3xl font-bold text-paper">{stat.value}</p>
-                    <p className="mx-auto max-w-[18ch] text-sm leading-6 text-cloud/70">{stat.label}</p>
+                    <p className="mx-auto max-w-[20ch] text-sm leading-6 text-cloud/70">{stat.label}</p>
                   </CardContent>
                 </Card>
               ))}
             </div>
             <div className="space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cloud/50">Built for teams using</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cloud/50">Works with</p>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                 {siteConfig.trustLogos.map((logo) => (
                   <TrustLogoCard key={logo.name} logo={logo} />
@@ -397,13 +402,13 @@ export function BadDataTestApp() {
           <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div className="space-y-2">
               <p className="text-sm font-semibold uppercase tracking-[0.26em] text-glow">Diagnostic</p>
-              <h2 className="font-display text-4xl font-bold tracking-tight text-paper md:text-5xl">The Bad Data Test</h2>
+              <h2 className="font-display text-4xl font-bold tracking-tight text-paper md:text-5xl">Question 1 starts here</h2>
               <p className="max-w-3xl text-base leading-7 text-cloud/75 md:text-lg">
-                Most marketing systems look healthy on the surface, but hidden gaps in data infrastructure often cause companies to lose 20-40% of potential revenue. Answer the questions below to see if there may be hidden leaks in your marketing data.
+                Start with the first question below. One answer creates the momentum for the rest of the diagnostic.
               </p>
             </div>
             <Button variant="outline" onClick={startQuiz}>
-              {stage === "landing" ? "Start Diagnostic" : "Resume Diagnostic"}
+              {stage === "landing" ? "Start Question 1" : "Resume Diagnostic"}
             </Button>
           </div>
 
@@ -412,9 +417,8 @@ export function BadDataTestApp() {
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="text-sm font-medium text-cloud/65">
-                    Step {Math.min(currentIndex + 1, quizQuestions.length)} of {quizQuestions.length}
+                    Step {Math.min(currentIndex + 1, quizQuestions.length)} of {quizQuestions.length} - ~2 minutes total
                   </p>
-                  <p className="mt-1 text-sm text-cloud/55">Fast, keyboard-friendly, and built for your growth team.</p>
                 </div>
                 <div className="md:max-w-sm md:flex-1">
                   <Progress value={stage === "result" ? 100 : progress} />
@@ -624,57 +628,38 @@ export function BadDataTestApp() {
 
         <section id="booking" className="pb-12 pt-20 md:pb-20 md:pt-28">
           <Card className="border-glow/15 bg-gradient-to-br from-glow/10 via-white/[0.04] to-amber/10">
-            <CardContent className="grid gap-8 lg:grid-cols-[1fr_0.95fr]">
-                <div className="space-y-5">
-                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Next step</p>
-                  <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">Recover Revenue you are already paying for</h2>
-                  <p className="max-w-2xl text-base leading-8 text-cloud/80 md:text-lg">
-                    The Revenue Recovery Audit is designed to quantify where your team is losing signal, where attribution is distorting decisions, and where recoverable pipeline may already exist inside your current traffic.
-                  </p>
+            <CardContent className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+              <div className="space-y-5">
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Prefer to skip the test?</p>
+                <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">Book a 20-minute Intro Call instead</h2>
+                <p className="max-w-2xl text-base leading-8 text-cloud/80 md:text-lg">
+                  If you already know your team wants help pressure-testing identity, attribution, and signal loss, you can skip straight to a short intro call.
+                </p>
                 <div className="flex flex-wrap gap-3">
                   <Button
-                    size="lg"
+                    size="default"
                     onClick={() => {
                       trackEvent("booking_started");
                       window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer");
                     }}
                   >
-                    Book a 20-Minute Intro Call
+                    Prefer to skip the test? Book a 20-minute Intro Call.
                   </Button>
                 </div>
               </div>
               <div className="rounded-[28px] border border-white/10 bg-ink/70 p-6">
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">Book an intro call with our team</p>
-                <div className="mt-6 overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.02]">
-                  <iframe
-                    src={siteConfig.bookingEmbedUrl}
-                    id={GHL_EMBED_ID}
-                    title="Revenue Recovery Audit intro call booking"
-                    className="min-h-[720px] w-full border-0 md:min-h-[820px]"
-                    scrolling="no"
-                    style={{ width: "100%", border: "none", overflow: "hidden" }}
-                  />
-                </div>
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">Why the test usually converts better</p>
+                <p className="mt-3 text-base leading-7 text-cloud/76">
+                  The score and modeled revenue range create the tension most teams need before they commit to a deeper audit conversation.
+                </p>
                 <p className="mt-4 text-sm leading-6 text-cloud/60">
-                  If the embedded calendar feels cramped on your device,{" "}
-                  <a
-                    href={siteConfig.bookingUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-semibold text-glow underline decoration-glow/40 underline-offset-4"
-                    onClick={() => trackEvent("booking_started", { source: "fallback-link" })}
-                  >
-                    open the full booking page
-                  </a>
-                  .
+                  If you do want to skip ahead, the intro call is still the right place to decide whether a Revenue Recovery Audit makes sense.
                 </p>
               </div>
             </CardContent>
           </Card>
         </section>
       </div>
-
-      <Script src="https://link.msgsndr.com/js/form_embed.js" strategy="afterInteractive" />
 
       <div className="fixed inset-x-0 bottom-4 z-40 mx-auto flex max-w-md px-4 md:hidden">
         <Button className="w-full" size="lg" onClick={() => handleCtaClick(stage === "result" ? "Book a 20-Minute Intro Call" : "Take the Test", stage === "result" ? "#booking" : "#quiz")}>

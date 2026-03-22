@@ -15,12 +15,12 @@ const ghlBookingEmbedUrl =
   "https://api.leadconnectorhq.com/widget/booking/303rv61ZkidkXmcEvLhz";
 
 export const primaryCtas: CTAConfig[] = [
-  { id: "take-test", label: "Take the Test", href: "#quiz" },
+  { id: "take-test", label: "Start the Bad Data Test", href: "#quiz" },
   {
     id: "see-how",
     label: "See How It Works",
     href: "#framework",
-    variant: "secondary",
+    variant: "outline",
   },
   { id: "book-call", label: "Book a 20-Minute Intro Call", href: "#booking" },
   {
@@ -34,10 +34,10 @@ export const primaryCtas: CTAConfig[] = [
 export const proofStats: ProofStat[] = [
   {
     value: "15-30%",
-    label: "common wasted spend and hidden pipeline recovery range",
+    label: "typical efficiency upside we see in audits",
   },
-  { value: "2 min", label: "diagnostic completion time for qualified teams" },
-  { value: "20-40%", label: "potential revenue impact of hidden data gaps" },
+  { value: "2 min", label: "average time to complete this diagnostic" },
+  { value: "20-40%", label: "typical share of anonymous traffic on B2B SaaS sites" },
 ];
 
 export const stackLayers: StackLayer[] = [
@@ -111,10 +111,10 @@ export const siteConfig = {
       "A premium diagnostic for B2B SaaS and info product teams to assess whether bad data is hiding wasted ad spend, anonymous traffic, and recoverable pipeline.",
   },
   hero: {
-    badge: "2-minute diagnostic for B2B SaaS growth leaders",
-    headline: "Are You Trying to Grow Your Company with Bad Data?",
+    badge: "Revenue leak diagnostic for paid-growth teams",
+    headline: "2-Minute Bad Data Test for B2B SaaS Teams Spending $50k-$500k/mo on Paid",
     subhead:
-      "Most teams do not have a traffic problem. They have an identity, attribution, and signal problem. Take the test to see whether hidden data gaps are costing you pipeline, efficiency, and revenue.",
+      "Find 15-30% of wasted ad spend and hidden pipeline in your existing traffic by scoring your tracking, targeting, and attribution. Get a Bad Data Score plus an estimated revenue recovery range.",
     kicker:
       "Most teams cannot answer every question with confidence. That is often the signal.",
   },
