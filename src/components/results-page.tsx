@@ -162,7 +162,7 @@ export function ResultsPage() {
   const visualModel = buildVisualModel(result, opportunityInputs);
   const isAuditCandidate = result.qualification === "High fit" && result.score >= 40;
   const annualizedRecoverableRevenue = visualModel.recoveredRevenue * 12;
-  const annualizedLeakFloor = Math.max(annualizedRecoverableRevenue, 100000);
+  const hasSixFigureUpside = visualModel.recoveryPotentialHigh * 12 >= 100000;
 
   function scrollToBooking() {
     trackEvent("booking_started", { source: isAuditCandidate ? "results-hero" : "results-soft-cta" });
@@ -185,8 +185,9 @@ export function ResultsPage() {
             result={result}
             visualModel={visualModel}
             isAuditCandidate={isAuditCandidate}
-            annualizedLeakFloor={annualizedLeakFloor}
-            onPrimary={isAuditCandidate ? scrollToBooking : handleEmailShare}
+            annualizedRecoverableRevenue={annualizedRecoverableRevenue}
+            hasSixFigureUpside={hasSixFigureUpside}
+            onPrimary={scrollToBooking}
           />
 
           <div className="grid gap-6 lg:grid-cols-2">
@@ -202,6 +203,9 @@ export function ResultsPage() {
                 <FunnelLeakVisualization model={visualModel} />
                 <p className="text-sm leading-7 text-cloud/65">
                   This is not about getting more traffic. It is about capturing more value from the traffic you already have.
+                </p>
+                <p className="text-sm leading-7 text-cloud/70">
+                  On the Intro Call we&apos;ll replace these directional bars with your actual GA / CRM numbers and confirm which levers are real.
                 </p>
               </CardContent>
             </Card>
@@ -296,6 +300,9 @@ export function ResultsPage() {
                       <p className="max-w-2xl text-base leading-8 text-cloud/80 md:text-lg">
                         The next step is a 20-minute Intro Call to validate the upside and decide if a full Revenue Recovery Audit makes sense now or later.
                       </p>
+                      <p className="max-w-2xl text-base leading-8 text-cloud/72 md:text-lg">
+                        Everything above is a modeled view from 8 questions. The Intro Call is where we turn this into a concrete 90-day plan.
+                      </p>
                       <div className="flex flex-wrap gap-3">
                         <Button size="lg" onClick={scrollToBooking}>
                           Book a 20-Minute Revenue Leak Intro Call
@@ -308,11 +315,14 @@ export function ResultsPage() {
                         Your Bad Data risk looks lower on the surface.
                       </h2>
                       <p className="max-w-2xl text-base leading-8 text-cloud/80 md:text-lg">
-                        This report is still useful for team alignment. Share it internally and use it to benchmark whether signal loss or attribution quality becomes a bigger issue as spend scales.
+                        If you&apos;d like a brief review, you can still book a 20-minute Intro Call, but we typically reserve full Revenue Recovery Audits for teams spending $50k+/mo on paid.
+                      </p>
+                      <p className="max-w-2xl text-base leading-8 text-cloud/72 md:text-lg">
+                        Everything above is a modeled view from 8 questions. The Intro Call is where we turn this into a concrete 90-day plan.
                       </p>
                       <div className="flex flex-wrap gap-3">
-                        <Button size="lg" onClick={handleEmailShare}>
-                          Share this report with your team
+                        <Button size="lg" onClick={scrollToBooking}>
+                          Book a 20-Minute Revenue Leak Intro Call
                         </Button>
                       </div>
                     </>
@@ -338,14 +348,19 @@ export function ResultsPage() {
                     </>
                   ) : (
                     <div className="space-y-4">
-                      <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">Share-first recommendation</p>
+                      <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">Optional intro call</p>
                       <p className="text-base leading-7 text-cloud/78">
-                        Bring this report to your growth lead, RevOps lead, or founder and see whether the findings match how your team currently thinks about attribution, anonymous traffic, and signal quality.
+                        This looks lower urgency than the strongest audit candidates, but you can still use the call to pressure-test whether hidden signal loss is likely to become a real issue as spend grows.
                       </p>
-                      <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
-                        <p className="text-sm leading-7 text-cloud/70">
-                          If the team sees the same pattern and wants a second look, the next step can still be a short intro call to validate whether a Revenue Recovery Audit makes sense.
-                        </p>
+                      <div className="mt-6 overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.02]">
+                        <iframe
+                          src={siteConfig.bookingEmbedUrl}
+                          id={GHL_EMBED_ID}
+                          title="Revenue Recovery Audit intro call booking"
+                          className="min-h-[720px] w-full border-0 md:min-h-[820px]"
+                          scrolling="no"
+                          style={{ width: "100%", border: "none", overflow: "hidden" }}
+                        />
                       </div>
                     </div>
                   )}
@@ -409,18 +424,21 @@ function MetricInput({
 function ResultsHeroVariant({
   result,
   visualModel,
-  annualizedLeakFloor,
+  annualizedRecoverableRevenue,
+  hasSixFigureUpside,
   isAuditCandidate,
   onPrimary,
 }: {
   result: ResultModel;
   visualModel: VisualModel;
-  annualizedLeakFloor: number;
+  annualizedRecoverableRevenue: number;
+  hasSixFigureUpside: boolean;
   isAuditCandidate: boolean;
   onPrimary: () => void;
 }) {
-  const annualizedLeakLabel =
-    annualizedLeakFloor >= 100000 ? "$100k+" : formatCompactCurrency(annualizedLeakFloor);
+  const primaryHeadline = hasSixFigureUpside
+    ? "Your Bad Data Test shows likely 6-figure revenue leaks."
+    : "Your Bad Data Test shows likely meaningful revenue leaks.";
 
   return (
     <div className="space-y-6">
@@ -433,19 +451,27 @@ function ResultsHeroVariant({
               </p>
               <h2 className="mt-2 font-display text-4xl font-bold text-paper md:text-5xl">
                 {isAuditCandidate
-                  ? "Your Bad Data Test shows likely 6-figure revenue leaks."
+                  ? primaryHeadline
                   : "Your Bad Data risk looks lower on the surface."}
               </h2>
+              <p className="mt-4 text-sm font-medium uppercase tracking-[0.18em] text-cloud/60">
+                {result.label} score of {result.score}
+              </p>
               <p className="mt-4 max-w-3xl text-base leading-8 text-cloud/80 md:text-lg">
                 {isAuditCandidate
-                  ? `${result.label} score of ${result.score}. At your level of spend, even small signal loss can mean ${annualizedLeakLabel} in wasted pipeline each year.`
+                  ? "This is a directional estimate based on your answers. A 20-minute Intro Call is where we validate these numbers against your actual GA / CRM data and confirm if there&apos;s real upside."
                   : `${result.label} score of ${result.score}. The stack may be healthier than average right now, but this report is still useful for pressure-testing attribution confidence, CRM activation, and anonymous traffic before spend scales further.`}
               </p>
               <div className="mt-6">
                 <Button size="lg" onClick={onPrimary}>
-                  {isAuditCandidate ? "Book a 20-Minute Revenue Leak Intro Call" : "Share This Report With Your Team"}
+                  Book a 20-Minute Revenue Leak Intro Call
                   <ArrowRight className="h-4 w-4" />
                 </Button>
+                <p className="mt-3 text-sm leading-6 text-cloud/68">
+                  {isAuditCandidate
+                    ? "We only run a limited number of Revenue Recovery Audits per month for teams spending $50k-$500k/mo on paid."
+                    : "We typically reserve full Revenue Recovery Audits for teams spending $50k+/mo on paid."}
+                </p>
               </div>
             </div>
             <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-cloud/75">{result.label}</div>
@@ -459,12 +485,12 @@ function ResultsHeroVariant({
               </h3>
               <p className="mt-4 max-w-2xl text-base leading-8 text-cloud/80">
                 {isAuditCandidate
-                  ? "This is a directional estimate based on a few high-level inputs. The intro call is where we validate the model against your actual GA / CRM data and confirm if there is real 6-figure upside."
-                  : "Share the report with your growth lead, RevOps owner, or founder so the team can decide whether signal quality is a real constraint now or a benchmark to revisit later."}
+                  ? "This is a directional estimate based on a few high-level inputs. The Intro Call is where we validate the model against your actual GA / CRM data and confirm if there&apos;s real upside."
+                  : "This result still deserves a quick human review if the numbers feel directionally close to your reality. The Intro Call is the fastest way to pressure-test whether a deeper audit makes sense now or later."}
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Button size="lg" onClick={onPrimary}>
-                  {isAuditCandidate ? "Book a 20-Minute Revenue Leak Intro Call" : "Share This Report With Your Team"}
+                  Book a 20-Minute Revenue Leak Intro Call
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>
@@ -968,6 +994,9 @@ function RecoverableRevenueModule({ model }: { model: VisualModel }) {
             <p className="mt-4 font-display text-5xl font-bold text-paper">{formatCompactCurrency(model.recoveredRevenue)}</p>
             <p className="mt-3 text-sm leading-7 text-cloud/78">
               From traffic you have already paid for, but are not currently capturing at full value.
+            </p>
+            <p className="mt-3 text-sm leading-7 text-cloud/70">
+              We validate this range live on the call before recommending a Revenue Recovery Audit.
             </p>
           </div>
 
