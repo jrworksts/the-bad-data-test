@@ -319,6 +319,9 @@ export function BadDataTestApp() {
                 <p className="max-w-2xl text-lg leading-8 text-cloud/80 md:text-xl">
                   {siteConfig.hero.subhead}
                 </p>
+                <p className="max-w-2xl text-base italic leading-7 text-cloud/66">
+                  ** For B2B SaaS / info products doing $5M–$100M ARR and spending $50k–$500k/mo on paid.
+                </p>
               </div>
               <div className="flex flex-wrap items-center gap-4">
                 <Button size="lg" onClick={() => handleCtaClick("Take the Test", "#quiz")}>
