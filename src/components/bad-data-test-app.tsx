@@ -335,13 +335,15 @@ export function BadDataTestApp() {
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
-                <button
-                  type="button"
-                  className="text-sm font-medium text-cloud/74 underline decoration-white/20 underline-offset-4 transition hover:text-paper"
-                  onClick={() => handleCtaClick("See How It Works", "#framework")}
-                >
-                  See How It Works
-                </button>
+                <div className="flex justify-center sm:justify-start">
+                  <button
+                    type="button"
+                    className="text-sm font-medium text-cloud/74 underline decoration-white/20 underline-offset-4 transition hover:text-paper"
+                    onClick={() => handleCtaClick("See How It Works", "#framework")}
+                  >
+                    See How It Works
+                  </button>
+                </div>
               </div>
             </div>
 
