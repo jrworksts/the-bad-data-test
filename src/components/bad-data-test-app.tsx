@@ -331,14 +331,14 @@ export function BadDataTestApp() {
                   ))}
                 </ul>
               </div>
-              <div className="space-y-3">
-                <div className="flex flex-wrap items-center justify-center gap-4 sm:justify-start">
+              <div className="flex w-fit flex-col items-center space-y-3">
+                <div className="flex flex-wrap items-center justify-center gap-4">
                   <Button size="lg" onClick={() => handleCtaClick("Start the Bad Data Test", "#quiz")}>
                     Start the Bad Data Test
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
-                <div className="flex justify-center sm:w-fit sm:justify-center">
+                <div className="flex justify-center">
                   <button
                     type="button"
                     className="text-sm font-medium text-cloud/74 underline decoration-white/20 underline-offset-4 transition hover:text-paper"
