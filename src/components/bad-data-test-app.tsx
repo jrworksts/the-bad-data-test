@@ -70,6 +70,14 @@ function TrustLogoCard({
   );
 }
 
+function formatPhoneNumber(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
+
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
 export function BadDataTestApp() {
   const router = useRouter();
   const [stage, setStage] = useState<FunnelStage>("landing");
@@ -244,7 +252,10 @@ export function BadDataTestApp() {
   }
 
   function handleLeadFieldChange(field: string, value: string) {
-    setLead((previous) => ({ ...previous, [field]: value }));
+    setLead((previous) => ({
+      ...previous,
+      [field]: field === "phone" ? formatPhoneNumber(value) : value,
+    }));
   }
 
   function submitLeadGate() {
@@ -490,7 +501,7 @@ export function BadDataTestApp() {
                           }}
                         >
                           {leadGateFields.map((field) => (
-                            <div key={field.id}>
+                            <div key={field.id} className={field.id === "phone" ? "sm:col-span-2" : undefined}>
                               <label className="mb-2 block text-sm font-medium text-cloud/80" htmlFor={field.id}>
                                 {field.label}
                                 {field.required ? <span className="ml-1 text-rose">*</span> : null}
@@ -513,17 +524,18 @@ export function BadDataTestApp() {
                               ) : (
                                 <Input
                                   id={field.id}
-                                  type={field.type}
+                                  type={field.id === "phone" ? "tel" : field.type}
                                   required={field.required}
                                   placeholder={field.placeholder}
                                   value={lead[field.id] || ""}
+                                  inputMode={field.id === "phone" ? "tel" : undefined}
                                   onChange={(event) => handleLeadFieldChange(field.id, event.target.value)}
                                 />
                               )}
                             </div>
                           ))}
                           <div className="sm:col-span-2 flex flex-wrap gap-3 pt-2">
-                            <Button type="submit">
+                            <Button type="submit" className="w-full">
                               Continue
                               <MoveRight className="h-4 w-4" />
                             </Button>
@@ -546,7 +558,7 @@ export function BadDataTestApp() {
                                 key={option.value}
                                 type="button"
                                 className={cn(
-                                  "group rounded-[24px] border p-5 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-glow",
+                                  "group w-full rounded-[24px] border p-5 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-glow",
                                   active
                                     ? "border-glow bg-glow/10 shadow-[0_0_0_1px_rgba(121,242,210,0.15)]"
                                     : "border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.05]",
@@ -577,7 +589,7 @@ export function BadDataTestApp() {
                           })}
                         </div>
                         <div className="flex items-center justify-between">
-                          <Button variant="secondary" onClick={goBack} disabled={currentIndex === 0}>
+                          <Button variant="secondary" className="w-full" onClick={goBack} disabled={currentIndex === 0}>
                             <ChevronLeft className="h-4 w-4" />
                             Back
                           </Button>
