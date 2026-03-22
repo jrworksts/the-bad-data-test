@@ -71,7 +71,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "cpa-trend",
     title: "Cost Per Acquisition Trend",
-    prompt: "Over the past 12 months, your CPA has:",
+    prompt: "Over the past 12 months, your CPC has:",
     options: [
       makeOption("decreased", "Decreased", 1),
       makeOption("same", "Stayed the same", 5),
