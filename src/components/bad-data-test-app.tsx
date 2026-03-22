@@ -351,7 +351,18 @@ export function BadDataTestApp() {
               </div>
             </div>
 
-            <Card className="overflow-hidden border-glow/15 bg-slate/80">
+            <Card
+              className="cursor-pointer overflow-hidden border-glow/15 bg-slate/80 transition hover:border-glow/35 hover:bg-slate/90"
+              role="button"
+              tabIndex={0}
+              onClick={() => handleCtaClick("Hero quiz preview", "#quiz")}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  handleCtaClick("Hero quiz preview", "#quiz");
+                }
+              }}
+            >
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
