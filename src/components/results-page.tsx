@@ -260,7 +260,7 @@ export function ResultsPage() {
                   helperText="The average revenue generated per customer or sale."
                 />
                 <MetricInput
-                  label="Current Traffic Identification Rate (optional)"
+                  label="Current Traffic Identification Rate"
                   value={opportunityInputs.identificationRate}
                   onChange={(value) => handleOpportunityChange("identificationRate", value)}
                   placeholder="5"
