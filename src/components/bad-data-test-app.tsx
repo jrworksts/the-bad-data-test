@@ -82,6 +82,7 @@ export function BadDataTestApp() {
   const [result, setResult] = useState<ResultModel | null>(null);
   const [opportunityInputs, setOpportunityInputs] = useState<OpportunityInputs>(initialOpportunityInputs);
   const quizRef = useRef<HTMLDivElement | null>(null);
+  const leadGateFormRef = useRef<HTMLFormElement | null>(null);
 
   const currentQuestion = quizQuestions[currentIndex];
   const progress = Math.round(((currentIndex + 1) / quizQuestions.length) * 100);
@@ -247,10 +248,9 @@ export function BadDataTestApp() {
   }
 
   function submitLeadGate() {
-    const hasLeadDetails = leadGateFields.some((field) => !!lead[field.id]?.trim());
-    const missingRequired = leadGateFields.some((field) => field.required && !lead[field.id]?.trim());
+    if (leadGateFormRef.current && !leadGateFormRef.current.reportValidity()) return;
 
-    if (missingRequired) return;
+    const hasLeadDetails = leadGateFields.some((field) => !!lead[field.id]?.trim());
 
     setLeadGateSubmitted(true);
     setShowLeadGate(false);
@@ -442,15 +442,24 @@ export function BadDataTestApp() {
                             Tell us where to send it and a bit about your company.
                           </p>
                         </div>
-                        <div className="grid gap-4 sm:grid-cols-2">
+                        <form
+                          ref={leadGateFormRef}
+                          className="grid gap-4 sm:grid-cols-2"
+                          onSubmit={(event) => {
+                            event.preventDefault();
+                            submitLeadGate();
+                          }}
+                        >
                           {leadGateFields.map((field) => (
                             <div key={field.id}>
                               <label className="mb-2 block text-sm font-medium text-cloud/80" htmlFor={field.id}>
                                 {field.label}
+                                {field.required ? <span className="ml-1 text-rose">*</span> : null}
                               </label>
                               {field.type === "select" ? (
                                 <select
                                   id={field.id}
+                                  required={field.required}
                                   value={lead[field.id] || ""}
                                   onChange={(event) => handleLeadFieldChange(field.id, event.target.value)}
                                   className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-paper outline-none transition focus:border-glow/50"
@@ -466,6 +475,7 @@ export function BadDataTestApp() {
                                 <Input
                                   id={field.id}
                                   type={field.type}
+                                  required={field.required}
                                   placeholder={field.placeholder}
                                   value={lead[field.id] || ""}
                                   onChange={(event) => handleLeadFieldChange(field.id, event.target.value)}
@@ -474,12 +484,12 @@ export function BadDataTestApp() {
                             </div>
                           ))}
                           <div className="sm:col-span-2 flex flex-wrap gap-3 pt-2">
-                            <Button type="button" onClick={submitLeadGate}>
+                            <Button type="submit">
                               Continue
                               <MoveRight className="h-4 w-4" />
                             </Button>
                           </div>
-                        </div>
+                        </form>
                       </div>
                     ) : (
                       <div className="space-y-8">
