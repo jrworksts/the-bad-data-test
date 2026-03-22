@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
+  CheckCircle2,
   ChevronLeft,
   Clipboard,
   MoveRight,
@@ -314,10 +315,17 @@ export function BadDataTestApp() {
                 <p className="max-w-2xl text-lg leading-8 text-cloud/80 md:text-xl">
                   {siteConfig.hero.subhead}
                 </p>
-                <ul className="grid gap-2 text-base leading-7 text-cloud/74">
-                  <li>For B2B SaaS / info products doing $5M-$100M ARR</li>
-                  <li>Takes ~2 minutes, 8 questions</li>
-                  <li>Get a modeled estimate of recoverable revenue, not generic tips</li>
+                <ul className="grid gap-3 text-base leading-7 text-cloud/74">
+                  {[
+                    "For B2B SaaS / info products doing $5M-$100M ARR",
+                    "Takes ~2 minutes, 8 questions",
+                    "Get a modeled estimate of recoverable revenue, not generic tips",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-glow" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
               <div className="space-y-3">
