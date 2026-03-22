@@ -21,6 +21,17 @@ const makeOption = (
 
 export const quizQuestions: QuizQuestion[] = [
   {
+    id: "anonymous-traffic-value",
+    title: "Anonymous Traffic Value",
+    prompt: "If you could reliably identify 20% more of your website visitors and feed that into targeting, would that materially impact revenue?",
+    options: [
+      makeOption("yes-significantly", "Yes, significantly", 16),
+      makeOption("probably", "Probably", 9),
+      makeOption("probably-not", "Probably not", 3),
+      makeOption("not-sure", "Not sure", 8),
+    ],
+  },
+  {
     id: "traffic-identification",
     title: "Traffic Identification",
     prompt: "How much of your website traffic can you actually identify as real people or accounts?",
@@ -97,17 +108,6 @@ export const quizQuestions: QuizQuestion[] = [
       makeOption("mostly-confident", "Mostly confident", 5),
       makeOption("somewhat-confident", "Somewhat confident", 10),
       makeOption("not-confident", "Not confident at all", 16),
-    ],
-  },
-  {
-    id: "anonymous-traffic-value",
-    title: "Anonymous Traffic Value",
-    prompt: "If you could reliably identify 20% more of your website visitors and feed that into targeting, would that materially impact revenue?",
-    options: [
-      makeOption("yes-significantly", "Yes, significantly", 16),
-      makeOption("probably", "Probably", 9),
-      makeOption("probably-not", "Probably not", 3),
-      makeOption("not-sure", "Not sure", 8),
     ],
   },
 ];
