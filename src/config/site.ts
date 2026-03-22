@@ -112,9 +112,10 @@ export const siteConfig = {
   },
   hero: {
     badge: "Revenue leak diagnostic for paid-growth teams",
-    headline: "2-Minute Bad Data Test for B2B SaaS Teams Spending $50k-$500k/mo on Paid",
+    headline: "Find 6-Figure Revenue Leaks in 2 Minutes",
+    qualifier: "(For B2B SaaS Teams Spending $50k-$500k/mo on Paid Ads)",
     subhead:
-      "Find 15-30% of wasted ad spend and hidden pipeline in your existing traffic by scoring your tracking, targeting, and attribution. Get a Bad Data Score plus an estimated revenue recovery range.",
+      "Score your tracking, targeting, and attribution to see how much ad spend and pipeline you’re quietly wasting. Get a Bad Data Score plus an estimated revenue recovery range from your existing traffic.",
     kicker:
       "Most teams cannot answer every question with confidence. That is often the signal.",
   },

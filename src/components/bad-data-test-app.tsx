@@ -312,14 +312,17 @@ export function BadDataTestApp() {
                 <h1 className="max-w-4xl font-display text-5xl font-bold leading-[0.96] tracking-tight text-balance text-paper md:text-7xl">
                   {siteConfig.hero.headline}
                 </h1>
+                <p className="max-w-3xl font-display text-2xl font-semibold leading-tight text-cloud/88 md:text-3xl">
+                  {siteConfig.hero.qualifier}
+                </p>
                 <p className="max-w-2xl text-lg leading-8 text-cloud/80 md:text-xl">
                   {siteConfig.hero.subhead}
                 </p>
                 <ul className="grid gap-3 text-base leading-7 text-cloud/74">
                   {[
                     "For B2B SaaS / info products doing $5M-$100M ARR",
-                    "Takes ~2 minutes, 8 questions",
-                    "Get a modeled estimate of recoverable revenue, not generic tips",
+                    "Takes ~2 minutes, 8 questions, no deck, no demo",
+                    "Built for teams spending $50k-$500k/mo on paid ads",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-3">
                       <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-glow" />
@@ -344,6 +347,7 @@ export function BadDataTestApp() {
                     See How It Works
                   </button>
                 </div>
+                <p className="text-sm text-cloud/62">No pitch on this page. You&apos;ll see your score and modeled upside first.</p>
               </div>
             </div>
 
@@ -352,7 +356,7 @@ export function BadDataTestApp() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Step 1 of 8</p>
-                    <h2 className="mt-2 font-display text-3xl font-bold text-paper">~2 minutes total</h2>
+                    <h2 className="mt-2 font-display text-3xl font-bold text-paper">2 minutes total · 8 questions</h2>
                   </div>
                   <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-cloud/70">
                     Start with one question
@@ -361,6 +365,9 @@ export function BadDataTestApp() {
                 <div className="space-y-4 rounded-[24px] border border-white/10 bg-ink/60 p-5">
                   <Progress value={12.5} />
                   <div className="space-y-3">
+                    <p className="text-sm leading-6 text-cloud/72">
+                      Answer 8 quick questions to get your Bad Data Score and estimated recoverable revenue.
+                    </p>
                     <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">
                       {quizQuestions[0].title}
                     </p>
@@ -403,6 +410,14 @@ export function BadDataTestApp() {
                 {siteConfig.trustLogos.map((logo) => (
                   <TrustLogoCard key={logo.name} logo={logo} />
                 ))}
+              </div>
+            </div>
+            <div className="grid gap-3 md:grid-cols-2">
+              <div className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 text-sm leading-6 text-cloud/72">
+                Typical upside we see in audits: 15-30% efficiency gain in paid spend
+              </div>
+              <div className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 text-sm leading-6 text-cloud/72">
+                Most SaaS sites: 20-40% of traffic is anonymous / untracked
               </div>
             </div>
           </div>
