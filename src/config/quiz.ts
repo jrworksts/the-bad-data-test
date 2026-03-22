@@ -23,7 +23,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "traffic-identification",
     title: "Traffic Identification",
-    prompt: "What percentage of your website visitors can you actually identify?",
+    prompt: "How much of your website traffic can you actually identify as real people or accounts?",
     options: [
       makeOption("under-5", "Under 5%", 18),
       makeOption("5-20", "5–20%", 14),
@@ -35,13 +35,12 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "attribution-confidence",
     title: "Attribution Confidence",
-    prompt: "How confident are you in your marketing attribution?",
+    prompt: "How confident are you in your current marketing attribution?",
     options: [
       makeOption("extremely-confident", "Extremely confident", 1),
       makeOption("mostly-confident", "Mostly confident", 5),
       makeOption("somewhat-confident", "Somewhat confident", 10),
-      makeOption("not-confident", "Not confident", 15),
-      makeOption("dont-track", "We don’t really track attribution", 18),
+      makeOption("not-confident", "Not confident at all", 16),
     ],
   },
   {
@@ -49,32 +48,30 @@ export const quizQuestions: QuizQuestion[] = [
     title: "Audience Targeting",
     prompt: "How are your ad audiences primarily built today?",
     options: [
-      makeOption("demographic", "Demographic targeting", 10),
-      makeOption("interest", "Interest targeting", 12),
-      makeOption("lookalike", "Lookalike audiences", 8),
-      makeOption("intent-based", "Intent-based audiences", 4),
-      makeOption("custom-models", "Custom behavioral models", 2),
+      makeOption("basic-targeting", "Basic demographic / interest targeting", 12),
+      makeOption("lookalike", "Lookalike / similarity audiences", 8),
+      makeOption("crm-lists", "CRM / email list-based audiences", 5),
+      makeOption("behavior-based", "Product-usage or behavior-based audiences", 2),
     ],
   },
   {
     id: "crm-utilization",
-    title: "CRM Data Utilization",
-    prompt: "How much of your CRM data is actively used to improve ad targeting?",
+    title: "CRM / Data Utilization",
+    prompt: "How much of your CRM / product data is actively used to improve ad targeting?",
     options: [
       makeOption("almost-none", "Almost none", 16),
       makeOption("some-lists", "Some lists occasionally", 11),
-      makeOption("regular-syncing", "Regular audience syncing", 6),
-      makeOption("fully-integrated", "Fully integrated marketing system", 2),
-      makeOption("not-sure", "Not sure", 10),
+      makeOption("regular-syncing", "Regular audience syncing from CRM", 6),
+      makeOption("fully-integrated", "Fully integrated, data-driven targeting", 2),
     ],
   },
   {
     id: "cpa-trend",
-    title: "Cost Per Acquisition Trend",
-    prompt: "Over the past 12 months, your CPC has:",
+    title: "CAC Trend",
+    prompt: "Over the past 12 months, your customer acquisition cost (CAC) has:",
     options: [
       makeOption("decreased", "Decreased", 1),
-      makeOption("same", "Stayed the same", 5),
+      makeOption("same", "Stayed about the same", 5),
       makeOption("increased-slightly", "Increased slightly", 10),
       makeOption("increased-significantly", "Increased significantly", 18),
       makeOption("not-sure", "Not sure", 9),
@@ -83,7 +80,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "data-fragmentation",
     title: "Data Fragmentation",
-    prompt: "How many platforms currently hold customer or marketing data?",
+    prompt: "How many different tools hold important customer or marketing data today?",
     options: [
       makeOption("1-2", "1–2 systems", 2),
       makeOption("3-4", "3–4 systems", 8),
@@ -94,21 +91,21 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "decision-confidence",
     title: "Marketing Decision Confidence",
-    prompt: "When you make marketing budget decisions, how confident are you the data is accurate?",
+    prompt: "When you make marketing budget decisions, how confident are you that the data is accurate?",
     options: [
       makeOption("extremely-confident", "Extremely confident", 1),
       makeOption("mostly-confident", "Mostly confident", 5),
       makeOption("somewhat-confident", "Somewhat confident", 10),
-      makeOption("not-confident", "Not confident", 16),
+      makeOption("not-confident", "Not confident at all", 16),
     ],
   },
   {
     id: "anonymous-traffic-value",
     title: "Anonymous Traffic Value",
-    prompt: "If you could identify even 20% more of your website visitors, would that impact your revenue?",
+    prompt: "If you could reliably identify 20% more of your website visitors and feed that into targeting, would that materially impact revenue?",
     options: [
-      makeOption("yes-significantly", "Yes significantly", 16),
-      makeOption("possibly", "Possibly", 9),
+      makeOption("yes-significantly", "Yes, significantly", 16),
+      makeOption("probably", "Probably", 9),
       makeOption("probably-not", "Probably not", 3),
       makeOption("not-sure", "Not sure", 8),
     ],
@@ -118,9 +115,42 @@ export const quizQuestions: QuizQuestion[] = [
 export const leadGateAfterQuestion = 4;
 
 export const leadGateFields: ProfilingField[] = [
-  { id: "firstName", label: "First name", type: "text", required: false, placeholder: "Taylor" },
-  { id: "workEmail", label: "Work email", type: "email", required: false, placeholder: "taylor@company.com" },
-  { id: "phone", label: "Phone number", type: "text", required: false, placeholder: "(555) 123-4567" },
+  { id: "firstName", label: "First name", type: "text", required: true, placeholder: "Taylor" },
+  { id: "workEmail", label: "Work email", type: "email", required: true, placeholder: "taylor@company.com" },
+  {
+    id: "roleTitle",
+    label: "Role",
+    type: "select",
+    required: true,
+    options: [
+      "CMO / VP Marketing",
+      "Director / Head of Growth / Demand Gen",
+      "Performance Marketing Lead",
+      "Founder / CEO",
+      "Other",
+    ],
+  },
+  {
+    id: "arrRange",
+    label: "Company ARR",
+    type: "select",
+    required: true,
+    options: ["Under $5M", "$5M-$10M", "$10M-$25M", "$25M-$100M", "$100M+"],
+  },
+  {
+    id: "monthlyAdSpend",
+    label: "Monthly paid ad spend",
+    type: "select",
+    required: true,
+    options: ["Under $50k", "$50k-$100k", "$100k-$250k", "$250k-$500k", "$500k+"],
+  },
+  {
+    id: "monthlySessions",
+    label: "Monthly website sessions",
+    type: "select",
+    required: true,
+    options: ["Under 5k", "5k-15k", "15k-50k", "50k-100k", "100k+"],
+  },
 ];
 
 export const qualificationFields: ProfilingField[] = [

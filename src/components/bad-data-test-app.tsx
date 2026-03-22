@@ -248,6 +248,9 @@ export function BadDataTestApp() {
 
   function submitLeadGate() {
     const hasLeadDetails = leadGateFields.some((field) => !!lead[field.id]?.trim());
+    const missingRequired = leadGateFields.some((field) => field.required && !lead[field.id]?.trim());
+
+    if (missingRequired) return;
 
     setLeadGateSubmitted(true);
     setShowLeadGate(false);
@@ -434,24 +437,40 @@ export function BadDataTestApp() {
                           <div className="inline-flex rounded-full border border-glow/20 bg-glow/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-glow">
                             Earned gate
                           </div>
-                          <h3 className="font-display text-3xl font-bold text-paper">Want your score and recovery potential?</h3>
+                          <h3 className="font-display text-3xl font-bold text-paper">Want your Bad Data Score and estimated recovery upside?</h3>
                           <p className="text-base leading-7 text-cloud/75">
-                            Share a little context and we will make your result more useful. This helps us translate the diagnostic into something commercially relevant, not generic.
+                            Tell us where to send it and a bit about your company.
                           </p>
                         </div>
                         <div className="grid gap-4 sm:grid-cols-2">
                           {leadGateFields.map((field) => (
-                            <div key={field.id} className={cn(field.id === "phone" && "sm:col-span-2")}>
+                            <div key={field.id}>
                               <label className="mb-2 block text-sm font-medium text-cloud/80" htmlFor={field.id}>
                                 {field.label}
                               </label>
-                              <Input
-                                id={field.id}
-                                type={field.type}
-                                placeholder={field.placeholder}
-                                value={lead[field.id] || ""}
-                                onChange={(event) => handleLeadFieldChange(field.id, event.target.value)}
-                              />
+                              {field.type === "select" ? (
+                                <select
+                                  id={field.id}
+                                  value={lead[field.id] || ""}
+                                  onChange={(event) => handleLeadFieldChange(field.id, event.target.value)}
+                                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-paper outline-none transition focus:border-glow/50"
+                                >
+                                  <option value="">Select</option>
+                                  {field.options?.map((option) => (
+                                    <option key={option} value={option}>
+                                      {option}
+                                    </option>
+                                  ))}
+                                </select>
+                              ) : (
+                                <Input
+                                  id={field.id}
+                                  type={field.type}
+                                  placeholder={field.placeholder}
+                                  value={lead[field.id] || ""}
+                                  onChange={(event) => handleLeadFieldChange(field.id, event.target.value)}
+                                />
+                              )}
                             </div>
                           ))}
                           <div className="sm:col-span-2 flex flex-wrap gap-3 pt-2">

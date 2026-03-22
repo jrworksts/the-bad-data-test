@@ -30,8 +30,7 @@ export function calculateRiskScore(answers: QuizResponses) {
   if (answers["traffic-identification"] === "under-5") score += 10;
   if (answers["crm-utilization"] === "almost-none") score += 8;
   if (answers["data-fragmentation"] === "5-plus") score += 6;
-  if (answers["attribution-confidence"] === "dont-track") score += 8;
-  if (answers["traffic-waste"] === "over-90") score += 8;
+  if (answers["attribution-confidence"] === "not-confident") score += 8;
 
   return clamp(Math.round((score / 150) * 100), 0, 100);
 }
@@ -54,7 +53,7 @@ export function determineQualification(profile: LeadProfile): QualificationTier 
 function buildFindings(answers: QuizResponses) {
   const findings: string[] = [];
 
-  if (answers["attribution-confidence"] === "somewhat-confident" || answers["attribution-confidence"] === "not-confident" || answers["attribution-confidence"] === "dont-track") {
+  if (answers["attribution-confidence"] === "somewhat-confident" || answers["attribution-confidence"] === "not-confident") {
     findings.push("Your team may be making budget decisions with incomplete attribution.");
   }
   if (answers["traffic-identification"] === "under-5" || answers["traffic-identification"] === "5-20") {
@@ -64,7 +63,7 @@ function buildFindings(answers: QuizResponses) {
     findings.push("CRM data appears underutilized in paid media targeting.");
   }
   if (answers["cpa-trend"] === "increased-slightly" || answers["cpa-trend"] === "increased-significantly") {
-    findings.push("Rising CPA may reflect signal loss, not just creative fatigue.");
+    findings.push("Rising CAC may reflect signal loss, not just creative fatigue.");
   }
   if (answers["data-fragmentation"] === "5-plus" || answers["data-fragmentation"] === "3-4") {
     findings.push("Fragmented systems may be hiding recoverable pipeline.");
