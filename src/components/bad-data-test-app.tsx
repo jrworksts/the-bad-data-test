@@ -332,13 +332,13 @@ export function BadDataTestApp() {
                 </ul>
               </div>
               <div className="space-y-3">
-                <div className="flex flex-wrap items-center gap-4">
+                <div className="flex flex-wrap items-center justify-center gap-4 sm:justify-start">
                   <Button size="lg" onClick={() => handleCtaClick("Start the Bad Data Test", "#quiz")}>
                     Start the Bad Data Test
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
-                <div className="flex justify-center sm:justify-start">
+                <div className="flex justify-center sm:w-fit sm:justify-center">
                   <button
                     type="button"
                     className="text-sm font-medium text-cloud/74 underline decoration-white/20 underline-offset-4 transition hover:text-paper"
@@ -347,7 +347,6 @@ export function BadDataTestApp() {
                     See How It Works
                   </button>
                 </div>
-                <p className="text-sm text-cloud/62">No pitch on this page. You&apos;ll see your score and modeled upside first.</p>
               </div>
             </div>
 
