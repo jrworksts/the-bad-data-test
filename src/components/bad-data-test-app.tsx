@@ -314,41 +314,70 @@ export function BadDataTestApp() {
         </header>
 
         <section className="relative pt-12 md:pt-20">
-          <div className="grid items-start gap-12 lg:grid-cols-[1.15fr_0.85fr]">
-            <div className="space-y-8">
+          <Card className="relative overflow-hidden border-glow/15 bg-[linear-gradient(145deg,rgba(9,25,39,0.96),rgba(14,39,55,0.92))]">
+            <div className="absolute inset-0 opacity-90" aria-hidden>
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(121,242,210,0.12),transparent_34%),linear-gradient(180deg,rgba(8,17,31,0.18),rgba(8,17,31,0.72))]" />
+              <div className="absolute -right-16 top-10 h-56 w-56 rounded-full bg-glow/12 blur-3xl" />
+              <div className="absolute left-[-4rem] top-32 h-72 w-72 rounded-full bg-amber/10 blur-3xl" />
+              <div className="absolute inset-x-10 bottom-12 h-px bg-gradient-to-r from-transparent via-white/12 to-transparent" />
+              <div className="absolute bottom-14 left-[14%] h-24 w-8 rounded-t-full bg-white/8 shadow-[0_0_24px_rgba(255,255,255,0.04)]" />
+              <div className="absolute bottom-14 left-[28%] h-40 w-8 rounded-t-full bg-white/10 shadow-[0_0_24px_rgba(121,242,210,0.08)]" />
+              <div className="absolute bottom-14 left-[42%] h-56 w-8 rounded-t-full bg-gradient-to-t from-glow/45 to-glow/15 shadow-[0_0_28px_rgba(121,242,210,0.18)]" />
+              <div className="absolute bottom-14 left-[56%] h-72 w-8 rounded-t-full bg-gradient-to-t from-amber/45 to-amber/15 shadow-[0_0_28px_rgba(247,201,109,0.16)]" />
+              <div className="absolute bottom-14 left-[70%] h-96 w-8 rounded-t-full bg-gradient-to-t from-glow/55 to-glow/18 shadow-[0_0_30px_rgba(121,242,210,0.22)]" />
+              <svg
+                viewBox="0 0 1200 480"
+                className="absolute inset-0 h-full w-full"
+                preserveAspectRatio="none"
+              >
+                <path
+                  d="M70 410 C220 388 340 336 462 276 C592 212 708 150 820 124 C930 98 1038 118 1140 76"
+                  fill="none"
+                  stroke="rgba(121,242,210,0.35)"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M72 430 C204 420 336 378 454 334 C590 286 726 220 854 196 C974 174 1062 180 1140 150"
+                  fill="none"
+                  stroke="rgba(247,201,109,0.24)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+            <CardContent className="relative z-10 flex min-h-[560px] flex-col items-center justify-center px-6 py-16 text-center md:min-h-[640px] md:px-12">
               <div className="inline-flex items-center rounded-full border border-glow/20 bg-glow/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-glow">
                 {siteConfig.hero.badge}
               </div>
-              <div className="space-y-5">
-                <h1 className="max-w-4xl font-display text-5xl font-bold leading-[0.96] tracking-tight text-balance text-paper md:text-7xl">
+              <div className="mt-8 space-y-5">
+                <h1 className="mx-auto max-w-5xl font-display text-5xl font-bold leading-[0.96] tracking-tight text-balance text-paper md:text-7xl">
                   {siteConfig.hero.headline}
                 </h1>
-                <p className="max-w-3xl font-display text-2xl font-semibold leading-tight text-cloud/88 md:text-3xl">
+                <p className="mx-auto max-w-4xl font-display text-2xl font-semibold leading-tight text-cloud/88 md:text-3xl">
                   {siteConfig.hero.qualifier}
                 </p>
-                <p className="max-w-2xl text-lg leading-8 text-cloud/80 md:text-xl">
+                <p className="mx-auto max-w-3xl text-lg leading-8 text-cloud/80 md:text-xl">
                   {siteConfig.hero.subhead}
                 </p>
-                <ul className="grid gap-3 text-base leading-7 text-cloud/74">
+                <ul className="mx-auto grid max-w-3xl gap-3 text-base leading-7 text-cloud/74 md:justify-items-center">
                   {[
                     "For B2B SaaS / info products doing $5M-$100M ARR",
                     "Takes ~2 minutes, 8 questions, no deck, no demo",
                     "Built for teams spending $50k-$500k/mo on paid ads",
                   ].map((item) => (
-                    <li key={item} className="flex items-start gap-3">
+                    <li key={item} className="flex items-start gap-3 text-left">
                       <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-glow" />
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className="flex w-fit flex-col items-center space-y-3">
-                <div className="flex flex-wrap items-center justify-center gap-4">
-                  <Button size="lg" onClick={() => handleCtaClick("Start the Bad Data Test", "#quiz")}>
-                    Start the Bad Data Test
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </div>
+              <div className="mt-10 flex w-full max-w-sm flex-col items-center space-y-3">
+                <Button size="lg" className="w-full" onClick={() => handleCtaClick("Start the Bad Data Test", "#quiz")}>
+                  Start the Bad Data Test
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
                 <div className="flex justify-center">
                   <button
                     type="button"
@@ -359,61 +388,8 @@ export function BadDataTestApp() {
                   </button>
                 </div>
               </div>
-            </div>
-
-            <Card
-              className="cursor-pointer overflow-hidden border-glow/15 bg-slate/80 transition hover:border-glow/35 hover:bg-slate/90"
-              role="button"
-              tabIndex={0}
-              onClick={() => handleCtaClick("Hero quiz preview", "#quiz")}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  handleCtaClick("Hero quiz preview", "#quiz");
-                }
-              }}
-            >
-              <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Step 1 of 8</p>
-                    <h2 className="mt-2 font-display text-3xl font-bold text-paper">2 minutes total · 8 questions</h2>
-                  </div>
-                  <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-cloud/70">
-                    Start with one question
-                  </div>
-                </div>
-                <div className="space-y-4 rounded-[24px] border border-white/10 bg-ink/60 p-5">
-                  <Progress value={12.5} />
-                  <div className="space-y-3">
-                    <p className="text-sm leading-6 text-cloud/72">
-                      Answer 8 quick questions to get your Bad Data Score and estimated recoverable revenue.
-                    </p>
-                    <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">
-                      {quizQuestions[0].title}
-                    </p>
-                    <h3 className="font-display text-2xl font-bold text-paper">
-                      {quizQuestions[0].prompt}
-                    </h3>
-                  </div>
-                  <div className="grid gap-3">
-                    {quizQuestions[0].options.slice(0, 3).map((option) => (
-                      <div
-                        key={option.value}
-                        className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-cloud/78"
-                      >
-                        <span>{option.label}</span>
-                        <ArrowRight className="h-4 w-4 text-cloud/35" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="rounded-[24px] border border-amber/15 bg-amber/10 p-5">
-                  <p className="text-sm leading-6 text-cloud/80">{siteConfig.hero.kicker}</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+            </CardContent>
+          </Card>
           <div className="mt-10 space-y-6">
             <div className="grid gap-4 md:grid-cols-3">
               {proofStats.map((stat) => (
