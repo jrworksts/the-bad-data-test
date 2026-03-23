@@ -23,7 +23,7 @@ export const quizQuestions: QuizQuestion[] = [
   {
     id: "anonymous-traffic-value",
     title: "Anonymous Traffic Value",
-    prompt: "If you could reliably identify 20% more of your website visitors and feed that into targeting, would that materially impact revenue?",
+    prompt: "If you could reliably identify 20% more of your website visitors and feed that into sales, would that materially impact revenue?",
     options: [
       makeOption("yes-significantly", "Yes, significantly", 16),
       makeOption("probably", "Probably", 9),
