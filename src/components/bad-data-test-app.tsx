@@ -421,7 +421,7 @@ export function BadDataTestApp() {
           </div>
         </section>
 
-        <section id="quiz" ref={quizRef} className="pt-20 md:pt-28">
+        <section id="quiz" ref={quizRef} className="scroll-mt-24 pt-20 md:pt-28">
           <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div className="space-y-2">
               <p className="text-sm font-semibold uppercase tracking-[0.26em] text-glow">Diagnostic</p>
