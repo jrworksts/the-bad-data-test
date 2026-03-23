@@ -455,7 +455,7 @@ function ResultsHeroVariant({
               </h2>
               <p className="mt-4 max-w-3xl text-base leading-8 text-cloud/80 md:text-lg">
                 {isAuditCandidate
-                  ? "This is a directional estimate based on your answers. A 20-minute Intro Call is where we validate these numbers against your actual GA / CRM data and confirm if there&apos;s real upside."
+                  ? "This is a directional estimate based on your answers. A 20-minute Revenue Recovery Call is where we validate these numbers against your actual GA / CRM data and confirm if there&apos;s real upside."
                   : `${result.label} score of ${result.score}. The stack may be healthier than average right now, but this report is still useful for pressure-testing attribution confidence, CRM activation, and anonymous traffic before spend scales further.`}
               </p>
               <div className="mt-6">
