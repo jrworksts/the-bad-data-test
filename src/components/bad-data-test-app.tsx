@@ -630,7 +630,7 @@ export function BadDataTestApp() {
               </CardContent>
             </Card>
           </div>
-          <div className="mt-10 flex justify-center">
+          <div className="flex justify-center py-12 md:py-16">
             <Button size="lg" onClick={() => handleCtaClick("Start the Bad Data Test", "#quiz")}>
               Start the Bad Data Test
               <ArrowRight className="h-4 w-4" />
@@ -653,7 +653,7 @@ export function BadDataTestApp() {
               </Card>
             ))}
           </div>
-          <div className="mt-10 flex justify-center">
+          <div className="flex justify-center py-12 md:py-16">
             <Button size="lg" onClick={() => handleCtaClick("Start the Bad Data Test", "#quiz")}>
               Start the Bad Data Test
               <ArrowRight className="h-4 w-4" />
