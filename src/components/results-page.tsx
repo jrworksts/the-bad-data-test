@@ -700,21 +700,28 @@ function DataConfidenceGauge({ model }: { model: VisualModel }) {
 }
 
 function FunnelLeakVisualization({ model }: { model: VisualModel }) {
+  const currentTraffic = model.traffic;
+  const improvedTraffic = model.traffic;
+  const currentLeadRate = 0.05;
+  const improvedLeadRate = 0.35;
+  const currentLeadCount = currentTraffic * currentLeadRate;
+  const improvedLeadCount = improvedTraffic * improvedLeadRate;
+
   const stages = [
     {
       label: "Traffic",
       currentLabel: "Traffic",
       improvedLabel: "Traffic",
-      current: 15000,
-      improved: 15000,
+      current: currentTraffic,
+      improved: improvedTraffic,
       format: formatCompactNumber,
     },
     {
       label: "Leads",
       currentLabel: "Leads (5%)",
       improvedLabel: "Leads (35%)",
-      current: 750,
-      improved: 5250,
+      current: currentLeadCount,
+      improved: improvedLeadCount,
       format: formatCompactNumber,
       currentWidth: "5%",
       improvedWidth: "35%",
