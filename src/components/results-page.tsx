@@ -453,9 +453,6 @@ function ResultsHeroVariant({
                   ? primaryHeadline
                   : "Your Bad Data risk looks lower on the surface."}
               </h2>
-              <p className="mt-4 text-sm font-medium uppercase tracking-[0.18em] text-cloud/60">
-                {result.label} score of {result.score}
-              </p>
               <p className="mt-4 max-w-3xl text-base leading-8 text-cloud/80 md:text-lg">
                 {isAuditCandidate
                   ? "This is a directional estimate based on your answers. A 20-minute Intro Call is where we validate these numbers against your actual GA / CRM data and confirm if there&apos;s real upside."
@@ -466,14 +463,8 @@ function ResultsHeroVariant({
                   Book a 20-Minute Revenue Recovery Call
                   <ArrowRight className="h-4 w-4" />
                 </Button>
-                <p className="mt-3 text-sm leading-6 text-cloud/68">
-                  {isAuditCandidate
-                    ? "We only run a limited number of Revenue Recovery Audits per month for teams spending $50k-$500k/mo on paid."
-                    : "We typically reserve full Revenue Recovery Audits for teams spending $50k+/mo on paid."}
-                </p>
               </div>
             </div>
-            <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-cloud/75">{result.label}</div>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             <DataConfidenceGauge model={visualModel} />
