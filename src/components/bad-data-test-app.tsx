@@ -96,14 +96,11 @@ export function BadDataTestApp() {
   const progress = Math.round(((currentIndex + 1) / quizQuestions.length) * 100);
 
   function scrollToQuizHeading() {
-    const target = document.getElementById("quiz");
+    const target = document.getElementById("quiz-heading") || document.getElementById("quiz");
     if (!target) return;
-
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
-
-    window.setTimeout(() => {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 80);
+    const headerOffset = 112;
+    const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
+    window.scrollTo({ top, behavior: "smooth" });
   }
 
   useEffect(() => {
@@ -189,9 +186,9 @@ export function BadDataTestApp() {
 
   function startQuiz() {
     setStage("quiz");
-    window.requestAnimationFrame(() => {
+    window.setTimeout(() => {
       scrollToQuizHeading();
-    });
+    }, 0);
     trackEvent("quiz_started");
   }
 
@@ -442,7 +439,9 @@ export function BadDataTestApp() {
           <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div className="space-y-2">
               <p className="text-sm font-semibold uppercase tracking-[0.26em] text-glow">Diagnostic</p>
-              <h2 className="font-display text-4xl font-bold tracking-tight text-paper md:text-5xl">Begin the 2-Minute Bad Data Test</h2>
+              <h2 id="quiz-heading" className="font-display text-4xl font-bold tracking-tight text-paper md:text-5xl">
+                Begin the 2-Minute Bad Data Test
+              </h2>
               <p className="max-w-3xl text-base leading-7 text-cloud/75 md:text-lg">
                 Your answers will generate a Bad Data Score and modeled revenue recovery range.
               </p>
