@@ -716,13 +716,13 @@ function FunnelLeakVisualization({ model }: { model: VisualModel }) {
     },
     {
       label: "Leads",
-      currentLabel: "Leads",
-      improvedLabel: "Leads",
+      currentLabel: "Leads (5%)",
+      improvedLabel: "Leads (35%)",
       current: model.currentLeads,
       improved: model.improvedLeads,
       format: formatCompactNumber,
-      currentWidth: "8%",
-      improvedWidth: "10%",
+      currentWidth: "5%",
+      improvedWidth: "35%",
     },
     {
       label: "Pipeline",
@@ -740,7 +740,7 @@ function FunnelLeakVisualization({ model }: { model: VisualModel }) {
     <div className="grid gap-4 md:grid-cols-2">
       {[
         { title: "Current state", key: "current" as const, tone: "bg-white/[0.03]" },
-        { title: "With improved data", key: "improved" as const, tone: "bg-glow/8" },
+        { title: "Improved data", key: "improved" as const, tone: "bg-glow/8" },
       ].map((column) => (
         <div key={column.title} className={cn("rounded-[24px] border border-white/10 p-5", column.tone)}>
           <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">{column.title}</p>
