@@ -7,7 +7,6 @@ import { ArrowRight } from "lucide-react";
 import { quizQuestions } from "@/config/quiz";
 import { siteConfig } from "@/config/site";
 import { trackEvent } from "@/lib/analytics";
-import { buildSharedResultsUrl, decodeSharedResults, getSharedResultsParam } from "@/lib/share-results";
 import type { OpportunityInputs, QuizResponses, ResultModel } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -17,7 +16,7 @@ import { Input } from "@/components/ui/input";
 const LOCAL_STORAGE_KEY = "bad-data-test-state";
 const GHL_EMBED_ID = "303rv61ZkidkXmcEvLhz_1773702309411";
 
-export function ResultsPage() {
+export function ResultsPage({ sharedToken }: { sharedToken?: string }) {
   const router = useRouter();
   const [result, setResult] = useState<ResultModel | null>(null);
   const [answers, setAnswers] = useState<QuizResponses>({});
@@ -31,30 +30,41 @@ export function ResultsPage() {
   const [copied, setCopied] = useState(false);
   const [submissionState, setSubmissionState] = useState<"idle" | "submitting" | "submitted" | "error">("idle");
   const [isPending, startTransition] = useTransition();
+  const [shareToken, setShareToken] = useState(sharedToken ?? "");
   const bookingRef = useRef<HTMLElement | null>(null);
-  const shareUrl = result
-    ? buildSharedResultsUrl(siteConfig.siteUrl, {
-        result,
-        answers,
-        opportunityInputs,
-      })
-    : `${siteConfig.siteUrl}/results`;
+  const shareUrl = shareToken ? `${siteConfig.siteUrl}/results/${shareToken}` : `${siteConfig.siteUrl}/results`;
   const shareMessage = result
     ? `We scored ${result.score}/100 on The Bad Data Test (${result.label}). Worth a look if we're serious about attribution, anonymous traffic, and recoverable pipeline.`
     : "We took The Bad Data Test. Worth a look if we're serious about attribution, anonymous traffic, and recoverable pipeline.";
 
   useEffect(() => {
-    const shared = getSharedResultsParam();
-    if (shared) {
-      const parsedShare = decodeSharedResults(shared);
+    if (sharedToken) {
+      void (async () => {
+        try {
+          const response = await fetch(`/api/shared-results/${sharedToken}`);
+          if (!response.ok) return;
 
-      if (parsedShare) {
-        setResult(parsedShare.result);
-        setAnswers(parsedShare.answers);
-        if (parsedShare.opportunityInputs) setOpportunityInputs(parsedShare.opportunityInputs);
-        setSubmissionState("submitted");
-        return;
-      }
+          const data = (await response.json()) as {
+            ok: boolean;
+            payload?: {
+              result: ResultModel;
+              answers: QuizResponses;
+              opportunityInputs?: OpportunityInputs;
+            };
+          };
+
+          if (!data.payload) return;
+
+          setResult(data.payload.result);
+          setAnswers(data.payload.answers);
+          if (data.payload.opportunityInputs) setOpportunityInputs(data.payload.opportunityInputs);
+          setSubmissionState("submitted");
+        } catch {
+          // Leave the page in its fallback state.
+        }
+      })();
+
+      return;
     }
 
     const saved = window.localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -75,6 +85,33 @@ export function ResultsPage() {
       window.localStorage.removeItem(LOCAL_STORAGE_KEY);
     }
   }, []);
+
+  useEffect(() => {
+    if (sharedToken || shareToken || !result) return;
+
+    void (async () => {
+      try {
+        const response = await fetch("/api/shared-results", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            result,
+            answers,
+            opportunityInputs,
+          }),
+        });
+
+        if (!response.ok) return;
+
+        const data = (await response.json()) as { ok: boolean; token?: string };
+        if (data.token) setShareToken(data.token);
+      } catch {
+        // Fall back to the non-token page URL if token creation fails.
+      }
+    })();
+  }, [answers, opportunityInputs, result, shareToken, sharedToken]);
 
   useEffect(() => {
     if (!result) return;
@@ -125,6 +162,7 @@ export function ResultsPage() {
         [field]: value ? Number(value) : undefined,
       };
       setOpportunityInputs(next);
+      if (!sharedToken) setShareToken("");
       const saved = window.localStorage.getItem(LOCAL_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved) as Record<string, unknown>;
