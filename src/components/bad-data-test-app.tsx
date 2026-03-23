@@ -89,6 +89,7 @@ export function BadDataTestApp() {
   const [leadGateSubmitted, setLeadGateSubmitted] = useState(false);
   const [result, setResult] = useState<ResultModel | null>(null);
   const [opportunityInputs, setOpportunityInputs] = useState<OpportunityInputs>(initialOpportunityInputs);
+  const [hideMobileStartCta, setHideMobileStartCta] = useState(false);
   const quizRef = useRef<HTMLDivElement | null>(null);
   const leadGateFormRef = useRef<HTMLFormElement | null>(null);
 
@@ -130,6 +131,7 @@ export function BadDataTestApp() {
       setLeadGateSubmitted(parsed.leadGateSubmitted || false);
       if (parsed.result) setResult(parsed.result);
       if (parsed.opportunityInputs) setOpportunityInputs(parsed.opportunityInputs);
+      setHideMobileStartCta((parsed.stage === "quiz" && ((parsed.currentIndex || 0) > 0 || Object.keys(parsed.answers || {}).length > 0)) || parsed.stage === "result");
     } catch {
       window.localStorage.removeItem(LOCAL_STORAGE_KEY);
     }
@@ -187,6 +189,7 @@ export function BadDataTestApp() {
 
   function startQuiz() {
     setStage("quiz");
+    setHideMobileStartCta(true);
     window.setTimeout(() => {
       scrollToQuizHeading();
     }, 0);
@@ -196,6 +199,7 @@ export function BadDataTestApp() {
   function handleAnswer(questionId: string, value: string) {
     const nextAnswers = { ...answers, [questionId]: value };
     setAnswers(nextAnswers);
+    setHideMobileStartCta(true);
     trackEvent("question_answered", { questionId, value, index: currentIndex + 1 });
 
     const shouldGate = currentIndex + 1 === leadGateAfterQuestion && !leadGateSubmitted;
@@ -276,6 +280,7 @@ export function BadDataTestApp() {
 
     setLeadGateSubmitted(true);
     setShowLeadGate(false);
+    setHideMobileStartCta(true);
     if (hasLeadDetails) {
       trackEvent("lead_gate_completed");
     }
@@ -742,7 +747,7 @@ export function BadDataTestApp() {
         </section>
       </div>
 
-      <div className="fixed inset-x-0 bottom-4 z-40 mx-auto flex max-w-md px-4 md:hidden">
+      <div className={cn("fixed inset-x-0 bottom-4 z-40 mx-auto max-w-md px-4 md:hidden", hideMobileStartCta ? "hidden" : "flex")}>
         <Button
           className="w-full"
           size="lg"
