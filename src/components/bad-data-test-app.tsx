@@ -100,20 +100,16 @@ export function BadDataTestApp() {
     if (!target) return;
     const headerOffset = 112;
     const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
+    window.history.replaceState(null, "", "#quiz-heading");
     window.scrollTo({ top, behavior: "smooth" });
   }
 
   function handleStartTestClick(source: string) {
     trackEvent("cta_clicked", { label: "Start the Bad Data Test", href: "#quiz", stage, source });
-
-    if (stage !== "quiz") {
-      setStage("quiz");
+    scrollToQuizHeading();
+    if (stage === "landing") {
       trackEvent("quiz_started");
     }
-
-    window.setTimeout(() => {
-      scrollToQuizHeading();
-    }, 0);
   }
 
   useEffect(() => {
