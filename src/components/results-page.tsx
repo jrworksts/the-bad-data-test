@@ -37,6 +37,38 @@ export function ResultsPage({ sharedToken }: { sharedToken?: string }) {
     ? `We scored ${result.score}/100 on The Bad Data Test (${result.label}). Worth a look if we're serious about attribution, anonymous traffic, and recoverable pipeline.`
     : "We took The Bad Data Test. Worth a look if we're serious about attribution, anonymous traffic, and recoverable pipeline.";
 
+  async function ensureShareUrl() {
+    if (!result) return `${siteConfig.siteUrl}/results`;
+    if (sharedToken) return `${siteConfig.siteUrl}/results/${sharedToken}`;
+    if (shareToken) return `${siteConfig.siteUrl}/results/${shareToken}`;
+
+    try {
+      const response = await fetch("/api/shared-results", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          result,
+          answers,
+          opportunityInputs,
+        }),
+      });
+
+      if (!response.ok) return `${siteConfig.siteUrl}/results`;
+
+      const data = (await response.json()) as { ok: boolean; token?: string };
+      if (data.token) {
+        setShareToken(data.token);
+        return `${siteConfig.siteUrl}/results/${data.token}`;
+      }
+    } catch {
+      // Fall back to the generic results URL if token creation fails.
+    }
+
+    return `${siteConfig.siteUrl}/results`;
+  }
+
   useEffect(() => {
     if (sharedToken) {
       void (async () => {
@@ -123,8 +155,9 @@ export function ResultsPage({ sharedToken }: { sharedToken?: string }) {
     });
   }, [result]);
 
-  function handleShare() {
-    navigator.clipboard.writeText(shareUrl);
+  async function handleShare() {
+    const resolvedShareUrl = await ensureShareUrl();
+    await navigator.clipboard.writeText(resolvedShareUrl);
     setCopied(true);
     trackEvent("share_clicked", { type: "copy-link", page: "results" });
     window.setTimeout(() => setCopied(false), 1600);
@@ -136,7 +169,7 @@ export function ResultsPage({ sharedToken }: { sharedToken?: string }) {
     const payload = {
       title: `Bad Data Score: ${result.score}/100`,
       text: shareMessage,
-      url: shareUrl,
+      url: await ensureShareUrl(),
     };
 
     if (navigator.share) {
@@ -149,7 +182,8 @@ export function ResultsPage({ sharedToken }: { sharedToken?: string }) {
       }
     }
 
-    await navigator.clipboard.writeText(`${shareMessage} ${shareUrl}`);
+    const resolvedShareUrl = await ensureShareUrl();
+    await navigator.clipboard.writeText(`${shareMessage} ${resolvedShareUrl}`);
     setCopied(true);
     trackEvent("share_clicked", { type: "native-share-fallback", page: "results" });
     window.setTimeout(() => setCopied(false), 1600);
@@ -178,19 +212,21 @@ export function ResultsPage({ sharedToken }: { sharedToken?: string }) {
     });
   }
 
-  function handleEmailShare() {
+  async function handleEmailShare() {
     trackEvent("share_clicked", { type: "email-team", page: "results" });
     const subject = encodeURIComponent(
       result ? `We scored ${result.score}/100 on The Bad Data Test` : "We should review this Bad Data Test result",
     );
+    const resolvedShareUrl = await ensureShareUrl();
     const body = encodeURIComponent(
-      `${shareMessage}\n\nSee the diagnostic here: ${shareUrl}`,
+      `${shareMessage}\n\nSee the diagnostic here: ${resolvedShareUrl}`,
     );
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   }
 
-  function handleSocialShare(platform: "linkedin" | "x") {
-    const encodedUrl = encodeURIComponent(shareUrl);
+  async function handleSocialShare(platform: "linkedin" | "x") {
+    const resolvedShareUrl = await ensureShareUrl();
+    const encodedUrl = encodeURIComponent(resolvedShareUrl);
     const encodedText = encodeURIComponent(shareMessage);
     const href =
       platform === "linkedin"
