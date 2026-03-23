@@ -4,8 +4,10 @@ import Script from "next/script";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
+import { quizQuestions } from "@/config/quiz";
 import { siteConfig } from "@/config/site";
 import { trackEvent } from "@/lib/analytics";
+import { buildSharedResultsUrl, decodeSharedResults, getSharedResultsParam } from "@/lib/share-results";
 import type { OpportunityInputs, QuizResponses, ResultModel } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -18,6 +20,7 @@ const GHL_EMBED_ID = "303rv61ZkidkXmcEvLhz_1773702309411";
 export function ResultsPage() {
   const router = useRouter();
   const [result, setResult] = useState<ResultModel | null>(null);
+  const [answers, setAnswers] = useState<QuizResponses>({});
   const [opportunityInputs, setOpportunityInputs] = useState<OpportunityInputs>({
     monthlyTraffic: 20000,
     cpa: 2000,
@@ -29,12 +32,31 @@ export function ResultsPage() {
   const [submissionState, setSubmissionState] = useState<"idle" | "submitting" | "submitted" | "error">("idle");
   const [isPending, startTransition] = useTransition();
   const bookingRef = useRef<HTMLElement | null>(null);
-  const shareUrl = `${siteConfig.siteUrl}/results`;
+  const shareUrl = result
+    ? buildSharedResultsUrl(siteConfig.siteUrl, {
+        result,
+        answers,
+        opportunityInputs,
+      })
+    : `${siteConfig.siteUrl}/results`;
   const shareMessage = result
     ? `We scored ${result.score}/100 on The Bad Data Test (${result.label}). Worth a look if we're serious about attribution, anonymous traffic, and recoverable pipeline.`
     : "We took The Bad Data Test. Worth a look if we're serious about attribution, anonymous traffic, and recoverable pipeline.";
 
   useEffect(() => {
+    const shared = getSharedResultsParam();
+    if (shared) {
+      const parsedShare = decodeSharedResults(shared);
+
+      if (parsedShare) {
+        setResult(parsedShare.result);
+        setAnswers(parsedShare.answers);
+        if (parsedShare.opportunityInputs) setOpportunityInputs(parsedShare.opportunityInputs);
+        setSubmissionState("submitted");
+        return;
+      }
+    }
+
     const saved = window.localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!saved) return;
 
@@ -46,6 +68,7 @@ export function ResultsPage() {
       };
 
       if (parsed.result) setResult(parsed.result);
+      if (parsed.answers) setAnswers(parsed.answers);
       if (parsed.opportunityInputs) setOpportunityInputs(parsed.opportunityInputs);
       setSubmissionState(parsed.result ? "submitted" : "idle");
     } catch {
@@ -189,6 +212,8 @@ export function ResultsPage() {
             hasSixFigureUpside={hasSixFigureUpside}
             onPrimary={openBookingUrl}
           />
+
+          <AnswersSummary answers={answers} />
 
           <Card id="opportunity">
             <CardContent className="space-y-6">
@@ -1057,6 +1082,47 @@ function RecoverableRevenueModule({ model }: { model: VisualModel }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function AnswersSummary({ answers }: { answers: QuizResponses }) {
+  const answeredQuestions = quizQuestions
+    .filter((question) => answers[question.id])
+    .map((question) => {
+      const selectedValue = answers[question.id];
+      const selectedOption = question.options.find((option) => option.value === selectedValue);
+
+      return {
+        id: question.id,
+        title: question.title,
+        prompt: question.prompt,
+        answer: selectedOption?.label ?? selectedValue,
+      };
+    });
+
+  if (answeredQuestions.length === 0) return null;
+
+  return (
+    <Card>
+      <CardContent className="space-y-5">
+        <div className="space-y-2">
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Answer summary</p>
+          <h3 className="font-display text-3xl font-bold text-paper">What answers generated this result</h3>
+          <p className="max-w-3xl text-sm leading-7 text-cloud/72">
+            This share view keeps the quiz responses attached to the result so the score can be reviewed later and shared with other stakeholders.
+          </p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          {answeredQuestions.map((item) => (
+            <div key={item.id} className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-glow">{item.title}</p>
+              <p className="mt-3 text-sm leading-6 text-cloud/74">{item.prompt}</p>
+              <p className="mt-4 text-base font-semibold leading-7 text-paper">{item.answer}</p>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
