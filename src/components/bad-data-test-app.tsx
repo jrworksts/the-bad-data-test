@@ -319,12 +319,13 @@ export function BadDataTestApp() {
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(121,242,210,0.12),transparent_34%),linear-gradient(180deg,rgba(8,17,31,0.18),rgba(8,17,31,0.72))]" />
               <div className="absolute -right-16 top-10 h-56 w-56 rounded-full bg-glow/12 blur-3xl" />
               <div className="absolute left-[-4rem] top-32 h-72 w-72 rounded-full bg-amber/10 blur-3xl" />
+              <div className="absolute inset-x-[8%] top-[10%] h-[62%] rounded-[40px] bg-[linear-gradient(180deg,rgba(8,17,31,0.72),rgba(8,17,31,0.52))] blur-[2px]" />
               <div className="absolute inset-x-10 bottom-12 h-px bg-gradient-to-r from-transparent via-white/12 to-transparent" />
-              <div className="absolute bottom-14 left-[14%] h-24 w-8 rounded-t-full bg-white/8 shadow-[0_0_24px_rgba(255,255,255,0.04)]" />
-              <div className="absolute bottom-14 left-[28%] h-40 w-8 rounded-t-full bg-white/10 shadow-[0_0_24px_rgba(121,242,210,0.08)]" />
-              <div className="absolute bottom-14 left-[42%] h-56 w-8 rounded-t-full bg-gradient-to-t from-glow/45 to-glow/15 shadow-[0_0_28px_rgba(121,242,210,0.18)]" />
-              <div className="absolute bottom-14 left-[56%] h-72 w-8 rounded-t-full bg-gradient-to-t from-amber/45 to-amber/15 shadow-[0_0_28px_rgba(247,201,109,0.16)]" />
-              <div className="absolute bottom-14 left-[70%] h-96 w-8 rounded-t-full bg-gradient-to-t from-glow/55 to-glow/18 shadow-[0_0_30px_rgba(121,242,210,0.22)]" />
+              <div className="absolute bottom-14 left-[14%] h-24 w-8 rounded-t-full bg-white/5 shadow-[0_0_24px_rgba(255,255,255,0.03)]" />
+              <div className="absolute bottom-14 left-[28%] h-40 w-8 rounded-t-full bg-white/6 shadow-[0_0_24px_rgba(121,242,210,0.05)]" />
+              <div className="absolute bottom-14 left-[42%] h-56 w-8 rounded-t-full bg-gradient-to-t from-glow/28 to-glow/10 shadow-[0_0_28px_rgba(121,242,210,0.12)]" />
+              <div className="absolute bottom-14 left-[56%] h-72 w-8 rounded-t-full bg-gradient-to-t from-amber/28 to-amber/10 shadow-[0_0_28px_rgba(247,201,109,0.1)]" />
+              <div className="absolute bottom-14 left-[70%] h-96 w-8 rounded-t-full bg-gradient-to-t from-glow/34 to-glow/12 shadow-[0_0_30px_rgba(121,242,210,0.14)]" />
               <svg
                 viewBox="0 0 1200 480"
                 className="absolute inset-0 h-full w-full"
@@ -333,14 +334,14 @@ export function BadDataTestApp() {
                 <path
                   d="M70 410 C220 388 340 336 462 276 C592 212 708 150 820 124 C930 98 1038 118 1140 76"
                   fill="none"
-                  stroke="rgba(121,242,210,0.35)"
+                  stroke="rgba(121,242,210,0.22)"
                   strokeWidth="3"
                   strokeLinecap="round"
                 />
                 <path
                   d="M72 430 C204 420 336 378 454 334 C590 286 726 220 854 196 C974 174 1062 180 1140 150"
                   fill="none"
-                  stroke="rgba(247,201,109,0.24)"
+                  stroke="rgba(247,201,109,0.14)"
                   strokeWidth="2"
                   strokeLinecap="round"
                 />
@@ -357,10 +358,10 @@ export function BadDataTestApp() {
                 <p className="mx-auto max-w-4xl font-display text-2xl font-semibold leading-tight text-cloud/88 md:text-3xl">
                   {siteConfig.hero.qualifier}
                 </p>
-                <p className="mx-auto max-w-3xl text-lg leading-8 text-cloud/80 md:text-xl">
+                <p className="mx-auto max-w-3xl text-lg leading-8 text-cloud/88 md:text-xl">
                   {siteConfig.hero.subhead}
                 </p>
-                <ul className="mx-auto grid max-w-3xl gap-3 text-base leading-7 text-cloud/74 md:justify-items-center">
+                <ul className="mx-auto grid max-w-3xl gap-3 text-base leading-7 text-cloud/86 md:justify-items-center">
                   {[
                     "For B2B SaaS / info products doing $5M-$100M ARR",
                     "Takes ~2 minutes, 8 questions, no deck, no demo",
