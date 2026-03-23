@@ -4,7 +4,6 @@ import Script from "next/script";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
-import { quizQuestions } from "@/config/quiz";
 import { siteConfig } from "@/config/site";
 import { trackEvent } from "@/lib/analytics";
 import type { OpportunityInputs, QuizResponses, ResultModel } from "@/lib/types";
@@ -16,10 +15,9 @@ import { Input } from "@/components/ui/input";
 const LOCAL_STORAGE_KEY = "bad-data-test-state";
 const GHL_EMBED_ID = "303rv61ZkidkXmcEvLhz_1773702309411";
 
-export function ResultsPage({ sharedToken }: { sharedToken?: string }) {
+export function ResultsPage() {
   const router = useRouter();
   const [result, setResult] = useState<ResultModel | null>(null);
-  const [answers, setAnswers] = useState<QuizResponses>({});
   const [opportunityInputs, setOpportunityInputs] = useState<OpportunityInputs>({
     monthlyTraffic: 20000,
     cpa: 2000,
@@ -30,87 +28,23 @@ export function ResultsPage({ sharedToken }: { sharedToken?: string }) {
   const [copied, setCopied] = useState(false);
   const [submissionState, setSubmissionState] = useState<"idle" | "submitting" | "submitted" | "error">("idle");
   const [isPending, startTransition] = useTransition();
-  const [shareToken, setShareToken] = useState(sharedToken ?? "");
   const bookingRef = useRef<HTMLElement | null>(null);
-  const shareUrl = shareToken ? `${siteConfig.siteUrl}/results/${shareToken}` : `${siteConfig.siteUrl}/results`;
+  const shareUrl = `${siteConfig.siteUrl}/results`;
   const shareMessage = result
     ? `We scored ${result.score}/100 on The Bad Data Test (${result.label}). Worth a look if we're serious about attribution, anonymous traffic, and recoverable pipeline.`
     : "We took The Bad Data Test. Worth a look if we're serious about attribution, anonymous traffic, and recoverable pipeline.";
 
-  async function ensureShareUrl() {
-    if (!result) return `${siteConfig.siteUrl}/results`;
-    if (sharedToken) return `${siteConfig.siteUrl}/results/${sharedToken}`;
-    if (shareToken) return `${siteConfig.siteUrl}/results/${shareToken}`;
-
-    try {
-      const response = await fetch("/api/shared-results", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          result,
-          answers,
-          opportunityInputs,
-        }),
-      });
-
-      if (!response.ok) return `${siteConfig.siteUrl}/results`;
-
-      const data = (await response.json()) as { ok: boolean; token?: string };
-      if (data.token) {
-        setShareToken(data.token);
-        return `${siteConfig.siteUrl}/results/${data.token}`;
-      }
-    } catch {
-      // Fall back to the generic results URL if token creation fails.
-    }
-
-    return `${siteConfig.siteUrl}/results`;
-  }
-
   useEffect(() => {
-    if (sharedToken) {
-      void (async () => {
-        try {
-          const response = await fetch(`/api/shared-results/${sharedToken}`);
-          if (!response.ok) return;
-
-          const data = (await response.json()) as {
-            ok: boolean;
-            payload?: {
-              result: ResultModel;
-              answers: QuizResponses;
-              opportunityInputs?: OpportunityInputs;
-            };
-          };
-
-          if (!data.payload) return;
-
-          setResult(data.payload.result);
-          setAnswers(data.payload.answers);
-          if (data.payload.opportunityInputs) setOpportunityInputs(data.payload.opportunityInputs);
-          setSubmissionState("submitted");
-        } catch {
-          // Leave the page in its fallback state.
-        }
-      })();
-
-      return;
-    }
-
     const saved = window.localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!saved) return;
 
     try {
       const parsed = JSON.parse(saved) as {
-        answers: QuizResponses;
         result?: ResultModel | null;
         opportunityInputs?: OpportunityInputs;
       };
 
       if (parsed.result) setResult(parsed.result);
-      if (parsed.answers) setAnswers(parsed.answers);
       if (parsed.opportunityInputs) setOpportunityInputs(parsed.opportunityInputs);
       setSubmissionState(parsed.result ? "submitted" : "idle");
     } catch {
@@ -129,8 +63,7 @@ export function ResultsPage({ sharedToken }: { sharedToken?: string }) {
   }, [result]);
 
   async function handleShare() {
-    const resolvedShareUrl = await ensureShareUrl();
-    await navigator.clipboard.writeText(resolvedShareUrl);
+    await navigator.clipboard.writeText(shareUrl);
     setCopied(true);
     trackEvent("share_clicked", { type: "copy-link", page: "results" });
     window.setTimeout(() => setCopied(false), 1600);
@@ -142,7 +75,7 @@ export function ResultsPage({ sharedToken }: { sharedToken?: string }) {
     const payload = {
       title: `Bad Data Score: ${result.score}/100`,
       text: shareMessage,
-      url: await ensureShareUrl(),
+      url: shareUrl,
     };
 
     if (navigator.share) {
@@ -155,8 +88,7 @@ export function ResultsPage({ sharedToken }: { sharedToken?: string }) {
       }
     }
 
-    const resolvedShareUrl = await ensureShareUrl();
-    await navigator.clipboard.writeText(`${shareMessage} ${resolvedShareUrl}`);
+    await navigator.clipboard.writeText(`${shareMessage} ${shareUrl}`);
     setCopied(true);
     trackEvent("share_clicked", { type: "native-share-fallback", page: "results" });
     window.setTimeout(() => setCopied(false), 1600);
@@ -169,7 +101,6 @@ export function ResultsPage({ sharedToken }: { sharedToken?: string }) {
         [field]: value ? Number(value) : undefined,
       };
       setOpportunityInputs(next);
-      if (!sharedToken) setShareToken("");
       const saved = window.localStorage.getItem(LOCAL_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved) as Record<string, unknown>;
@@ -190,16 +121,14 @@ export function ResultsPage({ sharedToken }: { sharedToken?: string }) {
     const subject = encodeURIComponent(
       result ? `We scored ${result.score}/100 on The Bad Data Test` : "We should review this Bad Data Test result",
     );
-    const resolvedShareUrl = await ensureShareUrl();
     const body = encodeURIComponent(
-      `${shareMessage}\n\nSee the diagnostic here: ${resolvedShareUrl}`,
+      `${shareMessage}\n\nSee the diagnostic here: ${shareUrl}`,
     );
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   }
 
   async function handleSocialShare(platform: "linkedin" | "x") {
-    const resolvedShareUrl = await ensureShareUrl();
-    const encodedUrl = encodeURIComponent(resolvedShareUrl);
+    const encodedUrl = encodeURIComponent(shareUrl);
     const encodedText = encodeURIComponent(shareMessage);
     const href =
       platform === "linkedin"
@@ -258,11 +187,7 @@ export function ResultsPage({ sharedToken }: { sharedToken?: string }) {
             annualizedRecoverableRevenue={annualizedRecoverableRevenue}
             hasSixFigureUpside={hasSixFigureUpside}
             onPrimary={openBookingUrl}
-            onShare={handleShare}
-            copied={copied}
           />
-
-          <AnswersSummary answers={answers} />
 
           <Card id="opportunity">
             <CardContent className="space-y-6">
@@ -501,8 +426,6 @@ function ResultsHeroVariant({
   hasSixFigureUpside,
   isAuditCandidate,
   onPrimary,
-  onShare,
-  copied,
 }: {
   result: ResultModel;
   visualModel: VisualModel;
@@ -510,8 +433,6 @@ function ResultsHeroVariant({
   hasSixFigureUpside: boolean;
   isAuditCandidate: boolean;
   onPrimary: () => void;
-  onShare: () => void;
-  copied: boolean;
 }) {
   const primaryHeadline = hasSixFigureUpside
     ? "Your Bad Data Test shows likely 6-figure revenue leaks."
@@ -537,15 +458,10 @@ function ResultsHeroVariant({
                   : `${result.label} score of ${result.score}. The stack may be healthier than average right now, but this report is still useful for pressure-testing attribution confidence, CRM activation, and anonymous traffic before spend scales further.`}
               </p>
               <div className="mt-6">
-                <div className="flex flex-wrap gap-3">
-                  <Button size="lg" onClick={onPrimary}>
-                    Book a 20-Minute Revenue Recovery Call
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                  <Button size="lg" variant="outline" onClick={onShare}>
-                    {copied ? "Results Link Copied" : "Copy Results Link"}
-                  </Button>
-                </div>
+                <Button size="lg" onClick={onPrimary}>
+                  Book a 20-Minute Revenue Recovery Call
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
               </div>
             </div>
           </div>
@@ -1143,46 +1059,6 @@ function RecoverableRevenueModule({ model }: { model: VisualModel }) {
   );
 }
 
-function AnswersSummary({ answers }: { answers: QuizResponses }) {
-  const answeredQuestions = quizQuestions
-    .filter((question) => answers[question.id])
-    .map((question) => {
-      const selectedValue = answers[question.id];
-      const selectedOption = question.options.find((option) => option.value === selectedValue);
-
-      return {
-        id: question.id,
-        title: question.title,
-        prompt: question.prompt,
-        answer: selectedOption?.label ?? selectedValue,
-      };
-    });
-
-  if (answeredQuestions.length === 0) return null;
-
-  return (
-    <Card>
-      <CardContent className="space-y-5">
-        <div className="space-y-2">
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Answer summary</p>
-          <h3 className="font-display text-3xl font-bold text-paper">What answers generated this result</h3>
-          <p className="max-w-3xl text-sm leading-7 text-cloud/72">
-            This share view keeps the quiz responses attached to the result so the score can be reviewed later and shared with other stakeholders.
-          </p>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2">
-          {answeredQuestions.map((item) => (
-            <div key={item.id} className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-glow">{item.title}</p>
-              <p className="mt-3 text-sm leading-6 text-cloud/74">{item.prompt}</p>
-              <p className="mt-4 text-base font-semibold leading-7 text-paper">{item.answer}</p>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
 
 function CPASignalChart() {
   return (

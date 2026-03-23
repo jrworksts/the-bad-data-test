@@ -102,9 +102,3 @@ export type SubmissionPayload = {
   submittedAt: string;
   source: "bad-data-test";
 };
-
-export type SharedResultsPayload = {
-  result: ResultModel;
-  answers: QuizResponses;
-  opportunityInputs?: OpportunityInputs;
-};
