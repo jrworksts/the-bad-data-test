@@ -190,39 +190,6 @@ export function ResultsPage() {
             onPrimary={openBookingUrl}
           />
 
-          <div className="grid gap-6 lg:grid-cols-2">
-            <Card>
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Funnel leak view</p>
-                  <h3 className="font-display text-3xl font-bold text-paper">Where Your System Is Likely Leaking Value</h3>
-                  <p className="max-w-3xl text-base leading-7 text-cloud/74">
-                    You may not need more traffic. You may need better signal quality.
-                  </p>
-                </div>
-                <FunnelLeakVisualization model={visualModel} />
-                <p className="text-sm leading-7 text-cloud/65">
-                  This is not about getting more traffic. It is about capturing more value from the traffic you already have.
-                </p>
-                <p className="text-sm leading-7 text-cloud/70">
-                  On the Intro Call we&apos;ll replace these directional bars with your actual GA / CRM numbers and confirm which levers are real.
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="flex h-full flex-col space-y-5">
-                <div className="space-y-2">
-                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Signal loss model</p>
-                  <h3 className="font-display text-3xl font-bold text-paper">Why CPA Often Rises When Signal Quality Falls</h3>
-                </div>
-                <CPASignalChart />
-                <p className="text-sm leading-7 text-cloud/65">
-                  Directional model - illustrates a common pattern when attribution, identity, and targeting signals weaken.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
           <Card id="opportunity">
             <CardContent className="space-y-6">
               <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
@@ -273,6 +240,38 @@ export function ResultsPage() {
                   <OpportunityBreakdownChart model={visualModel} />
                 </div>
                 <div className="space-y-4">
+                  <div className="grid gap-6 lg:grid-cols-2">
+                    <Card>
+                      <CardContent className="space-y-6">
+                        <div className="space-y-2">
+                          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Funnel leak view</p>
+                          <h3 className="font-display text-3xl font-bold text-paper">Where Your System Is Likely Leaking Value</h3>
+                          <p className="max-w-3xl text-base leading-7 text-cloud/74">
+                            You may not need more traffic. You may need better signal quality.
+                          </p>
+                        </div>
+                        <FunnelLeakVisualization model={visualModel} />
+                        <p className="text-sm leading-7 text-cloud/65">
+                          This is not about getting more traffic. It is about capturing more value from the traffic you already have.
+                        </p>
+                        <p className="text-sm leading-7 text-cloud/70">
+                          On the Intro Call we&apos;ll replace these directional bars with your actual GA / CRM numbers and confirm which levers are real.
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="flex h-full flex-col space-y-5">
+                        <div className="space-y-2">
+                          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Signal loss model</p>
+                          <h3 className="font-display text-3xl font-bold text-paper">Why CPA Often Rises When Signal Quality Falls</h3>
+                        </div>
+                        <CPASignalChart />
+                        <p className="text-sm leading-7 text-cloud/65">
+                          Directional model - illustrates a common pattern when attribution, identity, and targeting signals weaken.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
                   <RecoverableRevenueModule model={visualModel} />
                   <div className="space-y-2 px-1">
                     <p className="text-sm leading-7 text-cloud/70">
