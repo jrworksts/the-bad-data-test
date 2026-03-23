@@ -668,20 +668,6 @@ export function BadDataTestApp() {
               </CardContent>
             </Card>
           </div>
-          <div className="flex justify-center py-12 md:py-16">
-            <Button size="lg" asChild>
-              <a
-                href="#quiz-heading"
-                onClick={() => {
-                  trackEvent("cta_clicked", { label: "Start the Bad Data Test", href: "#quiz-heading", stage, source: "audience-section" });
-                  if (stage === "landing") trackEvent("quiz_started");
-                }}
-              >
-                Start the Bad Data Test
-                <ArrowRight className="h-4 w-4" />
-              </a>
-            </Button>
-          </div>
         </section>
 
         <section className="pt-20 md:pt-28">
@@ -698,20 +684,6 @@ export function BadDataTestApp() {
                 </CardContent>
               </Card>
             ))}
-          </div>
-          <div className="flex justify-center py-12 md:py-16">
-            <Button size="lg" asChild>
-              <a
-                href="#quiz-heading"
-                onClick={() => {
-                  trackEvent("cta_clicked", { label: "Start the Bad Data Test", href: "#quiz-heading", stage, source: "faq-section" });
-                  if (stage === "landing") trackEvent("quiz_started");
-                }}
-              >
-                Start the Bad Data Test
-                <ArrowRight className="h-4 w-4" />
-              </a>
-            </Button>
           </div>
         </section>
 
