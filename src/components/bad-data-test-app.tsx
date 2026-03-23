@@ -104,14 +104,6 @@ export function BadDataTestApp() {
     window.scrollTo({ top, behavior: "smooth" });
   }
 
-  function handleStartTestClick(source: string) {
-    trackEvent("cta_clicked", { label: "Start the Bad Data Test", href: "#quiz", stage, source });
-    scrollToQuizHeading();
-    if (stage === "landing") {
-      trackEvent("quiz_started");
-    }
-  }
-
   useEffect(() => {
     trackEvent("landing_viewed");
 
@@ -329,8 +321,16 @@ export function BadDataTestApp() {
               The Bad Data Test
             </a>
             <div className="hidden items-center gap-3 md:flex">
-              <Button size="sm" onClick={() => handleStartTestClick("header")}>
-                {primaryCtas[0].label}
+              <Button size="sm" asChild>
+                <a
+                  href="#quiz-heading"
+                  onClick={() => {
+                    trackEvent("cta_clicked", { label: "Start the Bad Data Test", href: "#quiz-heading", stage, source: "header" });
+                    if (stage === "landing") trackEvent("quiz_started");
+                  }}
+                >
+                  {primaryCtas[0].label}
+                </a>
               </Button>
             </div>
           </div>
@@ -398,9 +398,17 @@ export function BadDataTestApp() {
                 </ul>
               </div>
               <div className="mt-10 flex w-full max-w-sm flex-col items-center space-y-3">
-                <Button size="lg" className="w-full" onClick={() => handleStartTestClick("hero")}>
-                  Start the Bad Data Test
-                  <ArrowRight className="h-4 w-4" />
+                <Button size="lg" className="w-full" asChild>
+                  <a
+                    href="#quiz-heading"
+                    onClick={() => {
+                      trackEvent("cta_clicked", { label: "Start the Bad Data Test", href: "#quiz-heading", stage, source: "hero" });
+                      if (stage === "landing") trackEvent("quiz_started");
+                    }}
+                  >
+                    Start the Bad Data Test
+                    <ArrowRight className="h-4 w-4" />
+                  </a>
                 </Button>
                 <div className="flex justify-center">
                   <button
@@ -448,7 +456,7 @@ export function BadDataTestApp() {
           <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div className="space-y-2">
               <p className="text-sm font-semibold uppercase tracking-[0.26em] text-glow">Diagnostic</p>
-              <h2 id="quiz-heading" className="font-display text-4xl font-bold tracking-tight text-paper md:text-5xl">
+              <h2 id="quiz-heading" className="scroll-mt-28 font-display text-4xl font-bold tracking-tight text-paper md:text-5xl">
                 Begin the 2-Minute Bad Data Test
               </h2>
               <p className="max-w-3xl text-base leading-7 text-cloud/75 md:text-lg">
@@ -656,9 +664,17 @@ export function BadDataTestApp() {
             </Card>
           </div>
           <div className="flex justify-center py-12 md:py-16">
-            <Button size="lg" onClick={() => handleStartTestClick("audience-section")}>
-              Start the Bad Data Test
-              <ArrowRight className="h-4 w-4" />
+            <Button size="lg" asChild>
+              <a
+                href="#quiz-heading"
+                onClick={() => {
+                  trackEvent("cta_clicked", { label: "Start the Bad Data Test", href: "#quiz-heading", stage, source: "audience-section" });
+                  if (stage === "landing") trackEvent("quiz_started");
+                }}
+              >
+                Start the Bad Data Test
+                <ArrowRight className="h-4 w-4" />
+              </a>
             </Button>
           </div>
         </section>
@@ -679,9 +695,17 @@ export function BadDataTestApp() {
             ))}
           </div>
           <div className="flex justify-center py-12 md:py-16">
-            <Button size="lg" onClick={() => handleStartTestClick("faq-section")}>
-              Start the Bad Data Test
-              <ArrowRight className="h-4 w-4" />
+            <Button size="lg" asChild>
+              <a
+                href="#quiz-heading"
+                onClick={() => {
+                  trackEvent("cta_clicked", { label: "Start the Bad Data Test", href: "#quiz-heading", stage, source: "faq-section" });
+                  if (stage === "landing") trackEvent("quiz_started");
+                }}
+              >
+                Start the Bad Data Test
+                <ArrowRight className="h-4 w-4" />
+              </a>
             </Button>
           </div>
         </section>
@@ -725,7 +749,7 @@ export function BadDataTestApp() {
           onClick={() =>
             stage === "result"
               ? handleCtaClick("Book a 20-Minute Intro Call", "#booking")
-              : handleStartTestClick("mobile-sticky")
+              : scrollToQuizHeading()
           }
         >
           {stage === "result" ? "Book a 20-Minute Intro Call" : "Take the Test"}
