@@ -221,7 +221,7 @@ export function ResultsPage() {
                   helperText="The percentage of site visitors who ultimately become customers."
                 />
                 <MetricInput
-                  label="Average revenue per new customer (first-year)"
+                  label="Yearly revenue per customer"
                   value={opportunityInputs.averageDealValue}
                   onChange={(value) => handleOpportunityChange("averageDealValue", value)}
                   helperText="The average revenue generated per customer or sale."
