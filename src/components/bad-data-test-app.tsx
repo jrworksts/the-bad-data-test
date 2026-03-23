@@ -29,11 +29,11 @@ const GHL_EMBED_ID = "303rv61ZkidkXmcEvLhz_1773702309411";
 type FunnelStage = "landing" | "quiz" | "result";
 
 const initialOpportunityInputs: OpportunityInputs = {
-  monthlyTraffic: 15000,
-  cpa: 180,
-  leadToCloseRate: 2,
-  averageDealValue: 1800,
-  identificationRate: 5,
+  monthlyTraffic: 20000,
+  cpa: 2000,
+  leadToCloseRate: 0.8,
+  averageDealValue: 4000,
+  identificationRate: 25,
 };
 
 function TrustLogoCard({
