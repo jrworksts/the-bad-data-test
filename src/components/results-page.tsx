@@ -209,7 +209,7 @@ export function ResultsPage() {
                   helperText="The number of visitors your site receives each month."
                 />
                 <MetricInput
-                  label="Average CAC from paid (per new customer)"
+                  label="Average CAC (Per New Customer)"
                   value={opportunityInputs.cpa}
                   onChange={(value) => handleOpportunityChange("cpa", value)}
                   helperText="Your average acquisition cost per paying customer."
