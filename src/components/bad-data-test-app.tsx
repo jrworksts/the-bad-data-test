@@ -424,9 +424,9 @@ export function BadDataTestApp() {
           <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div className="space-y-2">
               <p className="text-sm font-semibold uppercase tracking-[0.26em] text-glow">Diagnostic</p>
-              <h2 className="font-display text-4xl font-bold tracking-tight text-paper md:text-5xl">Question 1 starts here</h2>
+              <h2 className="font-display text-4xl font-bold tracking-tight text-paper md:text-5xl">Begin the 2-Minute Bad Data Test</h2>
               <p className="max-w-3xl text-base leading-7 text-cloud/75 md:text-lg">
-                Start with the first question below. One answer creates the momentum for the rest of the diagnostic.
+                Your answers will generate a Bad Data Score and modeled revenue recovery range.
               </p>
             </div>
           </div>
