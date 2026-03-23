@@ -178,7 +178,9 @@ export function BadDataTestApp() {
 
   function startQuiz() {
     setStage("quiz");
-    quizRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.requestAnimationFrame(() => {
+      document.getElementById("quiz")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
     trackEvent("quiz_started");
   }
 
