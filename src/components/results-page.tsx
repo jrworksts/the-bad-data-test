@@ -119,33 +119,6 @@ export function ResultsPage({ sharedToken }: { sharedToken?: string }) {
   }, []);
 
   useEffect(() => {
-    if (sharedToken || shareToken || !result) return;
-
-    void (async () => {
-      try {
-        const response = await fetch("/api/shared-results", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            result,
-            answers,
-            opportunityInputs,
-          }),
-        });
-
-        if (!response.ok) return;
-
-        const data = (await response.json()) as { ok: boolean; token?: string };
-        if (data.token) setShareToken(data.token);
-      } catch {
-        // Fall back to the non-token page URL if token creation fails.
-      }
-    })();
-  }, [answers, opportunityInputs, result, shareToken, sharedToken]);
-
-  useEffect(() => {
     if (!result) return;
     trackEvent("result_viewed", {
       score: result.score,
