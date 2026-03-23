@@ -429,9 +429,6 @@ export function BadDataTestApp() {
                 Start with the first question below. One answer creates the momentum for the rest of the diagnostic.
               </p>
             </div>
-            <Button variant="outline" onClick={startQuiz}>
-              {stage === "landing" ? "Start Question 1" : "Resume Diagnostic"}
-            </Button>
           </div>
 
           <Card className="overflow-hidden">
@@ -564,12 +561,14 @@ export function BadDataTestApp() {
                             );
                           })}
                         </div>
-                        <div className="flex items-center justify-between">
-                          <Button variant="secondary" className="w-full" onClick={goBack} disabled={currentIndex === 0}>
-                            <ChevronLeft className="h-4 w-4" />
-                            Back
-                          </Button>
-                        </div>
+                        {currentIndex > 0 ? (
+                          <div className="flex items-center justify-between">
+                            <Button variant="secondary" className="w-full" onClick={goBack}>
+                              <ChevronLeft className="h-4 w-4" />
+                              Back
+                            </Button>
+                          </div>
+                        ) : null}
                       </div>
                     )}
                   </motion.div>
