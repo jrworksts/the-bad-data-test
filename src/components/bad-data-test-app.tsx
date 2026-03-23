@@ -95,6 +95,17 @@ export function BadDataTestApp() {
   const currentQuestion = quizQuestions[currentIndex];
   const progress = Math.round(((currentIndex + 1) / quizQuestions.length) * 100);
 
+  function scrollToQuizHeading() {
+    const target = document.getElementById("quiz");
+    if (!target) return;
+
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    window.setTimeout(() => {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
+  }
+
   useEffect(() => {
     trackEvent("landing_viewed");
 
@@ -179,7 +190,7 @@ export function BadDataTestApp() {
   function startQuiz() {
     setStage("quiz");
     window.requestAnimationFrame(() => {
-      document.getElementById("quiz")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      scrollToQuizHeading();
     });
     trackEvent("quiz_started");
   }
@@ -291,7 +302,11 @@ export function BadDataTestApp() {
   function handleCtaClick(label: string, href: string) {
     trackEvent("cta_clicked", { label, href, stage });
     if (href === "#quiz") {
-      startQuiz();
+      if (stage !== "quiz") {
+        startQuiz();
+      } else {
+        scrollToQuizHeading();
+      }
       return;
     }
 
