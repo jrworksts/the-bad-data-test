@@ -499,6 +499,7 @@ type VisualModel = {
   traffic: number;
   conversionRate: number;
   identificationRate: number;
+  averageRevenuePerCustomer: number;
   recoveryPotentialLow: number;
   recoveryPotentialHigh: number;
   currentRevenueMonthly: number;
@@ -583,6 +584,7 @@ function buildVisualModel(result: ResultModel, inputs: OpportunityInputs): Visua
     traffic,
     conversionRate: closeRatePercent,
     identificationRate,
+    averageRevenuePerCustomer: averageDeal,
     recoveryPotentialLow,
     recoveryPotentialHigh,
     currentRevenueMonthly: currentRevenue,
@@ -705,6 +707,11 @@ function DataConfidenceGauge({ model }: { model: VisualModel }) {
 }
 
 function FunnelLeakVisualization({ model }: { model: VisualModel }) {
+  const currentLeads = model.traffic * 0.05;
+  const improvedLeads = model.traffic * 0.35;
+  const currentPipeline = currentLeads * model.averageRevenuePerCustomer;
+  const improvedPipeline = improvedLeads * model.averageRevenuePerCustomer;
+
   const stages = [
     {
       label: "Traffic",
@@ -718,8 +725,8 @@ function FunnelLeakVisualization({ model }: { model: VisualModel }) {
       label: "Leads",
       currentLabel: "Leads (5%)",
       improvedLabel: "Leads (35%)",
-      current: model.currentLeads,
-      improved: model.improvedLeads,
+      current: currentLeads,
+      improved: improvedLeads,
       format: formatCompactNumber,
       currentWidth: "5%",
       improvedWidth: "35%",
@@ -728,8 +735,8 @@ function FunnelLeakVisualization({ model }: { model: VisualModel }) {
       label: "Pipeline",
       currentLabel: "Pipeline",
       improvedLabel: "Pipeline",
-      current: model.currentPipelineAnnual,
-      improved: model.improvedPipelineAnnual,
+      current: currentPipeline,
+      improved: improvedPipeline,
       format: formatCompactCurrency,
     },
   ];
