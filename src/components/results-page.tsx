@@ -249,6 +249,8 @@ export function ResultsPage({ sharedToken }: { sharedToken?: string }) {
             annualizedRecoverableRevenue={annualizedRecoverableRevenue}
             hasSixFigureUpside={hasSixFigureUpside}
             onPrimary={openBookingUrl}
+            onShare={handleShare}
+            copied={copied}
           />
 
           <AnswersSummary answers={answers} />
@@ -490,6 +492,8 @@ function ResultsHeroVariant({
   hasSixFigureUpside,
   isAuditCandidate,
   onPrimary,
+  onShare,
+  copied,
 }: {
   result: ResultModel;
   visualModel: VisualModel;
@@ -497,6 +501,8 @@ function ResultsHeroVariant({
   hasSixFigureUpside: boolean;
   isAuditCandidate: boolean;
   onPrimary: () => void;
+  onShare: () => void;
+  copied: boolean;
 }) {
   const primaryHeadline = hasSixFigureUpside
     ? "Your Bad Data Test shows likely 6-figure revenue leaks."
@@ -522,10 +528,15 @@ function ResultsHeroVariant({
                   : `${result.label} score of ${result.score}. The stack may be healthier than average right now, but this report is still useful for pressure-testing attribution confidence, CRM activation, and anonymous traffic before spend scales further.`}
               </p>
               <div className="mt-6">
-                <Button size="lg" onClick={onPrimary}>
-                  Book a 20-Minute Revenue Recovery Call
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
+                <div className="flex flex-wrap gap-3">
+                  <Button size="lg" onClick={onPrimary}>
+                    Book a 20-Minute Revenue Recovery Call
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                  <Button size="lg" variant="outline" onClick={onShare}>
+                    {copied ? "Results Link Copied" : "Copy Results Link"}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
