@@ -690,10 +690,10 @@ export function BadDataTestApp() {
           <Card className="border-glow/15 bg-gradient-to-br from-glow/10 via-white/[0.04] to-amber/10">
             <CardContent className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
               <div className="space-y-5">
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Prefer to skip the test?</p>
-                <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">Book a 20-minute Intro Call instead</h2>
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Already know you want to talk?</p>
+                <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">Book a 20-minute Revenue Leak Intro Call</h2>
                 <p className="max-w-2xl text-base leading-8 text-cloud/80 md:text-lg">
-                  If you already know your team wants help pressure-testing identity, attribution, and signal loss, you can skip straight to a short intro call.
+                  If you already know your team needs help fixing tracking, attribution, or signal loss, you can skip the test and go straight to a short intro call. We&apos;ll review your current setup, sanity-check whether there&apos;s meaningful upside, and decide if a Revenue Recovery Audit makes sense now or later.
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <Button
@@ -703,17 +703,14 @@ export function BadDataTestApp() {
                       window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer");
                     }}
                   >
-                    Prefer to skip the test? Book a 20-minute Intro Call.
+                    Skip the test. Book a 20-minute Intro Call.
                   </Button>
                 </div>
               </div>
               <div className="rounded-[28px] border border-white/10 bg-ink/70 p-6">
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">Why the test usually converts better</p>
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">Why most teams start with the Bad Data Test</p>
                 <p className="mt-3 text-base leading-7 text-cloud/76">
-                  The score and modeled revenue range create the tension most teams need before they commit to a deeper audit conversation.
-                </p>
-                <p className="mt-4 text-sm leading-6 text-cloud/60">
-                  If you do want to skip ahead, the intro call is still the right place to decide whether a Revenue Recovery Audit makes sense.
+                  The Bad Data Score and modeled revenue recovery range create the tension most teams need before a deeper audit conversation. Seeing a concrete upside number makes it easier to align internally and come to the call with the right context and questions. If you do want to skip ahead, the intro call is still the place where we validate the upside and map out next steps.
                 </p>
               </div>
             </CardContent>
