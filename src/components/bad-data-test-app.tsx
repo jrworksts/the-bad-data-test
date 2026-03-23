@@ -103,6 +103,19 @@ export function BadDataTestApp() {
     window.scrollTo({ top, behavior: "smooth" });
   }
 
+  function handleStartTestClick(source: string) {
+    trackEvent("cta_clicked", { label: "Start the Bad Data Test", href: "#quiz", stage, source });
+
+    if (stage !== "quiz") {
+      setStage("quiz");
+      trackEvent("quiz_started");
+    }
+
+    window.setTimeout(() => {
+      scrollToQuizHeading();
+    }, 0);
+  }
+
   useEffect(() => {
     trackEvent("landing_viewed");
 
@@ -320,7 +333,7 @@ export function BadDataTestApp() {
               The Bad Data Test
             </a>
             <div className="hidden items-center gap-3 md:flex">
-              <Button size="sm" onClick={() => handleCtaClick(primaryCtas[0].label, primaryCtas[0].href)}>
+              <Button size="sm" onClick={() => handleStartTestClick("header")}>
                 {primaryCtas[0].label}
               </Button>
             </div>
@@ -389,7 +402,7 @@ export function BadDataTestApp() {
                 </ul>
               </div>
               <div className="mt-10 flex w-full max-w-sm flex-col items-center space-y-3">
-                <Button size="lg" className="w-full" onClick={() => handleCtaClick("Start the Bad Data Test", "#quiz")}>
+                <Button size="lg" className="w-full" onClick={() => handleStartTestClick("hero")}>
                   Start the Bad Data Test
                   <ArrowRight className="h-4 w-4" />
                 </Button>
@@ -647,7 +660,7 @@ export function BadDataTestApp() {
             </Card>
           </div>
           <div className="flex justify-center py-12 md:py-16">
-            <Button size="lg" onClick={() => handleCtaClick("Start the Bad Data Test", "#quiz")}>
+            <Button size="lg" onClick={() => handleStartTestClick("audience-section")}>
               Start the Bad Data Test
               <ArrowRight className="h-4 w-4" />
             </Button>
@@ -670,7 +683,7 @@ export function BadDataTestApp() {
             ))}
           </div>
           <div className="flex justify-center py-12 md:py-16">
-            <Button size="lg" onClick={() => handleCtaClick("Start the Bad Data Test", "#quiz")}>
+            <Button size="lg" onClick={() => handleStartTestClick("faq-section")}>
               Start the Bad Data Test
               <ArrowRight className="h-4 w-4" />
             </Button>
@@ -713,7 +726,15 @@ export function BadDataTestApp() {
       </div>
 
       <div className="fixed inset-x-0 bottom-4 z-40 mx-auto flex max-w-md px-4 md:hidden">
-        <Button className="w-full" size="lg" onClick={() => handleCtaClick(stage === "result" ? "Book a 20-Minute Intro Call" : "Take the Test", stage === "result" ? "#booking" : "#quiz")}>
+        <Button
+          className="w-full"
+          size="lg"
+          onClick={() =>
+            stage === "result"
+              ? handleCtaClick("Book a 20-Minute Intro Call", "#booking")
+              : handleStartTestClick("mobile-sticky")
+          }
+        >
           {stage === "result" ? "Book a 20-Minute Intro Call" : "Take the Test"}
         </Button>
       </div>
