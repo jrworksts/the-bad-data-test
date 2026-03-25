@@ -1,0 +1,699 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import type { OpportunityInputs } from "@/lib/types";
+
+type EstimateVisualModel = {
+  traffic: number;
+  conversionRate: number;
+  identificationRate: number;
+  averageRevenuePerCustomer: number;
+  recoveryPotentialLow: number;
+  recoveryPotentialHigh: number;
+  currentRevenueMonthly: number;
+  improvedRevenueMonthlyLow: number;
+  improvedRevenueMonthlyMid: number;
+  improvedRevenueMonthlyHigh: number;
+  currentLeads: number;
+  improvedLeads: number;
+  currentPipelineAnnual: number;
+  improvedPipelineAnnual: number;
+  recoverablePipeline: number;
+  efficiencyGain: number;
+  anonymousTrafficUpside: number;
+  wastedSpend: number;
+  currentSales: number;
+  currentRevenue: number;
+  estimatedSpend: number;
+  trafficLossValue: number;
+  anonymousTraffic: number;
+  idResolutionMatchPct: number;
+  consumerMatches: number;
+  verificationPct: number;
+  verifiedMatchedProfiles: number;
+  reOptInPct: number;
+  recoveredLeads: number;
+  reactivationSalesRate: number;
+  recoveredSales: number;
+  recoveredRevenue: number;
+};
+
+const initialOpportunityInputs: OpportunityInputs = {
+  monthlyTraffic: 20000,
+  cpa: 2000,
+  leadToCloseRate: 0.8,
+  averageDealValue: 4000,
+  identificationRate: 25,
+};
+
+export function OpportunityEstimatePage() {
+  const [opportunityInputs, setOpportunityInputs] = useState<OpportunityInputs>(initialOpportunityInputs);
+  const [, startTransition] = useTransition();
+  const visualModel = buildEstimateVisualModel(opportunityInputs);
+
+  function handleOpportunityChange(field: keyof OpportunityInputs, value: string) {
+    startTransition(() => {
+      setOpportunityInputs((current) => ({
+        ...current,
+        [field]: value ? Number(value) : undefined,
+      }));
+    });
+  }
+
+  return (
+    <main className="relative overflow-hidden">
+      <div className="absolute inset-0 bg-grid opacity-30" aria-hidden />
+      <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-4 pb-24 pt-10 sm:px-6 lg:px-8">
+        <div className="mb-8 space-y-3">
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Client estimate</p>
+          <h1 className="font-display text-4xl font-bold text-paper md:text-5xl">Opportunity estimate</h1>
+          <p className="max-w-3xl text-base leading-8 text-cloud/76 md:text-lg">
+            Use this standalone estimate to show what a team could expect if they improve identity, attribution, and CRM activation across their existing traffic.
+          </p>
+        </div>
+
+        <Card id="opportunity">
+          <CardContent className="space-y-6">
+            <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Opportunity estimate</p>
+                <h2 className="mt-2 font-display text-3xl font-bold text-paper">What Your Pipeline Could Look Like With Better Data</h2>
+              </div>
+              <p className="max-w-xl text-sm leading-6 text-cloud/65">
+                Enter your company information below to see what sort of results you can expect.
+              </p>
+            </div>
+            <div className="grid gap-4 lg:grid-cols-5">
+              <MetricInput
+                label="Monthly Website Visitors"
+                value={opportunityInputs.monthlyTraffic}
+                onChange={(value) => handleOpportunityChange("monthlyTraffic", value)}
+                helperText="The number of visitors your site receives each month."
+              />
+              <MetricInput
+                label="Average CAC (Per New Customer)"
+                value={opportunityInputs.cpa}
+                onChange={(value) => handleOpportunityChange("cpa", value)}
+                helperText="Your average acquisition cost per paying customer."
+              />
+              <MetricInput
+                label="Visitor-to-customer conversion rate (%)"
+                value={opportunityInputs.leadToCloseRate}
+                onChange={(value) => handleOpportunityChange("leadToCloseRate", value)}
+                helperText="The percentage of site visitors who ultimately become customers."
+              />
+              <MetricInput
+                label="Yearly revenue per customer"
+                value={opportunityInputs.averageDealValue}
+                onChange={(value) => handleOpportunityChange("averageDealValue", value)}
+                helperText="The average revenue generated per customer or sale."
+              />
+              <MetricInput
+                label="Current identifiable traffic (%)"
+                value={opportunityInputs.identificationRate}
+                onChange={(value) => handleOpportunityChange("identificationRate", value)}
+                placeholder="25"
+                helperText="Estimated percentage of your traffic you can currently identify or activate."
+              />
+            </div>
+            <div className="grid gap-6">
+              <div className="grid gap-4 lg:grid-cols-[1.35fr_0.65fr]">
+                <OpportunityComparisonChart model={visualModel} />
+                <OpportunityBreakdownChart model={visualModel} />
+              </div>
+              <div className="space-y-4">
+                <div className="grid gap-6 lg:grid-cols-2">
+                  <Card>
+                    <CardContent className="space-y-6">
+                      <div className="space-y-2">
+                        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Funnel leak view</p>
+                        <h3 className="font-display text-3xl font-bold text-paper">Where Your System Is Likely Leaking Value</h3>
+                        <p className="max-w-3xl text-base leading-7 text-cloud/74">
+                          You may not need more traffic. You may need better signal quality.
+                        </p>
+                      </div>
+                      <FunnelLeakVisualization model={visualModel} />
+                      <p className="text-sm leading-7 text-cloud/65">
+                        Illustrative model showing how a 15-25% improvement in signal quality (identity, attribution, CRM activation) can translate into roughly $1.0M-$1.5M/year in additional pipeline and revenue from traffic you already have.
+                      </p>
+                      <p className="text-sm leading-7 text-cloud/70">
+                        On the Revenue Recovery Call we&apos;ll replace these directional bars with actual GA / CRM numbers and confirm which levers are real.
+                      </p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="flex h-full flex-col space-y-5">
+                      <div className="space-y-2">
+                        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Signal loss model</p>
+                        <h3 className="font-display text-3xl font-bold text-paper">Why CPA Often Rises When Signal Quality Falls</h3>
+                      </div>
+                      <CPASignalChart />
+                      <p className="text-sm leading-7 text-cloud/65">
+                        Directional model - illustrates a common pattern when attribution, identity, and targeting signals weaken.
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+                <RecoverableRevenueModule model={visualModel} />
+                <div className="space-y-2 px-1">
+                  <p className="text-sm leading-7 text-cloud/70">
+                    This is not new traffic. This is value already inside your existing system.
+                  </p>
+                  <p className="text-sm leading-7 text-cloud/60">
+                    Even modest improvements in identification and re-engagement can create meaningful pipeline without increasing acquisition spend.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </main>
+  );
+}
+
+function MetricInput({
+  label,
+  value,
+  onChange,
+  helperText,
+  placeholder,
+}: {
+  label: string;
+  value?: number;
+  onChange: (value: string) => void;
+  helperText?: string;
+  placeholder?: string;
+}) {
+  return (
+    <div className="flex h-full flex-col">
+      <label className="mb-2 block min-h-[3.5rem] text-sm font-semibold uppercase tracking-[0.16em] text-paper/88">{label}</label>
+      <Input
+        type="number"
+        step="any"
+        inputMode="decimal"
+        placeholder={placeholder}
+        value={value ?? ""}
+        onChange={(event) => onChange(event.target.value)}
+      />
+      {helperText ? <p className="mt-2 min-h-[3.25rem] text-xs leading-5 text-cloud/55">{helperText}</p> : null}
+    </div>
+  );
+}
+
+function buildEstimateVisualModel(inputs: OpportunityInputs): EstimateVisualModel {
+  const traffic = inputs.monthlyTraffic || 20000;
+  const cpa = inputs.cpa || 2000;
+  const closeRatePercent = inputs.leadToCloseRate || 0.8;
+  const closeRate = closeRatePercent / 100;
+  const averageDeal = inputs.averageDealValue || 4000;
+  const identificationRate = inputs.identificationRate || 25;
+  const idResolutionMatchPct = 30;
+  const verificationPct = 80;
+  const reOptInPct = 15;
+  const reactivationSalesRate = 4;
+
+  const currentSales = traffic * closeRate;
+  const currentRevenue = currentSales * averageDeal;
+  const estimatedSpend = currentSales * cpa;
+  const anonymousTraffic = traffic * ((100 - identificationRate) / 100);
+  const trafficLossValue = (estimatedSpend / traffic) * anonymousTraffic;
+  const consumerMatches = anonymousTraffic * (idResolutionMatchPct / 100);
+  const verifiedMatchedProfiles = consumerMatches * (verificationPct / 100);
+  const recoveredLeads = verifiedMatchedProfiles * (reOptInPct / 100);
+  const recoveredSales = recoveredLeads * closeRate;
+  const recoveredRevenue = recoveredSales * averageDeal;
+  const currentLeads = traffic * 0.08;
+  const improvedLeads = traffic * 0.1;
+  const currentPipelineAnnual = currentRevenue * 12;
+  const improvedPipelineAnnual = currentPipelineAnnual * 1.2;
+  const recoverablePipeline = currentRevenue * 0.1640625;
+  const recoveryPotentialLow = currentRevenue * 0.125;
+  const recoveryPotentialHigh = currentRevenue * 0.203125;
+  const improvedRevenueMonthlyLow = currentRevenue + recoveryPotentialLow;
+  const improvedRevenueMonthlyMid = (760000 / 640000) * currentRevenue;
+  const improvedRevenueMonthlyHigh = currentRevenue * 1.25;
+  const efficiencyGain = currentRevenue * 0.06;
+  const anonymousTrafficUpside = currentRevenue * 0.28;
+  const wastedSpend = estimatedSpend * 0.12;
+
+  return {
+    traffic,
+    conversionRate: closeRatePercent,
+    identificationRate,
+    averageRevenuePerCustomer: averageDeal,
+    recoveryPotentialLow,
+    recoveryPotentialHigh,
+    currentRevenueMonthly: currentRevenue,
+    improvedRevenueMonthlyLow,
+    improvedRevenueMonthlyMid,
+    improvedRevenueMonthlyHigh,
+    currentLeads,
+    improvedLeads,
+    currentPipelineAnnual,
+    improvedPipelineAnnual,
+    recoverablePipeline,
+    efficiencyGain,
+    anonymousTrafficUpside,
+    wastedSpend,
+    currentSales,
+    currentRevenue,
+    estimatedSpend,
+    trafficLossValue,
+    anonymousTraffic,
+    idResolutionMatchPct,
+    consumerMatches,
+    verificationPct,
+    verifiedMatchedProfiles,
+    reOptInPct,
+    recoveredLeads,
+    reactivationSalesRate,
+    recoveredSales,
+    recoveredRevenue,
+  };
+}
+
+function formatCompactCurrency(value: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    notation: value >= 1000 ? "compact" : "standard",
+    maximumFractionDigits: 1,
+  }).format(value);
+}
+
+function formatRoundedCompactCurrency(value: number, roundingBase = 10000) {
+  return formatCompactCurrency(Math.round(value / roundingBase) * roundingBase);
+}
+
+function formatRangeCurrency(min: number, max: number) {
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    notation: min >= 1000 ? "compact" : "standard",
+    maximumFractionDigits: 0,
+  });
+
+  return `${formatter.format(min)}-${formatter.format(max)}`;
+}
+
+function formatCompactNumber(value: number) {
+  return new Intl.NumberFormat("en-US", {
+    notation: value >= 1000 ? "compact" : "standard",
+    maximumFractionDigits: 1,
+  }).format(value);
+}
+
+function formatDetailedCurrency(value: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+function formatDetailedNumber(value: number, digits = 2) {
+  return new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  }).format(value);
+}
+
+function formatPercent(value: number) {
+  return `${value.toFixed(2)}%`;
+}
+
+function FunnelLeakVisualization({ model }: { model: EstimateVisualModel }) {
+  const currentLeads = model.traffic * 0.05;
+  const improvedLeads = model.traffic * 0.35;
+  const currentPipeline = currentLeads * model.averageRevenuePerCustomer;
+  const improvedPipeline = improvedLeads * model.averageRevenuePerCustomer;
+
+  const stages = [
+    {
+      label: "Traffic",
+      currentLabel: "Traffic",
+      improvedLabel: "Traffic",
+      current: model.traffic,
+      improved: model.traffic,
+      format: formatCompactNumber,
+    },
+    {
+      label: "Leads",
+      currentLabel: "Leads (5%)",
+      improvedLabel: "Leads (35%)",
+      current: currentLeads,
+      improved: improvedLeads,
+      format: formatCompactNumber,
+      currentWidth: "5%",
+      improvedWidth: "35%",
+    },
+    {
+      label: "Pipeline",
+      currentLabel: "Pipeline",
+      improvedLabel: "Pipeline",
+      current: currentPipeline,
+      improved: improvedPipeline,
+      format: formatCompactCurrency,
+    },
+  ];
+
+  const maxValue = Math.max(...stages.flatMap((stage) => [stage.current, stage.improved]));
+
+  return (
+    <div className="grid gap-4 md:grid-cols-2">
+      {[
+        { title: "Current state", key: "current" as const, tone: "bg-white/[0.03]" },
+        { title: "Improved data", key: "improved" as const, tone: "bg-glow/8" },
+      ].map((column) => (
+        <div key={column.title} className={cn("rounded-[24px] border border-white/10 p-5", column.tone)}>
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">{column.title}</p>
+          <div className="mt-5 space-y-4">
+            {stages.map((stage) => {
+              const value = column.key === "current" ? stage.current : stage.improved;
+              const width =
+                column.key === "current"
+                  ? ("currentWidth" in stage && stage.currentWidth) || `${Math.max((value / maxValue) * 100, 14)}%`
+                  : ("improvedWidth" in stage && stage.improvedWidth) || `${Math.max((value / maxValue) * 100, 14)}%`;
+              return (
+                <div key={`${column.title}-${stage.label}`} className="space-y-2">
+                  <div className="flex items-center justify-between text-sm text-cloud/72">
+                    <span>{column.key === "current" ? stage.currentLabel : stage.improvedLabel}</span>
+                    <span className="font-medium text-paper">{stage.format(value)}</span>
+                  </div>
+                  <div className="h-3 overflow-hidden rounded-full bg-white/10">
+                    <div className={cn("h-full rounded-full", column.key === "current" ? "bg-white/40" : "bg-glow")} style={{ width }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function OpportunityComparisonChart({ model }: { model: EstimateVisualModel }) {
+  const maxValue = model.improvedRevenueMonthlyHigh;
+  const currentWidth = `${Math.max((model.currentRevenueMonthly / maxValue) * 100, 18)}%`;
+  const recoverableWidth = `${Math.max((model.recoverablePipeline / maxValue) * 100, 12)}%`;
+  const pipelineLiftPercent = model.currentRevenueMonthly > 0 ? (model.recoverablePipeline / model.currentRevenueMonthly) * 100 : 0;
+  const annualizedLow = model.recoveryPotentialLow * 12;
+  const annualizedMid = model.recoverablePipeline * 12;
+  const annualizedHigh = model.recoveryPotentialHigh * 12;
+
+  return (
+    <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">Main visual</p>
+          <h3 className="mt-2 font-display text-2xl font-bold text-paper">You May Be Leaving Pipeline on the Table</h3>
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-cloud/72">
+            Based on your inputs of {formatCompactNumber(model.traffic)} monthly visitors and a {formatPercent(model.conversionRate)} visitor-to-customer conversion rate.
+          </p>
+        </div>
+        <div className="rounded-[20px] border border-glow/15 bg-glow/10 px-4 py-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-glow">Estimated Recoverable / Protected Revenue</p>
+          <p className="mt-2 font-display text-3xl font-bold text-paper">
+            {formatRoundedCompactCurrency(model.recoveryPotentialLow)}-{formatRoundedCompactCurrency(model.recoveryPotentialHigh)}
+          </p>
+          <p className="mt-2 text-sm text-cloud/68">Modeled midpoint {formatRoundedCompactCurrency(model.recoverablePipeline, 5000)}</p>
+          <p className="mt-3 text-sm leading-6 text-cloud/72">
+            Directional estimate based on your inputs and benchmark assumptions. Represents a 15-25% efficiency improvement from better identity, attribution, and CRM activation, without buying more traffic.
+          </p>
+        </div>
+      </div>
+      <div className="mt-6 grid gap-5">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-sm text-cloud/72">
+            <span>Current visible value</span>
+            <span className="font-medium text-paper">{formatCompactCurrency(model.currentRevenueMonthly)}</span>
+          </div>
+          <div className="h-12 overflow-hidden rounded-2xl bg-white/8">
+            <div
+              className="flex h-full items-center rounded-2xl bg-white/25 px-4 text-sm font-medium text-paper"
+              style={{ width: currentWidth }}
+            >
+              {formatCompactCurrency(model.currentRevenueMonthly)}
+            </div>
+          </div>
+        </div>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-sm text-cloud/72">
+            <span>With improved data visibility</span>
+            <span className="font-medium text-paper">
+              {formatRoundedCompactCurrency(model.improvedRevenueMonthlyLow)}-{formatRoundedCompactCurrency(model.improvedRevenueMonthlyHigh)}
+            </span>
+          </div>
+          <div className="h-12 overflow-hidden rounded-2xl bg-white/8">
+            <div className="flex h-full overflow-hidden rounded-2xl" style={{ width: "100%" }}>
+              <div className="flex h-full items-center bg-white/20 px-4 text-sm font-medium text-paper" style={{ width: currentWidth }}>
+                {formatCompactCurrency(model.currentRevenueMonthly)}
+              </div>
+              <div
+                className="flex h-full items-center justify-end border-l border-white/20 bg-gradient-to-r from-glow to-[#9df4dd] px-4 text-sm font-semibold text-ink shadow-[0_0_20px_rgba(121,242,210,0.18)]"
+                style={{ width: recoverableWidth }}
+              >
+                +{formatRoundedCompactCurrency(model.recoverablePipeline, 5000)}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="mt-6 grid gap-4 md:grid-cols-[0.9fr_1.1fr]">
+        <div className="rounded-[20px] border border-white/10 bg-white/[0.03] p-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cloud/55">Potential Pipeline Lift</p>
+          <p className="mt-2 font-display text-3xl font-bold text-glow">
+            {formatRoundedCompactCurrency(model.recoveryPotentialLow)}-{formatRoundedCompactCurrency(model.recoveryPotentialHigh)}
+          </p>
+          <p className="mt-2 text-sm font-medium text-cloud/72">+{pipelineLiftPercent.toFixed(1)}%</p>
+          <p className="mt-3 text-sm text-cloud/65">From traffic you are already paying for.</p>
+        </div>
+        <div className="rounded-[20px] border border-white/10 bg-white/[0.02] p-4">
+          <p className="text-sm leading-7 text-cloud/76">
+            The difference between these two states is not new traffic — it&apos;s better use of traffic you already paid for.
+          </p>
+          <p className="mt-3 text-sm leading-7 text-cloud/62">Even small improvements in signal quality can compound across your funnel.</p>
+          <div className="mt-4 flex items-center justify-between rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-cloud/55">Annualized Impact</span>
+            <span className="font-medium text-paper">{formatRangeCurrency(annualizedLow, annualizedHigh)} / year</span>
+          </div>
+          <p className="mt-3 text-sm leading-7 text-cloud/68">
+            Modeled midpoint: ~{formatCompactCurrency(annualizedMid)} / year in recoverable / protected revenue
+          </p>
+        </div>
+      </div>
+      <p className="mt-5 text-sm leading-7 text-cloud/70">
+        This estimate is based on improving how your existing traffic is identified and activated — not increasing traffic.
+      </p>
+      <p className="mt-3 text-sm leading-7 text-cloud/70">
+        This is a directional estimate based on a few high-level inputs. The Revenue Recovery Call is where we validate the model against your actual GA / CRM data and confirm if there is real 6-figure upside.
+      </p>
+      <div className="mt-4 space-y-1 text-xs leading-6 text-cloud/52">
+        <p>Directional estimate based on your inputs and benchmark assumptions.</p>
+        <p>Actual outcomes depend on traffic quality, conversion performance, and signal match rates.</p>
+        <p>This represents one layer of recoverable value. Additional gains often exist in targeting efficiency, attribution, and CRM activation.</p>
+      </div>
+    </div>
+  );
+}
+
+function OpportunityBreakdownChart({ model }: { model: EstimateVisualModel }) {
+  const total = model.efficiencyGain + model.recoverablePipeline + model.estimatedSpend;
+  const segments = [
+    {
+      label: "Conversion Efficiency Lift",
+      value: model.efficiencyGain,
+      className: "bg-amber",
+      description: "Small gains from improved targeting, attribution, and data accuracy",
+      confidence: "High confidence",
+    },
+    {
+      label: "Reactivated Lost Pipeline",
+      value: model.recoverablePipeline,
+      className: "bg-glow",
+      description: "Revenue from previously anonymous visitors who can now be identified and re-engaged",
+      confidence: "Moderate confidence",
+    },
+    {
+      label: "Uncaptured Traffic Potential (Theoretical)",
+      value: model.estimatedSpend,
+      className: "bg-white/35",
+      description: "Estimated value if more anonymous traffic were converted into leads",
+      confidence: "Theoretical / directional",
+    },
+  ];
+
+  return (
+    <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">Where The Opportunity Exists</p>
+      <div className="mt-5 overflow-hidden rounded-full bg-white/10">
+        <div className="flex h-6">
+          {segments.map((segment) => (
+            <div key={segment.label} className={segment.className} style={{ width: `${(segment.value / total) * 100}%` }} />
+          ))}
+        </div>
+      </div>
+      <div className="mt-4 space-y-3">
+        {segments.map((segment) => (
+          <div key={segment.label} className="rounded-2xl border border-white/8 bg-white/[0.02] p-3">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-3 text-cloud/74">
+                <span className={cn("mt-1 h-3 w-3 rounded-full", segment.className)} />
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-medium text-paper">{segment.label}</span>
+                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[11px] uppercase tracking-[0.14em] text-cloud/55">
+                      {segment.confidence}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs leading-5 text-cloud/58">{segment.description}</p>
+                </div>
+              </div>
+              <span className="pt-0.5 text-sm font-medium text-paper">{formatCompactCurrency(segment.value)}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <p className="mt-4 text-sm leading-7 text-cloud/66">
+        Most companies capture only a fraction of the value already present in their traffic.
+      </p>
+    </div>
+  );
+}
+
+function RecoverableRevenueModule({ model }: { model: EstimateVisualModel }) {
+  const flow = [
+    {
+      label: "Anonymous visitors",
+      value: `${formatCompactNumber(model.anonymousTraffic)} anonymous visitors`,
+    },
+    {
+      label: "Matched profiles",
+      value: `${formatCompactNumber(model.consumerMatches)} matched`,
+      note: `${formatPercent(model.idResolutionMatchPct)} ID resolution match`,
+    },
+    {
+      label: "Verified contacts",
+      value: `${formatCompactNumber(model.verifiedMatchedProfiles)} verified`,
+      note: `${formatPercent(model.verificationPct)} verification`,
+    },
+    {
+      label: "Re-engaged leads",
+      value: `${formatCompactNumber(model.recoveredLeads)} re-engaged leads`,
+      note: `${formatPercent(model.reOptInPct)} re-opt-in`,
+    },
+    {
+      label: "Additional sales",
+      value: `${formatDetailedNumber(model.recoveredSales, 0)} additional sales`,
+      note: `${formatPercent(model.reactivationSalesRate)} re-activation sales rate`,
+    },
+    {
+      label: "Recovered revenue",
+      value: `${formatCompactCurrency(model.recoveredRevenue)} recovered revenue`,
+    },
+  ];
+
+  return (
+    <div className="rounded-[24px] border border-white/10 bg-[linear-gradient(160deg,rgba(17,27,42,0.96),rgba(11,18,31,1))] p-5 md:p-6">
+      <div className="space-y-3">
+        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-glow">Your Recoverable Revenue Opportunity</p>
+        <h3 className="font-display text-3xl font-bold text-paper">A portion of your existing traffic is currently anonymous and underused.</h3>
+        <p className="max-w-4xl text-sm leading-7 text-cloud/75">
+          This model estimates how much of that traffic can be identified, re-engaged, and turned into additional revenue without increasing spend.
+        </p>
+        <p className="text-xs uppercase tracking-[0.18em] text-cloud/50">Directional estimate based on your current inputs and benchmark assumptions.</p>
+      </div>
+
+      <div className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+          <div className="space-y-3">
+            {flow.map((step, index) => (
+              <div key={step.label}>
+                <div className="flex items-center gap-4 rounded-[20px] border border-white/8 bg-white/[0.02] px-4 py-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/6 text-sm font-semibold text-paper">
+                    {index + 1}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium uppercase tracking-[0.16em] text-cloud/55">{step.label}</p>
+                    <p className="mt-1 text-lg font-semibold text-paper">{step.value}</p>
+                    {step.note ? <p className="mt-1 text-sm text-cloud/62">{step.note}</p> : null}
+                  </div>
+                </div>
+                {index < flow.length - 1 ? <div className="ml-5 h-5 w-px bg-gradient-to-b from-glow/80 to-white/10" /> : null}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="rounded-[24px] border border-glow/20 bg-[linear-gradient(135deg,rgba(121,242,210,0.18),rgba(255,209,102,0.10))] p-5">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-glow">Estimated Recoverable Revenue</p>
+            <p className="mt-4 font-display text-5xl font-bold text-paper">{formatCompactCurrency(model.recoveredRevenue)}</p>
+            <p className="mt-3 text-sm leading-7 text-cloud/78">
+              From traffic you have already paid for, but are not currently capturing at full value.
+            </p>
+            <p className="mt-3 text-sm leading-7 text-cloud/70">
+              We validate this range live on the call before recommending a Revenue Recovery Audit.
+            </p>
+          </div>
+
+          <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">Current Baseline</p>
+            <div className="mt-4 grid gap-3">
+              {[
+                { label: "Sales", value: formatDetailedNumber(model.currentSales) },
+                { label: "Revenue", value: formatDetailedCurrency(model.currentRevenue) },
+                { label: "Estimated Spend", value: formatDetailedCurrency(model.estimatedSpend) },
+              ].map((field) => (
+                <div key={field.label} className="flex items-center justify-between gap-4 border-b border-white/8 pb-3 text-sm last:border-b-0 last:pb-0">
+                  <span className="text-cloud/70">{field.label}</span>
+                  <span className="font-medium text-paper">{field.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cloud/60">Traffic Loss Value</p>
+            <p className="mt-3 font-display text-3xl font-bold text-glow">{formatDetailedCurrency(model.trafficLossValue)}</p>
+            <p className="mt-3 text-sm leading-7 text-cloud/72">
+              This represents the portion of your spend that drove visitors who did not convert or become usable data.
+            </p>
+            <p className="mt-2 text-sm leading-7 text-cloud/60">
+              This traffic is not necessarily lost forever — it is often just unidentified and unactivated.
+            </p>
+          </div>
+
+          <p className="text-xs leading-6 text-cloud/52">
+            Actual outcomes depend on traffic quality, match quality, and conversion performance.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CPASignalChart() {
+  return (
+    <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5">
+      <svg viewBox="0 0 320 180" className="w-full" role="img" aria-label="CPA rising while signal quality falls">
+        <line x1="24" y1="150" x2="300" y2="150" stroke="rgba(255,255,255,0.16)" />
+        <line x1="24" y1="20" x2="24" y2="150" stroke="rgba(255,255,255,0.16)" />
+        <path d="M36 128 C86 120 126 104 170 88 C210 70 252 50 292 34" fill="none" stroke="#f7c96d" strokeWidth="4" strokeLinecap="round" />
+        <path d="M36 42 C82 56 126 72 170 88 C214 104 252 118 292 132" fill="none" stroke="#79f2d2" strokeWidth="4" strokeLinecap="round" />
+        <text x="70" y="112" fill="#f7c96d" fontSize="12">
+          CPA
+        </text>
+        <text x="224" y="144" fill="#dbe5f4" fontSize="12">
+          Signal quality
+        </text>
+      </svg>
+    </div>
+  );
+}
