@@ -111,7 +111,7 @@ export const siteConfig = {
       "A premium diagnostic for B2B SaaS and info product teams to assess whether bad data is hiding wasted ad spend, anonymous traffic, and recoverable pipeline.",
   },
   hero: {
-    badge: "Revenue leak diagnostic for paid-growth teams",
+    badge: "",
     headline: "Find 6-Figure Revenue Leaks in 2 Minutes",
     qualifier: "(For B2B SaaS Teams Spending $50k-$500k/mo on Paid Ads)",
     subhead:
