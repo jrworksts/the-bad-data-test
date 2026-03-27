@@ -315,7 +315,7 @@ export function BadDataTestApp() {
     <main className="relative overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-30" aria-hidden />
       <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-4 pb-24 sm:px-6 lg:px-8">
-        <section className="relative pt-12 md:pt-20">
+        <section className="relative pt-4 md:pt-8">
           <Card className="relative overflow-hidden border-glow/15 bg-[linear-gradient(145deg,rgba(9,25,39,0.96),rgba(14,39,55,0.92))]">
             <div className="absolute inset-0 opacity-90" aria-hidden>
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(121,242,210,0.12),transparent_34%),linear-gradient(180deg,rgba(8,17,31,0.18),rgba(8,17,31,0.72))]" />
