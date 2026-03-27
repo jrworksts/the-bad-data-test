@@ -350,9 +350,11 @@ export function BadDataTestApp() {
               </svg>
             </div>
             <CardContent className="relative z-10 flex min-h-[560px] flex-col items-center justify-center px-6 py-16 text-center md:min-h-[640px] md:px-12">
-              <div className="inline-flex items-center rounded-full border border-glow/20 bg-glow/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-glow">
-                {siteConfig.hero.badge}
-              </div>
+              {siteConfig.hero.badge ? (
+                <div className="inline-flex items-center rounded-full border border-glow/20 bg-glow/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-glow">
+                  {siteConfig.hero.badge}
+                </div>
+              ) : null}
               <div className="mt-8 space-y-5">
                 <h1 className="mx-auto max-w-5xl font-display text-5xl font-bold leading-[0.96] tracking-tight text-balance text-paper md:text-7xl">
                   {siteConfig.hero.headline}
