@@ -98,7 +98,7 @@ export function BadDataTestApp() {
   function scrollToQuizHeading() {
     const target = document.getElementById("quiz-heading") || document.getElementById("quiz");
     if (!target) return;
-    const headerOffset = 112;
+    const headerOffset = 32;
     const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
     window.history.replaceState(null, "", "#quiz-heading");
     window.scrollTo({ top, behavior: "smooth" });
@@ -315,27 +315,6 @@ export function BadDataTestApp() {
     <main className="relative overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-30" aria-hidden />
       <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-4 pb-24 sm:px-6 lg:px-8">
-        <header className="sticky top-0 z-40 -mx-4 border-b border-white/8 bg-ink/70 px-4 py-4 backdrop-blur sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-          <div className="mx-auto flex max-w-7xl items-center justify-between">
-            <a href="#" className="font-display text-lg font-bold tracking-tight text-paper">
-              The Bad Data Test
-            </a>
-            <div className="hidden items-center gap-3 md:flex">
-              <Button size="sm" asChild>
-                <a
-                  href="#quiz-heading"
-                  onClick={() => {
-                    trackEvent("cta_clicked", { label: "Take the Bad Data Test", href: "#quiz-heading", stage, source: "header" });
-                    if (stage === "landing") trackEvent("quiz_started");
-                  }}
-                >
-                  {primaryCtas[0].label}
-                </a>
-              </Button>
-            </div>
-          </div>
-        </header>
-
         <section className="relative pt-12 md:pt-20">
           <Card className="relative overflow-hidden border-glow/15 bg-[linear-gradient(145deg,rgba(9,25,39,0.96),rgba(14,39,55,0.92))]">
             <div className="absolute inset-0 opacity-90" aria-hidden>
