@@ -60,6 +60,12 @@ export function ResultsPage() {
       route: result.routeVariant,
       page: "dedicated-results",
     });
+    window.fbq?.("track", "Lead", {
+      content_name: "Bad Data Test Result",
+      score: result.score,
+      qualification: result.qualification,
+      route_variant: result.routeVariant,
+    });
   }, [result]);
 
   async function handleShare() {
