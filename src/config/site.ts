@@ -15,7 +15,7 @@ const ghlBookingEmbedUrl =
   "https://api.leadconnectorhq.com/widget/booking/303rv61ZkidkXmcEvLhz";
 
 export const primaryCtas: CTAConfig[] = [
-  { id: "take-test", label: "Start the Bad Data Test", href: "#quiz" },
+  { id: "take-test", label: "Take the Bad Data Test", href: "#quiz" },
   {
     id: "see-how",
     label: "See How It Works",
@@ -115,7 +115,7 @@ export const siteConfig = {
     headline: "Find 6-Figure Revenue Leaks in 2 Minutes",
     qualifier: "(For B2B SaaS Teams Spending $50k-$500k/mo on Paid Ads)",
     subhead:
-      "Score your tracking, targeting, and attribution to see how much ad spend and pipeline you’re quietly wasting. Get a Bad Data Score plus an estimated revenue recovery range from your existing traffic.",
+      "See how much ad spend and pipeline you’re quietly wasting.",
     kicker:
       "Most teams cannot answer every question with confidence. That is often the signal.",
   },

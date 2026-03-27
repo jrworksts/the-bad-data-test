@@ -325,7 +325,7 @@ export function BadDataTestApp() {
                 <a
                   href="#quiz-heading"
                   onClick={() => {
-                    trackEvent("cta_clicked", { label: "Start the Bad Data Test", href: "#quiz-heading", stage, source: "header" });
+                    trackEvent("cta_clicked", { label: "Take the Bad Data Test", href: "#quiz-heading", stage, source: "header" });
                     if (stage === "landing") trackEvent("quiz_started");
                   }}
                 >
@@ -386,7 +386,7 @@ export function BadDataTestApp() {
                 </p>
                 <ul className="mx-auto grid max-w-3xl gap-3 text-base leading-7 text-cloud/86 md:justify-items-center">
                   {[
-                    "For B2B SaaS / info products doing $5M-$100M ARR",
+                    "For B2B SaaS products doing $5M-$100M ARR",
                     "Takes ~2 minutes, 8 questions, no deck, no demo",
                     "Built for teams spending $50k-$500k/mo on paid ads",
                   ].map((item) => (
@@ -402,11 +402,11 @@ export function BadDataTestApp() {
                   <a
                     href="#quiz-heading"
                     onClick={() => {
-                      trackEvent("cta_clicked", { label: "Start the Bad Data Test", href: "#quiz-heading", stage, source: "hero" });
+                      trackEvent("cta_clicked", { label: "Take the Bad Data Test", href: "#quiz-heading", stage, source: "hero" });
                       if (stage === "landing") trackEvent("quiz_started");
                     }}
                   >
-                    Start the Bad Data Test
+                    Take the Bad Data Test
                     <ArrowRight className="h-4 w-4" />
                   </a>
                 </Button>
