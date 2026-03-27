@@ -59,6 +59,11 @@ export default function RootLayout({
           src="https://cdn.idpixel.app/v1/idp-analytics-69bf16b99f10cf2f551c09d5.min.js"
           strategy="beforeInteractive"
         />
+        <Script
+          id="contentsquare-uxa"
+          src="https://t.contentsquare.net/uxa/e8172fefc952a.js"
+          strategy="beforeInteractive"
+        />
         <Script id="meta-pixel" strategy="beforeInteractive">
           {`!function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
