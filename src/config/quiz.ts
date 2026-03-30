@@ -118,8 +118,15 @@ export const leadGateFields: ProfilingField[] = [
   { id: "firstName", label: "First name", type: "text", required: true, placeholder: "Taylor" },
   { id: "workEmail", label: "Work email", type: "email", required: true, placeholder: "taylor@company.com" },
   {
+    id: "company",
+    label: "Company name",
+    type: "text",
+    required: true,
+    placeholder: "Acme Software",
+  },
+  {
     id: "phone",
-    label: "Phone (optional, for SMS reminder or if you want us to send a quick Loom walkthrough of your results)",
+    label: "Phone",
     type: "text",
     required: false,
     placeholder: "(312) 555-0199",

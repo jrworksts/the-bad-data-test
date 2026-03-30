@@ -489,7 +489,7 @@ export function BadDataTestApp() {
                           }}
                         >
                           {leadGateFields.map((field) => (
-                            <div key={field.id} className={field.id === "phone" ? "sm:col-span-2" : undefined}>
+                            <div key={field.id}>
                               <label className="mb-2 block text-sm font-medium text-cloud/80" htmlFor={field.id}>
                                 {field.label}
                                 {field.required ? <span className="ml-1 text-rose">*</span> : null}
