@@ -1,19 +1,14 @@
 "use client";
 
-import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
-  CheckCircle2,
   ChevronLeft,
-  Clipboard,
   MoveRight,
-  ShieldCheck,
 } from "lucide-react";
 import { leadGateAfterQuestion, leadGateFields, quizQuestions } from "@/config/quiz";
-import { faqItems, primaryCtas, proofStats, siteConfig, stackLayers } from "@/config/site";
 import { trackEvent } from "@/lib/analytics";
 import { buildResultModel } from "@/lib/scoring";
 import type { LeadProfile, OpportunityInputs, QuizResponses, ResultModel } from "@/lib/types";
@@ -24,8 +19,6 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 
 const LOCAL_STORAGE_KEY = "bad-data-test-state";
-const GHL_EMBED_ID = "303rv61ZkidkXmcEvLhz_1773702309411";
-
 type FunnelStage = "landing" | "quiz" | "result";
 
 const initialOpportunityInputs: OpportunityInputs = {
@@ -35,40 +28,6 @@ const initialOpportunityInputs: OpportunityInputs = {
   averageDealValue: 4000,
   identificationRate: 25,
 };
-
-function TrustLogoCard({
-  logo,
-}: {
-  logo: {
-    name: string;
-    alt: string;
-    src: string;
-    surfaceClassName?: string;
-    imageClassName?: string;
-  };
-}) {
-  const [hasError, setHasError] = useState(false);
-
-  return (
-    <div
-      className={cn(
-        "flex min-h-24 items-center justify-center rounded-2xl border border-white/8 px-5 py-6 shadow-[0_10px_30px_rgba(3,8,20,0.12)]",
-        logo.surfaceClassName ?? "bg-white/[0.03]",
-      )}
-    >
-      {hasError ? (
-        <span className="text-center text-base font-medium text-cloud/72">{logo.name}</span>
-      ) : (
-        <img
-          src={logo.src}
-          alt={logo.alt}
-          className={cn("w-auto object-contain opacity-95", logo.imageClassName ?? "h-10 max-w-[180px]")}
-          onError={() => setHasError(true)}
-        />
-      )}
-    </div>
-  );
-}
 
 function formatPhoneNumber(value: string) {
   const digits = value.replace(/\D/g, "").slice(0, 10);
@@ -80,7 +39,7 @@ function formatPhoneNumber(value: string) {
 
 export function BadDataTestApp() {
   const router = useRouter();
-  const [stage, setStage] = useState<FunnelStage>("landing");
+  const [stage, setStage] = useState<FunnelStage>("quiz");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<QuizResponses>({});
   const [lead, setLead] = useState<LeadProfile>({});
@@ -89,20 +48,10 @@ export function BadDataTestApp() {
   const [leadGateSubmitted, setLeadGateSubmitted] = useState(false);
   const [result, setResult] = useState<ResultModel | null>(null);
   const [opportunityInputs, setOpportunityInputs] = useState<OpportunityInputs>(initialOpportunityInputs);
-  const quizRef = useRef<HTMLDivElement | null>(null);
   const leadGateFormRef = useRef<HTMLFormElement | null>(null);
 
   const currentQuestion = quizQuestions[currentIndex];
   const progress = Math.round(((currentIndex + 1) / quizQuestions.length) * 100);
-
-  function scrollToQuizHeading() {
-    const target = document.getElementById("quiz-heading") || document.getElementById("quiz");
-    if (!target) return;
-    const headerOffset = 32;
-    const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
-    window.history.replaceState(null, "", "#quiz-heading");
-    window.scrollTo({ top, behavior: "smooth" });
-  }
 
   useEffect(() => {
     trackEvent("landing_viewed");
@@ -122,7 +71,7 @@ export function BadDataTestApp() {
         opportunityInputs?: OpportunityInputs;
       };
 
-      setStage(parsed.stage === "result" ? "landing" : parsed.stage || "landing");
+      setStage(parsed.stage === "result" ? "quiz" : parsed.stage || "quiz");
       setCurrentIndex(parsed.currentIndex || 0);
       setAnswers(parsed.answers || {});
       setLead(parsed.lead || {});
@@ -184,14 +133,6 @@ export function BadDataTestApp() {
       setResult(refreshed);
     }
   }, [answers, lead, qualification, result]);
-
-  function startQuiz() {
-    setStage("quiz");
-    window.setTimeout(() => {
-      scrollToQuizHeading();
-    }, 0);
-    trackEvent("quiz_started");
-  }
 
   function handleAnswer(questionId: string, value: string) {
     const nextAnswers = { ...answers, [questionId]: value };
@@ -297,144 +238,13 @@ export function BadDataTestApp() {
     setCurrentIndex((value) => Math.max(value - 1, 0));
   }
 
-  function handleCtaClick(label: string, href: string) {
-    trackEvent("cta_clicked", { label, href, stage });
-    if (href === "#quiz") {
-      if (stage !== "quiz") {
-        startQuiz();
-      } else {
-        scrollToQuizHeading();
-      }
-      return;
-    }
-
-    document.querySelector(href)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
   return (
     <main className="relative overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-30" aria-hidden />
-      <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-4 pb-24 sm:px-6 lg:px-8">
-        <section className="relative pt-4 md:pt-8">
-          <Card className="relative overflow-hidden border-glow/15 bg-[linear-gradient(145deg,rgba(9,25,39,0.96),rgba(14,39,55,0.92))]">
-            <div className="absolute inset-0 opacity-90" aria-hidden>
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(121,242,210,0.12),transparent_34%),linear-gradient(180deg,rgba(8,17,31,0.18),rgba(8,17,31,0.72))]" />
-              <div className="absolute -right-16 top-10 h-56 w-56 rounded-full bg-glow/12 blur-3xl" />
-              <div className="absolute left-[-4rem] top-32 h-72 w-72 rounded-full bg-amber/10 blur-3xl" />
-              <div className="absolute inset-x-[8%] top-[10%] h-[62%] rounded-[40px] bg-[linear-gradient(180deg,rgba(8,17,31,0.72),rgba(8,17,31,0.52))] blur-[2px]" />
-              <div className="absolute inset-x-10 bottom-12 h-px bg-gradient-to-r from-transparent via-white/12 to-transparent" />
-              <div className="absolute bottom-14 left-[14%] h-24 w-8 rounded-t-full bg-white/5 shadow-[0_0_24px_rgba(255,255,255,0.03)]" />
-              <div className="absolute bottom-14 left-[28%] h-40 w-8 rounded-t-full bg-white/6 shadow-[0_0_24px_rgba(121,242,210,0.05)]" />
-              <div className="absolute bottom-14 left-[42%] h-56 w-8 rounded-t-full bg-gradient-to-t from-glow/28 to-glow/10 shadow-[0_0_28px_rgba(121,242,210,0.12)]" />
-              <div className="absolute bottom-14 left-[56%] h-72 w-8 rounded-t-full bg-gradient-to-t from-amber/28 to-amber/10 shadow-[0_0_28px_rgba(247,201,109,0.1)]" />
-              <div className="absolute bottom-14 left-[70%] h-96 w-8 rounded-t-full bg-gradient-to-t from-glow/34 to-glow/12 shadow-[0_0_30px_rgba(121,242,210,0.14)]" />
-              <svg
-                viewBox="0 0 1200 480"
-                className="absolute inset-0 h-full w-full"
-                preserveAspectRatio="none"
-              >
-                <path
-                  d="M70 410 C220 388 340 336 462 276 C592 212 708 150 820 124 C930 98 1038 118 1140 76"
-                  fill="none"
-                  stroke="rgba(121,242,210,0.22)"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M72 430 C204 420 336 378 454 334 C590 286 726 220 854 196 C974 174 1062 180 1140 150"
-                  fill="none"
-                  stroke="rgba(247,201,109,0.14)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </div>
-            <CardContent className="relative z-10 flex min-h-[560px] flex-col items-center justify-center px-6 py-16 text-center md:min-h-[640px] md:px-12">
-              {siteConfig.hero.badge ? (
-                <div className="inline-flex items-center rounded-full border border-glow/20 bg-glow/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-glow">
-                  {siteConfig.hero.badge}
-                </div>
-              ) : null}
-              <div className="mt-8 space-y-5">
-                <h1 className="mx-auto max-w-5xl font-display text-5xl font-bold leading-[0.96] tracking-tight text-balance text-paper md:text-7xl">
-                  {siteConfig.hero.headline}
-                </h1>
-                <p className="mx-auto max-w-4xl font-display text-2xl font-semibold leading-tight text-cloud/88 md:text-3xl">
-                  {siteConfig.hero.qualifier}
-                </p>
-                <p className="mx-auto max-w-3xl text-lg leading-8 text-cloud/88 md:text-xl">
-                  {siteConfig.hero.subhead}
-                </p>
-                <ul className="mx-auto grid max-w-3xl gap-3 text-base leading-7 text-cloud/86 md:justify-items-center">
-                  {[
-                    "For B2B SaaS products doing $5M-$100M ARR",
-                    "Takes ~2 minutes, 8 questions, no deck, no demo",
-                    "Built for teams spending $50k-$500k/mo on paid ads",
-                  ].map((item) => (
-                    <li key={item} className="flex items-start gap-3 text-left">
-                      <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-glow" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="mt-10 flex w-full max-w-sm flex-col items-center space-y-3">
-                <Button size="lg" className="w-full" asChild>
-                  <a
-                    href="#quiz-heading"
-                    onClick={() => {
-                      trackEvent("cta_clicked", { label: "Take the Bad Data Test", href: "#quiz-heading", stage, source: "hero" });
-                      if (stage === "landing") trackEvent("quiz_started");
-                    }}
-                  >
-                    Take the Bad Data Test
-                    <ArrowRight className="h-4 w-4" />
-                  </a>
-                </Button>
-                <div className="flex justify-center">
-                  <button
-                    type="button"
-                    className="text-sm font-medium text-cloud/74 underline decoration-white/20 underline-offset-4 transition hover:text-paper"
-                    onClick={() => handleCtaClick("See How It Works", "#framework")}
-                  >
-                    See How It Works
-                  </button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <div className="mt-10 space-y-6">
-            <div className="grid gap-4 md:grid-cols-3">
-              {proofStats.map((stat) => (
-                <Card key={stat.value} className="border-white/8 bg-white/[0.03]">
-                  <CardContent className="flex h-full flex-col justify-center space-y-2 text-center">
-                    <p className="font-display text-3xl font-bold text-paper">{stat.value}</p>
-                    <p className="mx-auto max-w-[20ch] text-sm leading-6 text-cloud/70">{stat.label}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-            <div className="space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cloud/50">Works with</p>
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-                {siteConfig.trustLogos.map((logo) => (
-                  <TrustLogoCard key={logo.name} logo={logo} />
-                ))}
-              </div>
-            </div>
-            <div className="grid gap-3 md:grid-cols-2">
-              <div className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 text-sm leading-6 text-cloud/72">
-                Typical upside we see in audits: 15-30% efficiency gain in paid spend
-              </div>
-              <div className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 text-sm leading-6 text-cloud/72">
-                Most SaaS sites: 20-40% of traffic is anonymous / untracked
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="quiz" ref={quizRef} className="scroll-mt-24 pt-20 md:pt-28">
-          <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div className="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-4 py-6 sm:px-6 lg:px-8">
+        <section id="quiz" className="flex min-h-[calc(100vh-3rem)] items-center">
+          <div className="w-full">
+            <div className="mb-6 flex flex-col gap-4 md:mb-8 md:flex-row md:items-end md:justify-between">
             <div className="space-y-2">
               <p className="text-sm font-semibold uppercase tracking-[0.26em] text-glow">Diagnostic</p>
               <h2 id="quiz-heading" className="scroll-mt-28 font-display text-4xl font-bold tracking-tight text-paper md:text-5xl">
@@ -444,10 +254,10 @@ export function BadDataTestApp() {
                 Your answers will generate a Bad Data Score and modeled revenue recovery range.
               </p>
             </div>
-          </div>
+            </div>
 
-          <Card className="overflow-hidden">
-            <CardContent className="space-y-8 p-5 md:p-8">
+            <Card className="overflow-hidden">
+              <CardContent className="space-y-6 p-4 md:space-y-8 md:p-8">
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="text-sm font-medium text-cloud/65">
@@ -592,106 +402,7 @@ export function BadDataTestApp() {
 
             </CardContent>
           </Card>
-        </section>
-
-        <section id="framework" className="pt-20 md:pt-28">
-          <div className="mb-8 max-w-3xl space-y-3">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Framework</p>
-            <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">The 3 layers of the Data Growth Stack</h2>
-            <p className="text-base leading-7 text-cloud/75 md:text-lg">
-              Diagnosis is the front door. The stack is how weak signal, underused CRM data, and incomplete attribution become an operating advantage.
-            </p>
           </div>
-          <div className="grid gap-6 lg:grid-cols-3">
-            {stackLayers.map((layer) => (
-              <Card key={layer.title}>
-                <CardContent className="space-y-4">
-                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">{layer.eyebrow}</p>
-                  <h3 className="font-display text-3xl font-bold text-paper">{layer.title}</h3>
-                  <p className="text-base leading-7 text-cloud/75">{layer.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        <section className="pt-20 md:pt-28">
-          <div className="grid gap-8 lg:grid-cols-2">
-            <Card>
-              <CardContent className="space-y-5">
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Who this is for</p>
-                <div className="grid gap-3">
-                  {siteConfig.audiences.for.map((item) => (
-                    <div key={item} className="flex gap-3">
-                      <ShieldCheck className="mt-0.5 h-5 w-5 text-glow" />
-                      <p className="text-sm leading-6 text-cloud/78">{item}</p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="space-y-5">
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-amber">Who this is not for</p>
-                <div className="grid gap-3">
-                  {siteConfig.audiences.notFor.map((item) => (
-                    <div key={item} className="flex gap-3">
-                      <Clipboard className="mt-0.5 h-5 w-5 text-amber" />
-                      <p className="text-sm leading-6 text-cloud/78">{item}</p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        <section className="pt-20 md:pt-28">
-          <div className="mb-8 max-w-2xl space-y-3">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">FAQ</p>
-            <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">Questions growth leaders usually ask</h2>
-          </div>
-          <div className="grid gap-4">
-            {faqItems.map((item) => (
-              <Card key={item.question}>
-                <CardContent className="space-y-3">
-                  <h3 className="text-lg font-semibold text-paper">{item.question}</h3>
-                  <p className="text-sm leading-7 text-cloud/75">{item.answer}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        <section id="booking" className="pb-12 pt-20 md:pb-20 md:pt-28">
-          <Card className="border-glow/15 bg-gradient-to-br from-glow/10 via-white/[0.04] to-amber/10">
-            <CardContent className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-              <div className="space-y-5">
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Already know you want to talk?</p>
-                <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">Book a 20-minute Revenue Leak Intro Call</h2>
-                <p className="max-w-2xl text-base leading-8 text-cloud/80 md:text-lg">
-                  If you already know your team needs help fixing tracking, attribution, or signal loss, you can skip the test and go straight to a short intro call. We&apos;ll review your current setup, sanity-check whether there&apos;s meaningful upside, and decide if a Revenue Recovery Audit makes sense now or later.
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  <Button
-                    size="default"
-                    onClick={() => {
-                      trackEvent("booking_started");
-                      window.open(siteConfig.bookingUrl, "_blank", "noopener,noreferrer");
-                    }}
-                  >
-                    Skip the test. Book a 20-minute Intro Call.
-                  </Button>
-                </div>
-              </div>
-              <div className="rounded-[28px] border border-white/10 bg-ink/70 p-6">
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">Why most teams start with the Bad Data Test</p>
-                <p className="mt-3 text-base leading-7 text-cloud/76">
-                  The Bad Data Score and modeled revenue recovery range create the tension most teams need before a deeper audit conversation. Seeing a concrete upside number makes it easier to align internally and come to the call with the right context and questions. If you do want to skip ahead, the intro call is still the place where we validate the upside and map out next steps.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
         </section>
       </div>
     </main>
