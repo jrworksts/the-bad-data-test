@@ -544,8 +544,7 @@ function ResultsHeroVariant({
               </div>
             </div>
           </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <DataConfidenceGauge model={visualModel} />
+          <div className="grid gap-4">
             <div className="rounded-[24px] border border-white/10 bg-[linear-gradient(135deg,rgba(121,242,210,0.10),rgba(255,255,255,0.04))] p-5 md:p-6">
               <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Recommended flow</p>
               <h3 className="mt-4 font-display text-3xl font-bold text-paper">
