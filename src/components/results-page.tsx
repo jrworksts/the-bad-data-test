@@ -27,6 +27,7 @@ export function ResultsPage() {
   });
   const [copied, setCopied] = useState(false);
   const [submissionState, setSubmissionState] = useState<"idle" | "submitting" | "submitted" | "error">("idle");
+  const [resultsStep, setResultsStep] = useState(0);
   const [isPending, startTransition] = useTransition();
   const bookingRef = useRef<HTMLElement | null>(null);
   const shareUrl = `${siteConfig.siteUrl}/results`;
@@ -168,211 +169,286 @@ export function ResultsPage() {
   const isAuditCandidate = result.qualification === "High fit" && result.score >= 40;
   const annualizedRecoverableRevenue = visualModel.recoveredRevenue * 12;
   const hasSixFigureUpside = visualModel.recoveryPotentialHigh * 12 >= 100000;
+  const resultSteps = [
+    {
+      overline: "Step 1 of 5",
+      title: "Your Bad Data Test result",
+      body: (
+        <ResultsHeroVariant
+          result={result}
+          visualModel={visualModel}
+          isAuditCandidate={isAuditCandidate}
+          annualizedRecoverableRevenue={annualizedRecoverableRevenue}
+          hasSixFigureUpside={hasSixFigureUpside}
+          onPrimary={openBookingUrl}
+        />
+      ),
+    },
+    {
+      overline: "Step 2 of 5",
+      title: "Opportunity estimate",
+      body: (
+        <div className="space-y-6">
+          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Opportunity estimate</p>
+              <h3 className="mt-2 font-display text-3xl font-bold text-paper">What Your Pipeline Could Look Like With Better Data</h3>
+            </div>
+            <p className="max-w-xl text-sm leading-6 text-cloud/65">
+              Enter your company information below to see what sort of results you can expect.
+            </p>
+          </div>
+          <div className="grid gap-4 lg:grid-cols-5">
+            <MetricInput
+              label="Monthly Website Visitors"
+              value={opportunityInputs.monthlyTraffic}
+              onChange={(value) => handleOpportunityChange("monthlyTraffic", value)}
+              helperText="The number of visitors your site receives each month."
+            />
+            <MetricInput
+              label="Average CAC (Per New Customer)"
+              value={opportunityInputs.cpa}
+              onChange={(value) => handleOpportunityChange("cpa", value)}
+              helperText="Your average acquisition cost per paying customer."
+            />
+            <MetricInput
+              label="Visitor-to-customer conversion rate (%)"
+              value={opportunityInputs.leadToCloseRate}
+              onChange={(value) => handleOpportunityChange("leadToCloseRate", value)}
+              helperText="The percentage of site visitors who ultimately become customers."
+            />
+            <MetricInput
+              label="Yearly revenue per customer"
+              value={opportunityInputs.averageDealValue}
+              onChange={(value) => handleOpportunityChange("averageDealValue", value)}
+              helperText="The average revenue generated per customer or sale."
+            />
+            <MetricInput
+              label="Current identifiable traffic (%)"
+              value={opportunityInputs.identificationRate}
+              onChange={(value) => handleOpportunityChange("identificationRate", value)}
+              placeholder="25"
+              helperText="Estimated percentage of your traffic you can currently identify or activate."
+            />
+          </div>
+          <div className="grid gap-4 lg:grid-cols-[1.35fr_0.65fr]">
+            <OpportunityComparisonChart model={visualModel} />
+            <OpportunityBreakdownChart model={visualModel} />
+          </div>
+        </div>
+      ),
+    },
+    {
+      overline: "Step 3 of 5",
+      title: "Where the leak likely exists",
+      body: (
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Card>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Funnel leak view</p>
+                <h3 className="font-display text-3xl font-bold text-paper">Where Your System Is Likely Leaking Value</h3>
+                <p className="max-w-3xl text-base leading-7 text-cloud/74">
+                  You may not need more traffic. You may need better signal quality.
+                </p>
+              </div>
+              <FunnelLeakVisualization model={visualModel} />
+              <p className="text-sm leading-7 text-cloud/65">
+                Illustrative model showing how a 15-25% improvement in signal quality (identity, attribution, CRM activation) can translate into roughly $1.0M-$1.5M/year in additional pipeline and revenue from traffic you already have.
+              </p>
+              <p className="text-sm leading-7 text-cloud/70">
+                On the Intro Call we&apos;ll replace these directional bars with your actual GA / CRM numbers and confirm which levers are real.
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="flex h-full flex-col space-y-5">
+              <div className="space-y-2">
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Signal loss model</p>
+                <h3 className="font-display text-3xl font-bold text-paper">Why CPA Often Rises When Signal Quality Falls</h3>
+              </div>
+              <CPASignalChart />
+              <p className="text-sm leading-7 text-cloud/65">
+                Directional model - illustrates a common pattern when attribution, identity, and targeting signals weaken.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      ),
+    },
+    {
+      overline: "Step 4 of 5",
+      title: "Recoverable revenue opportunity",
+      body: (
+        <div className="space-y-4">
+          <RecoverableRevenueModule model={visualModel} />
+          <div className="space-y-2 px-1">
+            <p className="text-sm leading-7 text-cloud/70">
+              This is not new traffic. This is value already inside your existing system.
+            </p>
+            <p className="text-sm leading-7 text-cloud/60">
+              Even modest improvements in identification and re-engagement can create meaningful pipeline without increasing acquisition spend.
+            </p>
+          </div>
+        </div>
+      ),
+    },
+    {
+      overline: "Step 5 of 5",
+      title: "Next step",
+      body: (
+        <section id="booking" ref={bookingRef}>
+          <Card className="border-glow/15 bg-gradient-to-br from-glow/10 via-white/[0.04] to-amber/10">
+            <CardContent className="grid gap-8 lg:grid-cols-[1fr_0.95fr]">
+              <div className="space-y-5">
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Next step</p>
+                {isAuditCandidate ? (
+                  <>
+                    <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">
+                      If these visuals even loosely match your reality and you&apos;re spending $50k+/mo on paid, you&apos;re almost certainly leaving six figures on the table.
+                    </h2>
+                    <p className="max-w-2xl text-base leading-8 text-cloud/80 md:text-lg">
+                      The next step is a 20-minute Intro Call to validate the upside and decide if a full Revenue Recovery Audit makes sense now or later.
+                    </p>
+                    <p className="max-w-2xl text-base leading-8 text-cloud/72 md:text-lg">
+                      Everything above is a modeled view from 8 questions. The Intro Call is where we turn this into a concrete 90-day plan.
+                    </p>
+                    <div className="flex flex-wrap gap-3">
+                      <Button size="lg" onClick={openBookingUrl}>
+                        Book a 20-Minute Revenue Recovery Call
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">
+                      Your Bad Data risk looks lower on the surface.
+                    </h2>
+                    <p className="max-w-2xl text-base leading-8 text-cloud/80 md:text-lg">
+                      If you&apos;d like a brief review, you can still book a 20-minute Intro Call, but we typically reserve full Revenue Recovery Audits for teams spending $50k+/mo on paid.
+                    </p>
+                    <p className="max-w-2xl text-base leading-8 text-cloud/72 md:text-lg">
+                      Everything above is a modeled view from 8 questions. The Intro Call is where we turn this into a concrete 90-day plan.
+                    </p>
+                    <div className="flex flex-wrap gap-3">
+                      <Button size="lg" onClick={openBookingUrl}>
+                        Book a 20-Minute Revenue Recovery Call
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
+              <div className="rounded-[28px] border border-white/10 bg-ink/70 p-6">
+                {isAuditCandidate ? (
+                  <>
+                    <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">Book an intro call with our team</p>
+                    <p className="mt-3 text-sm leading-6 text-cloud/68">
+                      We only run a limited number of Revenue Recovery Audits per month for teams spending $50k-$500k+/mo on paid. If your calendar is full, we&apos;ll prioritize you next month.
+                    </p>
+                    <div className="mt-6 overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.02]">
+                      <iframe
+                        src={siteConfig.bookingEmbedUrl}
+                        id={GHL_EMBED_ID}
+                        title="Revenue Recovery Audit intro call booking"
+                        className="min-h-[720px] w-full border-0 md:min-h-[820px]"
+                        scrolling="no"
+                        style={{ width: "100%", border: "none", overflow: "hidden" }}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div className="space-y-4">
+                    <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">Optional intro call</p>
+                    <p className="text-base leading-7 text-cloud/78">
+                      This looks lower urgency than the strongest audit candidates, but you can still use the call to pressure-test whether hidden signal loss is likely to become a real issue as spend grows.
+                    </p>
+                    <div className="mt-6 overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.02]">
+                      <iframe
+                        src={siteConfig.bookingEmbedUrl}
+                        id={GHL_EMBED_ID}
+                        title="Revenue Recovery Audit intro call booking"
+                        className="min-h-[720px] w-full border-0 md:min-h-[820px]"
+                        scrolling="no"
+                        style={{ width: "100%", border: "none", overflow: "hidden" }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+      ),
+    },
+  ];
+  const currentStep = resultSteps[resultsStep];
+  const isFirstStep = resultsStep === 0;
+  const isLastStep = resultsStep === resultSteps.length - 1;
 
   function openBookingUrl() {
     trackEvent("booking_started", { source: isAuditCandidate ? "results-hero" : "results-soft-cta" });
     window.open("https://api.leadconnectorhq.com/widget/bookings/intro-call-rev-recovery-audit", "_blank", "noopener,noreferrer");
   }
 
+  function goToStep(nextStep: number) {
+    const boundedStep = Math.max(0, Math.min(resultSteps.length - 1, nextStep));
+    setResultsStep(boundedStep);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   return (
     <main className="relative overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-30" aria-hidden />
-      <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-4 pb-24 pt-10 sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-4 pb-24 pt-10 sm:px-6 lg:px-8">
         <div className="mb-8">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Completion page</p>
             <h1 className="mt-2 font-display text-4xl font-bold text-paper md:text-5xl">Your Bad Data Test results</h1>
           </div>
         </div>
-
-        <div className="space-y-10">
-          <ResultsHeroVariant
-            result={result}
-            visualModel={visualModel}
-            isAuditCandidate={isAuditCandidate}
-            annualizedRecoverableRevenue={annualizedRecoverableRevenue}
-            hasSixFigureUpside={hasSixFigureUpside}
-            onPrimary={openBookingUrl}
-          />
-
-          <Card id="opportunity">
-            <CardContent className="space-y-6">
-              <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <Card className="overflow-hidden">
+          <CardContent className="space-y-8 p-5 md:p-8">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Opportunity estimate</p>
-                  <h3 className="mt-2 font-display text-3xl font-bold text-paper">What Your Pipeline Could Look Like With Better Data</h3>
+                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">{currentStep.overline}</p>
+                  <h2 className="mt-2 font-display text-3xl font-bold text-paper md:text-4xl">{currentStep.title}</h2>
                 </div>
-                <p className="max-w-xl text-sm leading-6 text-cloud/65">
-                  Enter your company information below to see what sort of results you can expect.
-                </p>
-              </div>
-              <div className="grid gap-4 lg:grid-cols-5">
-                <MetricInput
-                  label="Monthly Website Visitors"
-                  value={opportunityInputs.monthlyTraffic}
-                  onChange={(value) => handleOpportunityChange("monthlyTraffic", value)}
-                  helperText="The number of visitors your site receives each month."
-                />
-                <MetricInput
-                  label="Average CAC (Per New Customer)"
-                  value={opportunityInputs.cpa}
-                  onChange={(value) => handleOpportunityChange("cpa", value)}
-                  helperText="Your average acquisition cost per paying customer."
-                />
-                <MetricInput
-                  label="Visitor-to-customer conversion rate (%)"
-                  value={opportunityInputs.leadToCloseRate}
-                  onChange={(value) => handleOpportunityChange("leadToCloseRate", value)}
-                  helperText="The percentage of site visitors who ultimately become customers."
-                />
-                <MetricInput
-                  label="Yearly revenue per customer"
-                  value={opportunityInputs.averageDealValue}
-                  onChange={(value) => handleOpportunityChange("averageDealValue", value)}
-                  helperText="The average revenue generated per customer or sale."
-                />
-                <MetricInput
-                  label="Current identifiable traffic (%)"
-                  value={opportunityInputs.identificationRate}
-                  onChange={(value) => handleOpportunityChange("identificationRate", value)}
-                  placeholder="25"
-                  helperText="Estimated percentage of your traffic you can currently identify or activate."
-                />
-              </div>
-              <div className="grid gap-6">
-                <div className="grid gap-4 lg:grid-cols-[1.35fr_0.65fr]">
-                  <OpportunityComparisonChart model={visualModel} />
-                  <OpportunityBreakdownChart model={visualModel} />
-                </div>
-                <div className="space-y-4">
-                  <div className="grid gap-6 lg:grid-cols-2">
-                    <Card>
-                      <CardContent className="space-y-6">
-                        <div className="space-y-2">
-                          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Funnel leak view</p>
-                          <h3 className="font-display text-3xl font-bold text-paper">Where Your System Is Likely Leaking Value</h3>
-                          <p className="max-w-3xl text-base leading-7 text-cloud/74">
-                            You may not need more traffic. You may need better signal quality.
-                          </p>
-                        </div>
-                <FunnelLeakVisualization model={visualModel} />
-                <p className="text-sm leading-7 text-cloud/65">
-                  Illustrative model showing how a 15-25% improvement in signal quality (identity, attribution, CRM activation) can translate into roughly $1.0M-$1.5M/year in additional pipeline and revenue from traffic you already have.
-                </p>
-                        <p className="text-sm leading-7 text-cloud/70">
-                          On the Intro Call we&apos;ll replace these directional bars with your actual GA / CRM numbers and confirm which levers are real.
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardContent className="flex h-full flex-col space-y-5">
-                        <div className="space-y-2">
-                          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Signal loss model</p>
-                          <h3 className="font-display text-3xl font-bold text-paper">Why CPA Often Rises When Signal Quality Falls</h3>
-                        </div>
-                        <CPASignalChart />
-                        <p className="text-sm leading-7 text-cloud/65">
-                          Directional model - illustrates a common pattern when attribution, identity, and targeting signals weaken.
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                  <RecoverableRevenueModule model={visualModel} />
-                  <div className="space-y-2 px-1">
-                    <p className="text-sm leading-7 text-cloud/70">
-                      This is not new traffic. This is value already inside your existing system.
-                    </p>
-                    <p className="text-sm leading-7 text-cloud/60">
-                      Even modest improvements in identification and re-engagement can create meaningful pipeline without increasing acquisition spend.
-                    </p>
-                  </div>
+                <div className="text-right text-sm text-cloud/65">
+                  <p>{resultsStep + 1} / {resultSteps.length}</p>
+                  <p>{Math.round(((resultsStep + 1) / resultSteps.length) * 100)}% viewed</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+              <div className="h-2 rounded-full bg-white/10">
+                <div
+                  className="h-full rounded-full bg-[linear-gradient(90deg,rgba(121,242,210,1),rgba(255,205,102,1))] transition-all duration-300"
+                  style={{ width: `${((resultsStep + 1) / resultSteps.length) * 100}%` }}
+                />
+              </div>
+            </div>
 
-          <section id="booking" ref={bookingRef}>
-            <Card className="border-glow/15 bg-gradient-to-br from-glow/10 via-white/[0.04] to-amber/10">
-              <CardContent className="grid gap-8 lg:grid-cols-[1fr_0.95fr]">
-                <div className="space-y-5">
-                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Next step</p>
-                  {isAuditCandidate ? (
-                    <>
-                      <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">
-                        If these visuals even loosely match your reality and you&apos;re spending $50k+/mo on paid, you&apos;re almost certainly leaving six figures on the table.
-                      </h2>
-                      <p className="max-w-2xl text-base leading-8 text-cloud/80 md:text-lg">
-                        The next step is a 20-minute Intro Call to validate the upside and decide if a full Revenue Recovery Audit makes sense now or later.
-                      </p>
-                      <p className="max-w-2xl text-base leading-8 text-cloud/72 md:text-lg">
-                        Everything above is a modeled view from 8 questions. The Intro Call is where we turn this into a concrete 90-day plan.
-                      </p>
-                      <div className="flex flex-wrap gap-3">
-                        <Button size="lg" onClick={openBookingUrl}>
-                          Book a 20-Minute Revenue Recovery Call
-                        </Button>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <h2 className="font-display text-4xl font-bold text-paper md:text-5xl">
-                        Your Bad Data risk looks lower on the surface.
-                      </h2>
-                      <p className="max-w-2xl text-base leading-8 text-cloud/80 md:text-lg">
-                        If you&apos;d like a brief review, you can still book a 20-minute Intro Call, but we typically reserve full Revenue Recovery Audits for teams spending $50k+/mo on paid.
-                      </p>
-                      <p className="max-w-2xl text-base leading-8 text-cloud/72 md:text-lg">
-                        Everything above is a modeled view from 8 questions. The Intro Call is where we turn this into a concrete 90-day plan.
-                      </p>
-                      <div className="flex flex-wrap gap-3">
-                        <Button size="lg" onClick={openBookingUrl}>
-                          Book a 20-Minute Revenue Recovery Call
-                        </Button>
-                      </div>
-                    </>
-                  )}
-                </div>
-                <div className="rounded-[28px] border border-white/10 bg-ink/70 p-6">
-                  {isAuditCandidate ? (
-                    <>
-                      <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">Book an intro call with our team</p>
-                      <p className="mt-3 text-sm leading-6 text-cloud/68">
-                        We only run a limited number of Revenue Recovery Audits per month for teams spending $50k-$500k+/mo on paid. If your calendar is full, we&apos;ll prioritize you next month.
-                      </p>
-                      <div className="mt-6 overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.02]">
-                        <iframe
-                          src={siteConfig.bookingEmbedUrl}
-                          id={GHL_EMBED_ID}
-                          title="Revenue Recovery Audit intro call booking"
-                          className="min-h-[720px] w-full border-0 md:min-h-[820px]"
-                          scrolling="no"
-                          style={{ width: "100%", border: "none", overflow: "hidden" }}
-                        />
-                      </div>
-                    </>
-                  ) : (
-                    <div className="space-y-4">
-                      <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cloud/60">Optional intro call</p>
-                      <p className="text-base leading-7 text-cloud/78">
-                        This looks lower urgency than the strongest audit candidates, but you can still use the call to pressure-test whether hidden signal loss is likely to become a real issue as spend grows.
-                      </p>
-                      <div className="mt-6 overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.02]">
-                        <iframe
-                          src={siteConfig.bookingEmbedUrl}
-                          id={GHL_EMBED_ID}
-                          title="Revenue Recovery Audit intro call booking"
-                          className="min-h-[720px] w-full border-0 md:min-h-[820px]"
-                          scrolling="no"
-                          style={{ width: "100%", border: "none", overflow: "hidden" }}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </section>
-        </div>
+            <div className="min-h-[55vh]">{currentStep.body}</div>
+
+            <div className="flex flex-col-reverse gap-3 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
+              <Button variant="outline" onClick={() => goToStep(resultsStep - 1)} disabled={isFirstStep}>
+                Back
+              </Button>
+              <div className="flex justify-end">
+                {isLastStep ? (
+                  <Button size="lg" onClick={openBookingUrl}>
+                    Book a 20-Minute Revenue Recovery Call
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                ) : (
+                  <Button size="lg" onClick={() => goToStep(resultsStep + 1)}>
+                    Next
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
       <Script src="https://link.msgsndr.com/js/form_embed.js" strategy="afterInteractive" />
     </main>
