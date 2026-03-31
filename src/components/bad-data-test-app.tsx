@@ -213,6 +213,10 @@ export function BadDataTestApp() {
   function submitLeadGate() {
     if (leadGateFormRef.current && !leadGateFormRef.current.reportValidity()) return;
 
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+
     const hasLeadDetails = leadGateFields.some((field) => !!lead[field.id]?.trim());
 
     setLeadGateSubmitted(true);
@@ -326,7 +330,7 @@ export function BadDataTestApp() {
                                   required={field.required}
                                   value={lead[field.id] || ""}
                                   onChange={(event) => handleLeadFieldChange(field.id, event.target.value)}
-                                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-paper outline-none transition focus:border-glow/50"
+                                  className="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-base text-paper outline-none transition focus:border-glow/50 md:text-sm"
                                 >
                                   <option value="">Select</option>
                                   {field.options?.map((option) => (
