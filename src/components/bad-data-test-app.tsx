@@ -39,7 +39,7 @@ function formatPhoneNumber(value: string) {
 
 export function BadDataTestApp() {
   const router = useRouter();
-  const [stage, setStage] = useState<FunnelStage>("quiz");
+  const [stage, setStage] = useState<FunnelStage>("landing");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<QuizResponses>({});
   const [lead, setLead] = useState<LeadProfile>({});
@@ -71,7 +71,7 @@ export function BadDataTestApp() {
         opportunityInputs?: OpportunityInputs;
       };
 
-      setStage(parsed.stage === "result" ? "quiz" : parsed.stage || "quiz");
+      setStage(parsed.stage === "result" ? "landing" : parsed.stage || "landing");
       setCurrentIndex(parsed.currentIndex || 0);
       setAnswers(parsed.answers || {});
       setLead(parsed.lead || {});
@@ -238,26 +238,42 @@ export function BadDataTestApp() {
     setCurrentIndex((value) => Math.max(value - 1, 0));
   }
 
+  function startQuiz() {
+    setStage("quiz");
+    trackEvent("quiz_started");
+  }
+
   return (
     <main className="relative overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-30" aria-hidden />
       <div className="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-4 py-6 sm:px-6 lg:px-8">
         <section id="quiz" className="flex min-h-[calc(100vh-3rem)] items-center">
           <div className="w-full">
-            <div className="mb-6 flex flex-col gap-4 md:mb-8 md:flex-row md:items-end md:justify-between">
-            <div className="space-y-2">
-              <p className="text-sm font-semibold uppercase tracking-[0.26em] text-glow">Diagnostic</p>
-              <h2 id="quiz-heading" className="scroll-mt-28 font-display text-4xl font-bold tracking-tight text-paper md:text-5xl">
-                Begin the 2-Minute Bad Data Test
-              </h2>
-              <p className="max-w-3xl text-base leading-7 text-cloud/75 md:text-lg">
-                Your answers will generate a Bad Data Score and modeled revenue recovery range.
-              </p>
-            </div>
-            </div>
-
-            <Card className="overflow-hidden">
-              <CardContent className="space-y-6 p-4 md:space-y-8 md:p-8">
+            {stage === "landing" ? (
+              <Card className="overflow-hidden">
+                <CardContent className="space-y-8 px-5 py-10 text-center md:px-10 md:py-14">
+                  <div className="space-y-4">
+                    <h1
+                      id="quiz-heading"
+                      className="mx-auto max-w-4xl font-display text-4xl font-bold tracking-tight text-paper md:text-6xl"
+                    >
+                      2-Minute Bad Data Test for B2B SaaS Spending $50k-$500k/mo on Paid Ads
+                    </h1>
+                    <p className="mx-auto max-w-3xl text-base leading-8 text-cloud/78 md:text-lg">
+                      Score your tracking, targeting, and attribution to see how much ad spend and pipeline you&apos;re quietly wasting. Get a Bad Data Score plus a modeled 6-figure annual upside range from traffic you already have.
+                    </p>
+                  </div>
+                  <div className="flex justify-center">
+                    <Button size="lg" className="w-full max-w-sm" onClick={startQuiz}>
+                      Start the Bad Data Test
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="overflow-hidden">
+                <CardContent className="space-y-6 p-4 md:space-y-8 md:p-8">
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="text-sm font-medium text-cloud/65">
@@ -400,8 +416,9 @@ export function BadDataTestApp() {
                 </AnimatePresence>
               ) : null}
 
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </section>
       </div>
