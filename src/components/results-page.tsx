@@ -174,14 +174,17 @@ export function ResultsPage() {
       overline: "Step 1 of 5",
       title: "Your Bad Data Test result",
       body: (
-        <ResultsHeroVariant
-          result={result}
-          visualModel={visualModel}
-          isAuditCandidate={isAuditCandidate}
-          annualizedRecoverableRevenue={annualizedRecoverableRevenue}
-          hasSixFigureUpside={hasSixFigureUpside}
-          onPrimary={openBookingUrl}
-        />
+        <div className="space-y-6">
+          <DataConfidenceGauge model={visualModel} />
+          <ResultsHeroVariant
+            result={result}
+            visualModel={visualModel}
+            isAuditCandidate={isAuditCandidate}
+            annualizedRecoverableRevenue={annualizedRecoverableRevenue}
+            hasSixFigureUpside={hasSixFigureUpside}
+            onPrimary={openBookingUrl}
+          />
+        </div>
       ),
     },
     {
@@ -400,12 +403,6 @@ export function ResultsPage() {
     <main className="relative overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-30" aria-hidden />
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-4 pb-24 pt-10 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-glow">Completion page</p>
-            <h1 className="mt-2 font-display text-4xl font-bold text-paper md:text-5xl">Your Bad Data Test results</h1>
-          </div>
-        </div>
         <Card className="overflow-hidden">
           <CardContent className="space-y-8 p-5 md:p-8">
             <div className="space-y-4">
