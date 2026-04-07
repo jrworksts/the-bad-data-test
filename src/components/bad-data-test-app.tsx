@@ -261,7 +261,9 @@ export function BadDataTestApp() {
                       id="quiz-heading"
                       className="mx-auto max-w-4xl font-display text-4xl font-bold tracking-tight text-paper md:text-6xl"
                     >
-                      You&apos;re Wasting 20-30% of Your Paid Ad Budget. Find Out Where in 2 Minutes.
+                      You&apos;re Wasting 20-40% of Your Paid Ad Budget.
+                      <br />
+                      Find Out Where in 2 Minutes.
                     </h1>
                     <p className="mx-auto max-w-3xl text-base leading-8 text-cloud/78 md:text-lg">
                       We show you how much ad spend and pipeline you&apos;re losing and the 6-figure upside hiding in your existing traffic.
