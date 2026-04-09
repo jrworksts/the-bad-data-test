@@ -250,13 +250,20 @@ export function BadDataTestApp() {
   return (
     <main className="relative overflow-hidden">
       <div className="absolute inset-0 bg-grid opacity-30" aria-hidden />
-      <div className="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-4 py-6 sm:px-6 lg:px-8">
-        <section id="quiz" className="flex min-h-[calc(100vh-3rem)] items-center">
+      <div className="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-4 py-3 sm:px-6 sm:py-6 lg:px-8">
+        <section id="quiz" className="flex min-h-[calc(100vh-1.5rem)] items-center sm:min-h-[calc(100vh-3rem)]">
           <div className="w-full">
             {stage === "landing" ? (
               <Card className="overflow-hidden">
-                <CardContent className="space-y-8 px-5 py-10 text-center md:px-10 md:py-14">
+                <CardContent className="space-y-6 px-5 py-6 text-center md:space-y-8 md:px-10 md:py-14">
                   <div className="space-y-4">
+                    <div className="flex justify-center">
+                      <img
+                        src="/AI2.svg"
+                        alt="AI2"
+                        className="h-10 w-auto max-w-[180px] md:h-12 md:max-w-[220px]"
+                      />
+                    </div>
                     <h1
                       id="quiz-heading"
                       className="mx-auto max-w-4xl font-display text-4xl font-bold tracking-tight text-paper md:text-6xl"
