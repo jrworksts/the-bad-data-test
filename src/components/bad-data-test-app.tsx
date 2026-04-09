@@ -254,16 +254,17 @@ export function BadDataTestApp() {
         <section id="quiz" className="flex min-h-[calc(100vh-1.5rem)] items-center sm:min-h-[calc(100vh-3rem)]">
           <div className="w-full">
             {stage === "landing" ? (
-              <Card className="overflow-hidden">
-                <CardContent className="space-y-6 px-5 py-6 text-center md:space-y-8 md:px-10 md:py-14">
-                  <div className="space-y-4">
-                    <div className="flex justify-center">
-                      <img
-                        src="/AI2.svg"
-                        alt="AI2"
-                        className="h-10 w-auto max-w-[180px] md:h-12 md:max-w-[220px]"
-                      />
-                    </div>
+              <div className="space-y-4 md:space-y-6">
+                <div className="flex justify-center">
+                  <img
+                    src="/AI2.svg"
+                    alt="AI2"
+                    className="h-14 w-auto max-w-[240px] md:h-20 md:max-w-[320px]"
+                  />
+                </div>
+                <Card className="overflow-hidden">
+                  <CardContent className="space-y-6 px-5 py-6 text-center md:space-y-8 md:px-10 md:py-14">
+                    <div className="space-y-4">
                     <h1
                       id="quiz-heading"
                       className="mx-auto max-w-4xl font-display text-4xl font-bold tracking-tight text-paper md:text-6xl"
@@ -276,14 +277,15 @@ export function BadDataTestApp() {
                       We show you how much ad spend and pipeline you&apos;re losing and the 6-figure upside hiding in your existing traffic.
                     </p>
                   </div>
-                  <div className="flex justify-center">
-                    <Button size="lg" className="w-full max-w-sm" onClick={startQuiz}>
-                      Find My Lost Revenue
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                    <div className="flex justify-center">
+                      <Button size="lg" className="w-full max-w-sm" onClick={startQuiz}>
+                        Find My Lost Revenue
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             ) : (
               <Card className="overflow-hidden">
                 <CardContent className="space-y-6 p-4 md:space-y-8 md:p-8">
