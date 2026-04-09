@@ -254,8 +254,8 @@ export function BadDataTestApp() {
         <section id="quiz" className="flex min-h-[calc(100vh-1.5rem)] items-center sm:min-h-[calc(100vh-3rem)]">
           <div className="w-full">
             {stage === "landing" ? (
-              <div className="space-y-4 md:space-y-6">
-                <div className="flex justify-center">
+              <div className="space-y-6 pt-3 md:space-y-8 md:pt-6">
+                <div className="flex justify-center pb-2 md:pb-3">
                   <img
                     src="/AI2.svg"
                     alt="AI2"
